@@ -88,7 +88,7 @@
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
   
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxqB9Fk-ZS_jK93zGCOBwte0c4wKWzWLGfqpJeComTLEp1ZoRu-OmY5nGlOTmID1rjm/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbz7aRFTQr8dw57UR22QFjy1atq-Vpwoy8Kg9CUKcF2963_lxcbV9o3m8Vk6ls_haS2Q/exec";
 
     let paso = 1;
     let datos = {
