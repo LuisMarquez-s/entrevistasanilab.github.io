@@ -85,7 +85,8 @@
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
   
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxqB9Fk-ZS_jK93zGCOBwte0c4wKWzWLGfqpJeComTLEp1ZoRu-OmY5nGlOTmID1rjm/exec";
+    // URL DE TU BACKEND EN APPS SCRIPT
+    const API_URL = "AQUI_PONES_TU_URL_DE_APPS_SCRIPT";
 
     let paso = 1;
     let datos = {
@@ -122,7 +123,7 @@
             <p>Ingresa tu nombre y apellido completo.Pero primero mira este pequeño video para que nos conozcas mejor:</p>
             <div class="tiktok-player">
               <iframe
-              src="https://drive.google.com/file/d/18hHbql960CwoQPOu8l2vXeX6AJJXJYc7/preview"
+              src="https://drive.google.com/file/d/1_kGf5wxshyt-Y1uDB3STOYvyFRt9BH5y/preview"
               width="100%"
               height="100%"
                frameborder="0"
@@ -282,7 +283,7 @@
             <p>Mira este consejo rápido de productividad antes de continuar:.</p>
             <div class="tiktok-player">
               <iframe
-              src="https://drive.google.com/file/d/1kt7xypCyu-y89HYCykK1hK8qA7uvoPa8/preview"
+              src="https://drive.google.com/file/d/1senVZJhKpglTAGZe8_W7BQTVSUWzkCWC/preview"
               width="100%"
               height="100%"
                frameborder="0"
