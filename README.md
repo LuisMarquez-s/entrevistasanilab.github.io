@@ -362,7 +362,7 @@
             if(tipo === 2) datos.videoProductividad = respuesta.url;
             if(tipo === 3) datos.videoRetiro = respuesta.url;
           } else {
-            alert("Error al guardar video en la API.");
+            alert("El servidor de Google dice: " + respuesta.message);
           }
         };
         reader.readAsDataURL(blob);
