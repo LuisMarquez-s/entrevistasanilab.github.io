@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanilab - Sistema de Registro</title>
+  <base target="_top">
   <style>
     body { 
       font-family: Arial, sans-serif; 
@@ -40,7 +38,6 @@
       font-size: 16px; 
       font-weight: bold; 
     }
-    button:disabled { background: #64748b; cursor: not-allowed; }
     button.atras { background: #64748b; }
     .tiktok-player { 
       width: 100%; 
@@ -100,18 +97,18 @@
 
     let signaturePad, stream, mediaRecorder, chunks = [];
 
-    // --- FUNCIÓN NÚCLEO PARA COMUNICARSE CON EL BACKEND ---
-    async function enviarApi(payload) {
+    // Función genérica para enviar datos a la API de Apps Script
+    async function enviarDatosAPI(payload) {
       try {
         const respuesta = await fetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Truco para evitar problemas CORS en Apps Script
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
         return await respuesta.json();
       } catch (error) {
-        console.error("Error al conectar con la API:", error);
-        return { success: false, message: "Fallo de conexión." };
+        console.error("Error en la conexión con la API:", error);
+        return { success: false, message: "Error de red al conectar con el servidor." };
       }
     }
 
@@ -124,7 +121,14 @@
             <h2>👋 Hola. Bienvenido al Sistema de Entrevista de Sanilab</h2>
             <p>Ingresa tu nombre y apellido completo.Pero primero mira este pequeño video para que nos conozcas mejor:</p>
             <div class="tiktok-player">
-              <iframe src="https://drive.google.com/file/d/1_kGf5wxshyt-Y1uDB3STOYvyFRt9BH5y/preview" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+              <iframe
+              src="https://drive.google.com/file/d/18hHbql960CwoQPOu8l2vXeX6AJJXJYc7/preview"
+              width="100%"
+              height="100%"
+               frameborder="0"
+               allow="autoplay; fullscreen"
+               allowfullscreen>
+              </iframe>
             </div>
             <input id="nombre" placeholder="Nombre completo *" value="${datos.nombre}">
             <button onclick="guardarNombre()">Continuar</button>
@@ -134,13 +138,16 @@
         case 2:
           html = `
             <h2>🎥 Preséntate</h2>
-            <p>Ahora queremos conocerte mejor 😊. Mira este video y luego graba tu video de presentación.</p>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7340360993362447622" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <p>Ahora queremos conocerte mejor 😊. Mira este video y luego graba tu video de presentación (sé claro y natural).</p>
+            <div class="tiktok-player">
+              <iframe src="https://www.tiktok.com/player/v1/7340360993362447622" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+            </div>
             <div class="cam-box"><video id="video" autoplay playsinline></video></div>
             <button onclick="startCam('video')">📷 Activar cámara</button>
-            <button id="btnGrabar" onclick="startRec(1)">🎥 Grabar</button>
-            <button id="btnDetener" onclick="stopRec()" disabled>⏹ Detener</button>
+            <button onclick="startRec(1)" id="btnGrabar">🎥 Grabar</button>
+            <button onclick="stopRec()" id="btnDetener" disabled>⏹ Detener</button>
             <div id="preview"></div>
+            <p><strong>Descarga el video de presentación.</strong> Solo puede visualizarse una vez.</p>
             <button onclick="descargarVideo()">⬇️ Descargar Video de Presentación</button>
             <br><br>
             <button onclick="next()">Continuar</button>
@@ -151,8 +158,10 @@
         case 3:
           html = `
             <h2>🧾 Tus Datos</h2>
-            <p>Completa tu correo electrónico y número de teléfono.</p>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7601894722256244023" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <p>“Perfecto 👍.Completa tu correo electrónico y número de teléfono.Si no tienes correo,mira como hacer uno con el siguiente video:.</p>
+            <div class="tiktok-player">
+              <iframe src="https://www.tiktok.com/player/v1/7601894722256244023" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+            </div>
             <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
             <input id="telefono" placeholder="Teléfono *" value="${datos.telefono}">
             <button onclick="saveData()">Continuar</button>
@@ -163,23 +172,29 @@
         case 4:
           html = `
             <h2>🧑‍🎓 Tipo de Usuario</h2>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7496168002094746886" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <p>Elige la opción que mejor describe tu postulación con el siguiente video::</p>
+            <div class="tiktok-player">
+              <iframe src="https://www.tiktok.com/player/v1/7496168002094746886" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+            </div>
             <select id="tipoUsuario" onchange="actualizarTipo()">
               <option value="">Selecciona...</option>
               <option value="Estudiante" ${datos.tipoUsuario==='Estudiante'?'selected':''}>Estudiante</option>
               <option value="Egresado" ${datos.tipoUsuario==='Egresado'?'selected':''}>Egresado</option>
             </select>
+            
             <div id="subtipoDiv" style="display:${datos.tipoUsuario==='Estudiante'?'block':'none'}">
-              <p>Elige si quieres ser:</p>
+              <p>Tambien elige si quieres ser:</p>
               <select id="subTipo">
                 <option value="Pasante" ${datos.subTipo==='Pasante'?'selected':''}>Pasante</option>
                 <option value="Practicante" ${datos.subTipo==='Practicante'?'selected':''}>Practicante</option>
                 <option value="Remunerado" ${datos.subTipo==='Remunerado'?'selected':''}>Remunerado</option>
               </select>
             </div>
+            
             <div id="egresadoDiv" style="display:${datos.tipoUsuario==='Egresado'?'block':'none'}; color:#eab308; margin:15px;">
-              <strong>Modalidad remunerada</strong> – pago sujeto a negociación.
+              <strong>Modalidad remunerada</strong> – pago sujeto a negociación con el gerente.
             </div>
+            
             <button onclick="guardarTipo()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -188,6 +203,7 @@
         case 5:
           html = `
             <h2>⏰ Disponibilidad de Horario</h2>
+            <p>Selecciona tus días disponibles:</p>
             <div style="text-align:left; max-width:420px; margin:15px auto;">
               ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
                 <label><input type="checkbox" value="${dia}" ${datos.dias.includes(dia)?'checked':''}> ${dia}</label><br>
@@ -209,22 +225,29 @@
               <option value="Remoto" ${datos.modalidad==='Remoto'?'selected':''}>Remoto</option>
               <option value="Híbrido" ${datos.modalidad==='Híbrido'?'selected':''}>Híbrido</option>
             </select>
+            
             <div id="ubicacionDiv" style="display:${datos.modalidad==='Presencial'?'block':'none'}">
               <select id="ubicacion">
                 <option value="Miraflores" ${datos.ubicacion==='Miraflores'?'selected':''}>Miraflores</option>
                 <option value="Campo" ${datos.ubicacion==='Campo'?'selected':''}>Campo</option>
               </select>
             </div>
+            
             <div id="hibridoDiv" style="display:${datos.modalidad==='Híbrido'?'block':'none'}">
               <p>Días Presencial:</p>
               <select id="diasPresencial" multiple style="height:110px;">
-                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => `<option value="${d}" ${datos.diasPresencial.includes(d)?'selected':''}>${d}</option>`).join('')}
+                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => 
+                  `<option value="${d}" ${datos.diasPresencial.includes(d)?'selected':''}>${d}</option>`
+                ).join('')}
               </select>
               <p>Días Remoto:</p>
               <select id="diasRemoto" multiple style="height:110px;">
-                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => `<option value="${d}" ${datos.diasRemoto.includes(d)?'selected':''}>${d}</option>`).join('')}
+                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => 
+                  `<option value="${d}" ${datos.diasRemoto.includes(d)?'selected':''}>${d}</option>`
+                ).join('')}
               </select>
             </div>
+            
             <button onclick="guardarModalidad()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -233,8 +256,12 @@
       case 7:
           html = `
             <h2>📱 Video Informativo</h2>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7537859903172414728" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
-            <button onclick="next()">✅ He visto el video</button>
+            <p>Mira el video correspondiente a tu perfil:</p>
+            <div class="tiktok-player">
+              <iframe src="https://www.tiktok.com/player/v1/7537859903172414728" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <p class="warning">Este video solo puede reproducirse una vez.</p>
+            <button onclick="marcarVideoVisto()">✅ He visto el video</button>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;    
@@ -242,6 +269,7 @@
         case 8:
           html = `
             <h2>✍️ Solicitud de Cambios</h2>
+            <p>Si requiere algún cambio ahora o en el futuro, indíquelo:</p>
             <textarea id="cambios" rows="5" placeholder="Ejemplo: Prefiero entrar más temprano los miércoles...">${datos.cambios || ''}</textarea>
             <button onclick="guardarCambios()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
@@ -251,11 +279,21 @@
         case 9:
           html = `
             <h2>📈 Productividad</h2>
-            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1senVZJhKpglTAGZe8_W7BQTVSUWzkCWC/preview" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>
+            <p>Mira este consejo rápido de productividad antes de continuar:.</p>
+            <div class="tiktok-player">
+              <iframe
+              src="https://drive.google.com/file/d/1kt7xypCyu-y89HYCykK1hK8qA7uvoPa8/preview"
+              width="100%"
+              height="100%"
+               frameborder="0"
+                allow="autoplay; fullscreen"
+                   allowfullscreen>
+               </iframe>
+            </div>
             <div class="cam-box"><video id="video2" autoplay playsinline></video></div>
             <button onclick="startCam('video2')">📷 Activar cámara</button>
-            <button id="btnGrabar" onclick="startRec(2)">🎥 Grabar</button>
-            <button id="btnDetener" onclick="stopRec()" disabled>⏹ Detener</button>
+            <button onclick="startRec(2)" id="btnGrabar">🎥 Grabar</button>
+            <button onclick="stopRec()" id="btnDetener" disabled>⏹ Detener</button>
             <div id="preview"></div>
             <button onclick="next()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
@@ -265,11 +303,14 @@
         case 10:
           html = `
             <h2>🚪 Retiro de tu último empleo</h2>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7244346048775228678" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <p>Mira cómo responder positivamente esta pregunta común:.</p>
+            <div class="tiktok-player">
+              <iframe src="https://www.tiktok.com/player/v1/7244346048775228678" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+            </div>
             <div class="cam-box"><video id="video3" autoplay playsinline></video></div>
             <button onclick="startCam('video3')">📷 Activar cámara</button>
-            <button id="btnGrabar" onclick="startRec(3)">🎥 Grabar</button>
-            <button id="btnDetener" onclick="stopRec()" disabled>⏹ Detener</button>
+            <button onclick="startRec(3)" id="btnGrabar">🎥 Grabar</button>
+            <button onclick="stopRec()" id="btnDetener" disabled>⏹ Detener</button>
             <div id="preview"></div>
             <button onclick="next()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
@@ -279,7 +320,10 @@
         case 11:
           html = `
             <h2>✍ Firma Digital</h2>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7245295841550978350" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <p>Firma claramente en el recuadro.</p>
+            <div class="tiktok-player">
+              <iframe src="https://www.tiktok.com/player/v1/7245295841550978350" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+            </div>
             <canvas id="canvasFirma" width="420" height="180"></canvas>
             <br>
             <button onclick="limpiarFirma()">🗑️ Limpiar</button>
@@ -296,8 +340,20 @@
               <p><strong>Tipo:</strong> ${datos.tipoUsuario} ${datos.subTipo ? `(${datos.subTipo})` : ''}</p>
               <p><strong>Días:</strong> ${datos.dias.join(', ') || 'No especificado'}</p>
               <p><strong>Horario:</strong> ${datos.horaInicio || '--'} - ${datos.horaFin || '--'}</p>
+              <p><strong>Modalidad:</strong> ${datos.modalidad} ${datos.ubicacion ? `(${datos.ubicacion})` : ''}</p>
+              <p><strong>Cambios solicitados:</strong> ${datos.cambios || 'Ninguno'}</p>
             </div>
-            <button onclick="finalizarRegistro(event)" style="background:#22c55e; padding:14px 32px; font-size:18px;">Finalizar Entrevista</button>
+            <p><strong>Instrucciones finales:</strong></p>
+            <ul style="padding-left: 20px; line-height: 1.6; text-align:left; max-width:500px; margin:15px auto;">
+              <li>Envía este registro al grupo general de WhatsApp: 
+                <a href="https://chat.whatsapp.com/FpHkGyZQ6R8B7aPsiSNqKw" target="_blank" style="color:#22c55e;">Abrir grupo</a>
+              </li>
+              <li>Adjunta el video de presentación descargado.</li>
+              <li>Examina este documento importante:
+                <a href="https://docs.google.com/document/u/0/d/164G1ekRdqKTlzmypqCpSiYkYmMWqLza4d_1r7SILivE/mobilebasic" target="_blank" style="color:#22c55e;">Ver Documento</a>
+              </li>
+            </ul>
+            <button onclick="finalizarRegistro()" style="background:#22c55e; padding:14px 32px; font-size:18px;">Finalizar Entrevista</button>
             <br><br>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -336,9 +392,12 @@
     function startRec(tipo) {
       if (!stream) return alert("Primero activa la cámara");
       
-      document.getElementById("btnGrabar").disabled = true;
-      document.getElementById("btnDetener").disabled = false;
-      
+      // Control de botones
+      const btnGrabar = document.getElementById("btnGrabar");
+      const btnDetener = document.getElementById("btnDetener");
+      if(btnGrabar) btnGrabar.disabled = true;
+      if(btnDetener) btnDetener.disabled = false;
+
       chunks = [];
       mediaRecorder = new MediaRecorder(stream);
       mediaRecorder.ondataavailable = e => chunks.push(e.data);
@@ -346,22 +405,28 @@
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
         const url = URL.createObjectURL(blob);
-        document.getElementById("preview").innerHTML = `<video src="${url}" controls width="100%"></video><p style="color:#eab308;">⏳ Subiendo video a la API...</p>`;
+        document.getElementById("preview").innerHTML = `<video src="${url}" controls width="100%"></video><p style="color:#eab308;">⏳ Subiendo video a Google Drive...</p>`;
 
         let reader = new FileReader();
         reader.onloadend = async function () {
           const base64data = reader.result.split(",");
-          const payload = { accion: "guardarVideo", base64: base64data, tipo: tipo, nombre: datos.nombre };
-          
-          const respuesta = await enviarApi(payload);
+          const payload = {
+            accion: "guardarVideo",
+            base64: base64data,
+            tipo: tipo,
+            nombre: datos.nombre
+          };
+
+          const respuesta = await enviarDatosAPI(payload);
 
           if(respuesta.success){
-            document.getElementById("preview").innerHTML = `<video src="${url}" controls width="100%"></video><p style="color:#22c55e;">✅ Video guardado en la nube</p>`;
+            document.getElementById("preview").innerHTML = `<video src="${url}" controls width="100%"></video><p style="color:#22c55e;">✅ Video guardado correctamente</p>`;
             if(tipo === 1) datos.videoPresentacion = respuesta.url;
             if(tipo === 2) datos.videoProductividad = respuesta.url;
             if(tipo === 3) datos.videoRetiro = respuesta.url;
           } else {
-            alert("Error al guardar video en la API.");
+            alert("Error al subir el video. Intenta de nuevo.");
+            document.getElementById("preview").innerHTML += `<p style="color:red;">❌ Falló la subida</p>`;
           }
         };
         reader.readAsDataURL(blob);
@@ -372,8 +437,10 @@
 
     function stopRec() {
       if (mediaRecorder) mediaRecorder.stop();
-      document.getElementById("btnGrabar").disabled = false;
-      document.getElementById("btnDetener").disabled = true;
+      const btnGrabar = document.getElementById("btnGrabar");
+      const btnDetener = document.getElementById("btnDetener");
+      if(btnGrabar) btnGrabar.disabled = false;
+      if(btnDetener) btnDetener.disabled = true;
       apagarCamara();
     }
 
@@ -390,50 +457,63 @@
       setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
     }
 
-    function guardarNombre() { datos.nombre = document.getElementById("nombre").value.trim(); if(!datos.nombre) return alert("Ingresa tu nombre"); next(); }
-    function saveData() { datos.email = document.getElementById("email").value.trim(); datos.telefono = document.getElementById("telefono").value.trim(); if (!datos.email || !datos.telefono) return alert("Completa los datos"); next(); }
+    function guardarNombre() { datos.nombre = document.getElementById("nombre").value.trim(); if(!datos.nombre) return alert("Por favor ingresa tu nombre completo"); next(); }
+    function saveData() { datos.email = document.getElementById("email").value.trim(); datos.telefono = document.getElementById("telefono").value.trim(); if (!datos.email || !datos.telefono) return alert("Completa el correo y teléfono"); next(); }
     function actualizarTipo() { datos.tipoUsuario = document.getElementById("tipoUsuario").value; render(); }
-    function guardarTipo() { datos.tipoUsuario = document.getElementById("tipoUsuario").value; datos.subTipo = datos.tipoUsuario === "Estudiante" ? document.getElementById("subTipo").value : ""; if (!datos.tipoUsuario) return alert("Selecciona un tipo"); next(); }
-    function guardarHorario() { datos.dias = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value); datos.horaInicio = document.getElementById("horaInicio").value; datos.horaFin = document.getElementById("horaFin").value; if (!datos.horaInicio || !datos.horaFin) return alert("Ingresa las horas"); next(); }
+    function guardarTipo() { datos.tipoUsuario = document.getElementById("tipoUsuario").value; if (datos.tipoUsuario === "Estudiante") { datos.subTipo = document.getElementById("subTipo").value; } else { datos.subTipo = ""; } if (!datos.tipoUsuario) return alert("Selecciona un tipo de usuario"); next(); }
+    function guardarHorario() { datos.dias = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value); datos.horaInicio = document.getElementById("horaInicio").value; datos.horaFin = document.getElementById("horaFin").value; if (!datos.horaInicio || !datos.horaFin) return alert("Ingresa hora de inicio y fin"); next(); }
     function actualizarModalidad() { datos.modalidad = document.getElementById("modalidad").value; render(); }
-    function guardarModalidad() { datos.modalidad = document.getElementById("modalidad").value; if (datos.modalidad === "Presencial") datos.ubicacion = document.getElementById("ubicacion").value; else if (datos.modalidad === "Híbrido") { datos.diasPresencial = Array.from(document.getElementById("diasPresencial").selectedOptions).map(o => o.value); datos.diasRemoto = Array.from(document.getElementById("diasRemoto").selectedOptions).map(o => o.value); } next(); }
+    function guardarModalidad() { datos.modalidad = document.getElementById("modalidad").value; if (datos.modalidad === "Presencial") { datos.ubicacion = document.getElementById("ubicacion").value; } else if (datos.modalidad === "Híbrido") { datos.diasPresencial = Array.from(document.getElementById("diasPresencial").selectedOptions).map(o => o.value); datos.diasRemoto = Array.from(document.getElementById("diasRemoto").selectedOptions).map(o => o.value); } next(); }
     function guardarCambios() { datos.cambios = document.getElementById("cambios").value.trim(); next(); }
     function limpiarFirma() { if (signaturePad) signaturePad.clear(); }
 
     async function guardarFirma(e) {
-      if (!signaturePad || signaturePad.isEmpty()) return alert("Por favor realiza tu firma");
+      if (!signaturePad || signaturePad.isEmpty()) return alert("Por favor realiza tu firma digital");
       const boton = e.target;
-      boton.innerText = "⏳ Guardando...";
+      boton.innerText = "⏳ Guardando Firma...";
       boton.disabled = true;
 
-      const payload = { accion: "subirFirma", base64: signaturePad.toDataURL(), nombre: datos.nombre };
-      const respuesta = await enviarApi(payload);
+      const payload = {
+        accion: "subirFirma",
+        base64: signaturePad.toDataURL(),
+        nombre: datos.nombre
+      };
+
+      const respuesta = await enviarDatosAPI(payload);
 
       if (respuesta.success) {
         datos.firmaUrl = respuesta.url;
         next();
       } else {
-        alert("Error al subir la firma. Intenta de nuevo.");
+        alert("Error al guardar la firma.");
         boton.innerText = "Guardar Firma y Continuar";
         boton.disabled = false;
       }
     }
 
-    async function finalizarRegistro(e) {
+    async function finalizarRegistro() {
       const app = document.getElementById("app");
-      app.innerHTML = `<h2>⏳ Guardando tu información vía API...</h2><p>Espera unos segundos.</p>`;
+      app.innerHTML = `<h2>⏳ Guardando tu información...</h2><p>Espera unos segundos. No cierres esta ventana.</p>`;
 
-      const payload = { accion: "guardarRegistro", datos: datos };
-      const respuesta = await enviarApi(payload);
+      const payload = {
+        accion: "guardarRegistro",
+        datos: datos
+      };
+
+      const respuesta = await enviarDatosAPI(payload);
 
       if (respuesta.success) {
         app.innerHTML = `
-          <h2>🎉 ¡Registro Completado!</h2><p>${respuesta.message}</p>
-          <p>Envía tu video de presentación descargado al grupo de WhatsApp.</p>
-          <a href="https://chat.whatsapp.com/FpHkGyZQ6R8B7aPsiSNqKw" target="_blank"><button>Abrir Grupo WhatsApp</button></a>
+          <h2>🎉 ¡Registro Completado!</h2>
+          <p>${respuesta.message}</p><br>
+          <p>Gracias por completar tu proceso en Sanilab.</p>
+          <p>Envía ahora tu video de presentación descargado al grupo de WhatsApp.</p>
+          <a href="https://chat.whatsapp.com/FpHkGyZQ6R8B7aPsiSNqKw" target="_blank">
+            <button style="background:#22c55e;">Abrir Grupo WhatsApp</button>
+          </a>
         `;
       } else {
-        app.innerHTML = `<h2>⚠ Error</h2><p>${respuesta.message}</p><button onclick="render()">Volver</button>`;
+        app.innerHTML = `<h2>⚠ Error</h2><p>${respuesta.message}</p><button onclick="render()">Volver a intentar</button>`;
       }
     }
 
