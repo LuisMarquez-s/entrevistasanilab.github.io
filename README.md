@@ -100,18 +100,19 @@
 
     let signaturePad, stream, mediaRecorder, chunks = [];
 
-    // --- FUNCIÓN NÚCLEO PARA COMUNICARSE CON EL BACKEND ---
     async function enviarApi(payload) {
       try {
         const respuesta = await fetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Truco para evitar problemas CORS en Apps Script
           body: JSON.stringify(payload)
         });
-        return await respuesta.json();
+        
+        const textoRespuesta = await respuesta.text();
+        return JSON.parse(textoRespuesta);
+        
       } catch (error) {
-        console.error("Error al conectar con la API:", error);
-        return { success: false, message: "Fallo de conexión." };
+        console.error("Error en la conexión con la API:", error);
+        return { success: false, message: "Error de red al conectar con el servidor." };
       }
     }
 
