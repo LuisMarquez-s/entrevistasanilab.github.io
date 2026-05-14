@@ -415,7 +415,8 @@
         }
 
         const archivo = inputArchivo.files;
-        const limiteMB = 15;
+        
+        const limiteMB = 15; 
         const limiteBytes = limiteMB * 1024 * 1024;
 
         if (archivo.size > limiteBytes) {
@@ -424,7 +425,7 @@
         }
 
         const btn = document.getElementById("btnContinuar2");
-        btn.innerText = "⏳ Subiendo video... (Esto puede tardar un par de minutos, no cierres la página)";
+        btn.innerText = "⏳ Subiendo video... (Esto puede tardar un par de minutos)";
         btn.disabled = true;
 
         let reader = new FileReader();
@@ -451,7 +452,7 @@
 
             if (respuesta.success) {
               datos.videoPresentacion = respuesta.url;
-              next();
+              next(); 
             } else {
               alert("❌ Error del servidor de Google: " + (respuesta.message || "Fallo desconocido."));
               btn.innerText = "Continuar";
