@@ -351,7 +351,18 @@
       document.getElementById("btnDetener").disabled = false;
       
       chunks = [];
-      mediaRecorder = new MediaRecorder(stream);
+      
+      const opciones = { 
+        mimeType: 'video/webm;codecs=vp8,opus',
+        videoBitsPerSecond: 500000 
+      };
+      
+      try {
+        mediaRecorder = new MediaRecorder(stream, opciones);
+      } catch (e) {
+        mediaRecorder = new MediaRecorder(stream);
+      }
+
       mediaRecorder.ondataavailable = e => chunks.push(e.data);
 
       mediaRecorder.onstop = async () => {
@@ -363,6 +374,16 @@
           <p style="color:#22c55e;">✅ Grabación finalizada. Haz clic en Descargar.</p>
         `;
       };
+
+      mediaRecorder.start();
+
+      setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+          stopRec();
+          alert("⏱️ Se alcanzó el tiempo máximo de 2 minutos.");
+        }
+      }, 120000);
+    }
 
         let reader = new FileReader();
         reader.onloadend = async function () {
@@ -436,7 +457,7 @@
           nombre: datos.nombre
         };
 
-        const respuesta = await enviarDatosAPI(payload);
+        const respuesta = await enviarApi(payload);
 
         if (respuesta.success) {
           datos.videoPresentacion = respuesta.url;
