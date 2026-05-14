@@ -104,6 +104,7 @@
       try {
         const respuesta = await fetch(API_URL, {
           method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
         
@@ -111,8 +112,8 @@
         return JSON.parse(textoRespuesta);
         
       } catch (error) {
-        console.error("Error en la conexión con la API:", error);
-        return { success: false, message: "Error de red al conectar con el servidor." };
+        console.error("Error en la red:", error);
+        return { success: false, message: "Tu internet se desconectó o el navegador bloqueó la subida." };
       }
     }
 
@@ -150,7 +151,7 @@
             <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
               <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
               <input type="file" id="videoUpload" accept="video/*" style="width: 100%; padding: 5px;">
-              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 12 MB (Aprox. 2 minutos a 720p)</p>
+              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 12 MB</p>
             </div>
 
             <button id="btnContinuar2" onclick="validarYSubirVideo1()">Continuar</button>
@@ -406,48 +407,69 @@
     }
 
     async function validarYSubirVideo1() {
-      const inputArchivo = document.getElementById('videoUpload');
-      
-      if (!inputArchivo || inputArchivo.files.length === 0) {
-        return alert("❌ Debes subir tu video de presentación para poder continuar al siguiente paso.");
-      }
+      try {
+        const inputArchivo = document.getElementById('videoUpload');
+        
+        if (!inputArchivo || inputArchivo.files.length === 0) {
+          return alert("❌ Debes subir tu video de presentación para poder continuar al siguiente paso.");
+        }
 
-      const archivo = inputArchivo.files;
-      const limiteMB = 12; 
-      const limiteBytes = limiteMB * 1024 * 1024;
+        const archivo = inputArchivo.files;
+        const limiteMB = 15;
+        const limiteBytes = limiteMB * 1024 * 1024;
 
-      if (archivo.size > limiteBytes) {
-        const pesoActual = (archivo.size / 1024 / 1024).toFixed(2);
-        return alert(`❌ El video pesa demasiado (${pesoActual} MB). El máximo permitido es ${limiteMB} MB.\n\nAsegúrate de que dure menos de 2 minutos.`);
-      }
+        if (archivo.size > limiteBytes) {
+          const pesoActual = (archivo.size / 1024 / 1024).toFixed(2);
+          return alert(`❌ El video pesa demasiado (${pesoActual} MB). El máximo permitido es ${limiteMB} MB.\n\nAsegúrate de que dure menos de 2 minutos.`);
+        }
 
-      const btn = document.getElementById("btnContinuar2");
-      btn.innerText = "⏳ Subiendo video...";
-      btn.disabled = true;
+        const btn = document.getElementById("btnContinuar2");
+        btn.innerText = "⏳ Subiendo video... (Esto puede tardar un par de minutos, no cierres la página)";
+        btn.disabled = true;
 
-      let reader = new FileReader();
-      reader.onloadend = async function () {
-        const base64data = reader.result.split(",");
-        const payload = {
-          accion: "guardarVideo",
-          base64: base64data,
-          tipo: 1,
-          nombre: datos.nombre
-        };
-
-        const respuesta = await enviarApi(payload);
-
-        if (respuesta.success) {
-          datos.videoPresentacion = respuesta.url;
-          next();
-        } else {
-          alert("Error al guardar el video en la nube. Intenta de nuevo.");
+        let reader = new FileReader();
+        
+        reader.onerror = function() {
+          alert("❌ Error interno: No se pudo leer el archivo en tu dispositivo.");
           btn.innerText = "Continuar";
           btn.disabled = false;
-        }
-      };
-      
-      reader.readAsDataURL(archivo);
+        };
+
+        reader.onloadend = async function () {
+          try {
+            if (!reader.result) throw new Error("El archivo está vacío o dañado.");
+            
+            const base64data = reader.result.split(",");
+            const payload = {
+              accion: "guardarVideo",
+              base64: base64data,
+              tipo: 1,
+              nombre: datos.nombre || "Postulante"
+            };
+
+            const respuesta = await enviarApi(payload);
+
+            if (respuesta.success) {
+              datos.videoPresentacion = respuesta.url;
+              next();
+            } else {
+              alert("❌ Error del servidor de Google: " + (respuesta.message || "Fallo desconocido."));
+              btn.innerText = "Continuar";
+              btn.disabled = false;
+            }
+          } catch (error) {
+            console.error(error);
+            alert("❌ Ocurrió un fallo en tu navegador al procesar el video: " + error.message);
+            btn.innerText = "Continuar";
+            btn.disabled = false;
+          }
+        };
+        
+        reader.readAsDataURL(archivo);
+        
+      } catch (err) {
+        alert("❌ Error crítico en el formulario: " + err.message);
+      }
     }
 
     function guardarNombre() { datos.nombre = document.getElementById("nombre").value.trim(); if(!datos.nombre) return alert("Ingresa tu nombre"); next(); }
