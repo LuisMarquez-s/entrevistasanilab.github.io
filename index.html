@@ -112,8 +112,8 @@
         return JSON.parse(textoRespuesta);
         
       } catch (error) {
-        console.error("Error en la red:", error);
-        return { success: false, message: "Tu internet se desconectó o el navegador bloqueó la subida." };
+        console.error("Error en la conexión con la API:", error);
+        return { success: false, message: "Error de red al conectar con el servidor." };
       }
     }
 
@@ -150,11 +150,11 @@
             
             <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
               <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
-              <input type="file" id="videoUpload" accept="video/*" style="width: 100%; padding: 5px;">
-              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 12 MB</p>
+              <input type="file" id="videoUpload1" accept="video/*" style="width: 100%; padding: 5px;">
+              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 15 MB</p>
             </div>
 
-            <button id="btnContinuar2" onclick="validarYSubirVideo1()">Continuar</button>
+            <button id="btnContinuar2" onclick="validarYSubirVideo(1, 'videoUpload1', 'btnContinuar2')">Continuar</button>
             <br><br>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -269,7 +269,17 @@
             <button id="btnGrabar" onclick="startRec(2)">🎥 Grabar</button>
             <button id="btnDetener" onclick="stopRec()" disabled>⏹ Detener</button>
             <div id="preview"></div>
-            <button onclick="next()">Continuar</button>
+            <p><strong>Descarga tu video antes de subirlo.</strong></p>
+            <button onclick="descargarVideo()">⬇️ Descargar Video de Productividad</button>
+            
+            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
+              <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
+              <input type="file" id="videoUpload2" accept="video/*" style="width: 100%; padding: 5px;">
+              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 15 MB</p>
+            </div>
+
+            <button id="btnContinuar9" onclick="validarYSubirVideo(2, 'videoUpload2', 'btnContinuar9')">Continuar</button>
+            <br><br>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
@@ -283,7 +293,17 @@
             <button id="btnGrabar" onclick="startRec(3)">🎥 Grabar</button>
             <button id="btnDetener" onclick="stopRec()" disabled>⏹ Detener</button>
             <div id="preview"></div>
-            <button onclick="next()">Continuar</button>
+            <p><strong>Descarga tu video antes de subirlo.</strong></p>
+            <button onclick="descargarVideo()">⬇️ Descargar Video de Retiro</button>
+            
+            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
+              <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
+              <input type="file" id="videoUpload3" accept="video/*" style="width: 100%; padding: 5px;">
+              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 15 MB</p>
+            </div>
+
+            <button id="btnContinuar10" onclick="validarYSubirVideo(3, 'videoUpload3', 'btnContinuar10')">Continuar</button>
+            <br><br>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
@@ -372,7 +392,7 @@
         
         document.getElementById("preview").innerHTML = `
           <video src="${url}" controls width="100%"></video>
-          <p style="color:#22c55e;">✅ Grabación finalizada. Haz clic en Descargar.</p>
+          <p style="color:#22c55e;">✅ Grabación finalizada. Haz clic en Descargar y súbelo abajo.</p>
         `;
       };
 
@@ -400,32 +420,32 @@
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = `Presentacion_${datos.nombre || 'Sanilab'}.webm`;
+      a.download = `Video_${datos.nombre || 'Sanilab'}.webm`;
       document.body.appendChild(a);
       a.click();
       setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
     }
 
-    async function validarYSubirVideo1() {
+    // --- FUNCION MAESTRA PARA SUBIR CUALQUIER VIDEO (Pasos 2, 9 y 10) ---
+    async function validarYSubirVideo(tipo, inputId, btnId) {
       try {
-        const inputArchivo = document.getElementById('videoUpload');
+        const inputArchivo = document.getElementById(inputId);
         
         if (!inputArchivo || inputArchivo.files.length === 0) {
-          return alert("❌ Debes subir tu video de presentación para poder continuar al siguiente paso.");
+          return alert("❌ Debes subir tu archivo de video para poder continuar.");
         }
 
         const archivo = inputArchivo.files;
-        
         const limiteMB = 15; 
         const limiteBytes = limiteMB * 1024 * 1024;
 
         if (archivo.size > limiteBytes) {
           const pesoActual = (archivo.size / 1024 / 1024).toFixed(2);
-          return alert(`❌ El video pesa demasiado (${pesoActual} MB). El máximo permitido es ${limiteMB} MB.\n\nAsegúrate de que dure menos de 2 minutos.`);
+          return alert(`❌ El video pesa demasiado (${pesoActual} MB). El máximo permitido es ${limiteMB} MB.`);
         }
 
-        const btn = document.getElementById("btnContinuar2");
-        btn.innerText = "⏳ Subiendo video... (Esto puede tardar un par de minutos)";
+        const btn = document.getElementById(btnId);
+        btn.innerText = "⏳ Subiendo video... (Espera por favor)";
         btn.disabled = true;
 
         let reader = new FileReader();
@@ -444,14 +464,16 @@
             const payload = {
               accion: "guardarVideo",
               base64: base64data,
-              tipo: 1,
+              tipo: tipo,
               nombre: datos.nombre || "Postulante"
             };
 
             const respuesta = await enviarApi(payload);
 
             if (respuesta.success) {
-              datos.videoPresentacion = respuesta.url;
+              if (tipo === 1) datos.videoPresentacion = respuesta.url;
+              if (tipo === 2) datos.videoProductividad = respuesta.url;
+              if (tipo === 3) datos.videoRetiro = respuesta.url;
               next(); 
             } else {
               alert("❌ Error del servidor de Google: " + (respuesta.message || "Fallo desconocido."));
