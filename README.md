@@ -136,15 +136,25 @@
           html = `
             <h2>🎥 Preséntate</h2>
             <p>Ahora queremos conocerte mejor 😊. Mira este video y luego graba tu video de presentación.</p>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7340360993362447622" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <div class="tiktok-player">
+              <iframe src="https://www.tiktok.com/player/v1/7340360993362447622" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+            </div>
             <div class="cam-box"><video id="video" autoplay playsinline></video></div>
             <button onclick="startCam('video')">📷 Activar cámara</button>
-            <button id="btnGrabar" onclick="startRec(1)">🎥 Grabar</button>
-            <button id="btnDetener" onclick="stopRec()" disabled>⏹ Detener</button>
+            <button onclick="startRec(1)" id="btnGrabar">🎥 Grabar</button>
+            <button onclick="stopRec()" id="btnDetener" disabled>⏹ Detener</button>
             <div id="preview"></div>
+            <p><strong>Descarga tu video antes de subirlo.</strong></p>
             <button onclick="descargarVideo()">⬇️ Descargar Video de Presentación</button>
+            
+            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
+              <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
+              <input type="file" id="videoUpload" accept="video/*" style="width: 100%; padding: 5px;">
+              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 12 MB (Aprox. 2 minutos a 720p)</p>
+            </div>
+
+            <button id="btnContinuar2" onclick="validarYSubirVideo1()">Continuar</button>
             <br><br>
-            <button onclick="next()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
@@ -347,7 +357,12 @@
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
         const url = URL.createObjectURL(blob);
-        document.getElementById("preview").innerHTML = `<video src="${url}" controls width="100%"></video><p style="color:#eab308;">⏳ Subiendo video a la API...</p>`;
+        
+        document.getElementById("preview").innerHTML = `
+          <video src="${url}" controls width="100%"></video>
+          <p style="color:#22c55e;">✅ Grabación finalizada. Haz clic en Descargar.</p>
+        `;
+      };
 
         let reader = new FileReader();
         reader.onloadend = async function () {
@@ -389,6 +404,51 @@
       document.body.appendChild(a);
       a.click();
       setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
+    }
+
+    async function validarYSubirVideo1() {
+      const inputArchivo = document.getElementById('videoUpload');
+      
+      if (!inputArchivo || inputArchivo.files.length === 0) {
+        return alert("❌ Debes subir tu video de presentación para poder continuar al siguiente paso.");
+      }
+
+      const archivo = inputArchivo.files;
+      const limiteMB = 12; 
+      const limiteBytes = limiteMB * 1024 * 1024;
+
+      if (archivo.size > limiteBytes) {
+        const pesoActual = (archivo.size / 1024 / 1024).toFixed(2);
+        return alert(`❌ El video pesa demasiado (${pesoActual} MB). El máximo permitido es ${limiteMB} MB.\n\nAsegúrate de que dure menos de 2 minutos.`);
+      }
+
+      const btn = document.getElementById("btnContinuar2");
+      btn.innerText = "⏳ Subiendo video...";
+      btn.disabled = true;
+
+      let reader = new FileReader();
+      reader.onloadend = async function () {
+        const base64data = reader.result.split(",")[1];
+        const payload = {
+          accion: "guardarVideo",
+          base64: base64data,
+          tipo: 1,
+          nombre: datos.nombre
+        };
+
+        const respuesta = await enviarDatosAPI(payload);
+
+        if (respuesta.success) {
+          datos.videoPresentacion = respuesta.url;
+          next();
+        } else {
+          alert("Error al guardar el video en la nube. Intenta de nuevo.");
+          btn.innerText = "Continuar";
+          btn.disabled = false;
+        }
+      };
+      
+      reader.readAsDataURL(archivo);
     }
 
     function guardarNombre() { datos.nombre = document.getElementById("nombre").value.trim(); if(!datos.nombre) return alert("Ingresa tu nombre"); next(); }
