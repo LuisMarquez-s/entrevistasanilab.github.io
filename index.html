@@ -426,7 +426,6 @@
       setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
     }
 
-    // --- FUNCION MAESTRA PARA SUBIR CUALQUIER VIDEO (Pasos 2, 9 y 10) ---
     async function validarYSubirVideo(tipo, inputId, btnId) {
       try {
         const inputArchivo = document.getElementById(inputId);
@@ -435,7 +434,7 @@
           return alert("❌ Debes subir tu archivo de video para poder continuar.");
         }
 
-        const archivo = inputArchivo.files``;
+        const archivo = inputArchivo.files[0];
         const limiteMB = 15; 
         const limiteBytes = limiteMB * 1024 * 1024;
 
