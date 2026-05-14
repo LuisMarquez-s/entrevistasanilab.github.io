@@ -385,28 +385,6 @@
       }, 120000);
     }
 
-        let reader = new FileReader();
-        reader.onloadend = async function () {
-          const base64data = reader.result.split(",");
-          const payload = { accion: "guardarVideo", base64: base64data, tipo: tipo, nombre: datos.nombre };
-          
-          const respuesta = await enviarApi(payload);
-
-          if(respuesta.success){
-            document.getElementById("preview").innerHTML = `<video src="${url}" controls width="100%"></video><p style="color:#22c55e;">✅ Video guardado en la nube</p>`;
-            if(tipo === 1) datos.videoPresentacion = respuesta.url;
-            if(tipo === 2) datos.videoProductividad = respuesta.url;
-            if(tipo === 3) datos.videoRetiro = respuesta.url;
-          } else {
-            alert("El servidor de Google dice: " + respuesta.message);
-          }
-        };
-        reader.readAsDataURL(blob);
-      };
-
-      mediaRecorder.start();
-    }
-
     function stopRec() {
       if (mediaRecorder) mediaRecorder.stop();
       document.getElementById("btnGrabar").disabled = false;
@@ -449,7 +427,7 @@
 
       let reader = new FileReader();
       reader.onloadend = async function () {
-        const base64data = reader.result.split(",")[1];
+        const base64data = reader.result.split(",");
         const payload = {
           accion: "guardarVideo",
           base64: base64data,
