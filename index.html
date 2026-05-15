@@ -377,14 +377,12 @@
         const blob = new Blob(chunks, { type: 'video/webm' });
         const url = URL.createObjectURL(blob);
         
-        document.getElementById("preview").innerHTML = `
+        document.getElementById("preview").innerHTML = "
           <video src="${url}" controls width="100%"></video>
           <p style="color:#22c55e;">✅ Grabación finalizada. Haz clic en Descargar y súbelo abajo.</p>
-        `;
+        ";
       };
-
       mediaRecorder.start();
-
       setTimeout(() => {
         if (mediaRecorder && mediaRecorder.state === "recording") {
           stopRec();
@@ -392,14 +390,12 @@
         }
       }, 120000);
     }
-
     function stopRec() {
       if (mediaRecorder) mediaRecorder.stop();
       document.getElementById("btnGrabar").disabled = false;
       document.getElementById("btnDetener").disabled = true;
       apagarCamara();
     }
-
     function descargarVideo() {
       if (chunks.length === 0) return alert("Primero debes grabar un video.");
       const blob = new Blob(chunks, { type: 'video/webm' });
@@ -518,11 +514,11 @@
     }
     async function finalizarRegistro(e) {
       const appDiv = document.getElementById("app");
-      appDiv.innerHTML = `
+      appDiv.innerHTML = "
         <h2>⏳ Procesando tu registro...</h2>
         <p>Por favor no cierres esta pestaña. Esto puede tardar unos minutos.</p>
         <p id="estadoProceso" style="color: #22c55e; font-weight: bold;">Iniciando...</p>
-      `;
+      ";
       const estado = document.getElementById('estadoProceso');
       try {
         if (datos.base64Video1) {
@@ -547,17 +543,16 @@
         const resFinal = await enviarApi({ accion: "guardarRegistro", datos: datos });
         
         if (resFinal.success) {
-          appDiv.innerHTML = `<h2>🎉 ¡Éxito!</h2><p>${resFinal.message}</p>`;
+          appDiv.innerHTML = "<h2>🎉 ¡Éxito!</h2><p>${resFinal.message}</p>";
         } else {
           throw new Error("No se pudo guardar en la base de datos.");
         }
-
       } catch (error) {
-        appDiv.innerHTML = `
+        appDiv.innerHTML = "
           <h2>❌ Ocurrió un error</h2>
           <p>${error.message}</p>
           <p>Por favor, intenta nuevamente.</p>
           <button onclick="render()">Reintentar</button>
-        `;
+        ";
       }
     }
