@@ -501,7 +501,7 @@
         const base64 = reader.result.split(",");
         const res = await enviarApi({ accion: "subirFirma", base64, nombre: datos.nombre });
         if (res.success) { datos.firmaUrl = res.url; next(); }
-        else { alert("Error."); btn.innerText = "Subir Firma y Continuar"; btn.disabled = false; }
+        else { alert("Error detallado del servidor: " + (res.message || "Fallo de conexión")"); btn.innerText = "Subir Firma y Continuar"; btn.disabled = false; }
       };
       reader.readAsDataURL(input.files[0]);
     }
