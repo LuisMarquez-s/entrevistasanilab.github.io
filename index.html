@@ -230,15 +230,19 @@
               </select>
             </div>
             <div id="hibridoDiv" style="display:${datos.modalidad==='Híbrido'?'block':'none'}">
-              <p style="font-size:15px; margin-bottom:5px; font-weight:bold;">Días Presencial:</p>
-              <div style="text-align:left; max-width:200px; margin:auto;">
-                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => `<label><input type="checkbox" class="cb-presencial" value="${d}" ${datos.diasPresencial.includes(d)?'checked':''}> ${d}</label><br>`).join('')}
-              </div>
-              <p style="font-size:15px; margin-bottom:5px; margin-top:15px; font-weight:bold;">Días Remoto:</p>
-              <div style="text-align:left; max-width:200px; margin:auto;">
-                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => `<label><input type="checkbox" class="cb-remoto" value="${d}" ${datos.diasRemoto.includes(d)?'checked':''}> ${d}</label><br>`).join('')}
+              <p style="font-size:14px; margin-bottom:15px; color:#cbd5e1;">Selecciona exactamente 6 días en total (mínimo 1 y máximo 5 por columna).</p>
+              <div style="display: flex; justify-content: space-between; max-width: 400px; margin: 0 auto; text-align: left; background: #334155; padding: 15px; border-radius: 8px;">
+                <div style="width: 45%;">
+                  <p style="font-size:15px; margin-top:0; margin-bottom:10px; font-weight:bold; color:#22c55e; border-bottom: 1px solid #475569; padding-bottom: 5px;">Presencial</p>
+                  ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(d => `<label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="checkbox" class="cb-presencial" value="${d}" ${datos.diasPresencial.includes(d)?'checked':''}> ${d}</label>`).join('')}
+                </div>
+                <div style="width: 45%;">
+                  <p style="font-size:15px; margin-top:0; margin-bottom:10px; font-weight:bold; color:#3b82f6; border-bottom: 1px solid #475569; padding-bottom: 5px;">Remoto</p>
+                  ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(d => `<label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="checkbox" class="cb-remoto" value="${d}" ${datos.diasRemoto.includes(d)?'checked':''}> ${d}</label>`).join('')}
+                </div>
               </div>
             </div>
+            <br>
             <button onclick="guardarModalidad()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -451,7 +455,6 @@
     function guardarModalidad() {
       datos.modalidad = document.getElementById("modalidad").value;
       if (!datos.modalidad) return alert("Por favor, selecciona una modalidad.");
-
       if (datos.modalidad === "Presencial") {
         datos.ubicacion = document.getElementById("ubicacion").value;
         datos.diasPresencial = [];
@@ -461,15 +464,14 @@
         const presencial = Array.from(document.querySelectorAll('.cb-presencial:checked')).map(cb => cb.value);
         const remoto = Array.from(document.querySelectorAll('.cb-remoto:checked')).map(cb => cb.value);
         const totalDias = presencial.length + remoto.length;
-        if (totalDias < 1) {
-          return alert("Debes seleccionar al menos 1 día de trabajo.");
-        }
-        if (totalDias > 5) {
-          return alert("No puedes seleccionar más de 5 días en total.");
-        }
+        if (presencial.length < 1) return alert("Debes seleccionar al menos 1 día en Presencial.");
+        if (remoto.length < 1) return alert("Debes seleccionar al menos 1 día en Remoto.");
+        if (presencial.length > 5) return alert("No puedes seleccionar más de 5 días en Presencial.");
+        if (remoto.length > 5) return alert("No puedes seleccionar más de 5 días en Remoto.");
+        if (totalDias !== 6) return alert("Debes seleccionar exactamente 6 días en total sumando ambas columnas. Has seleccionado " + totalDias + ".");
         const duplicados = presencial.filter(dia => remoto.includes(dia));
         if (duplicados.length > 0) {
-          return alert("Error: Has marcado " + duplicados.join(", ") + " como presencial y remoto a la vez.");
+          return alert("Error: Has marcado " + duplicados.join(", ") + " en ambas columnas. Elige solo un formato por día.");
         }
         datos.diasPresencial = presencial;
         datos.diasRemoto = remoto;
@@ -515,7 +517,7 @@
         datos.base64Firma = reader.result.split(",")[1];
         next();
       };
-      reader.readAsDataURL(input.files)[0];
+      reader.readAsDataURL(input.files[0]);
     }
     async function finalizarRegistro(e) {
       const appDiv = document.getElementById("app");
