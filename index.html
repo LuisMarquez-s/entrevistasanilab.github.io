@@ -8,7 +8,10 @@
   <style>
     body { 
       font-family: Arial, sans-serif; 
-      background: #0f172a; 
+      background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1593113565214-80afcb4dd411?q=80&w=2000&auto=format&fit=crop'); 
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
       color: white; 
       text-align: center; 
       padding: 20px; 
@@ -93,10 +96,11 @@
 
     let paso = 1;
     let datos = {
-      nombre: "", email: "", telefono: "", tipoUsuario: "", subTipo: "",
+      nombre: "", email: "", telefono: "", telefonoRef: "", redes: "",
+      tipoUsuario: "", subTipo: "", area: "", areaOtra: "",
       dias: [], horaInicio: "", horaFin: "", modalidad: "", ubicacion: "",
       diasPresencial: [], diasRemoto: [], cambios: "", firmaUrl: "",
-      videoPresentacion: "", videoProductividad: "", videoRetiro: "",
+      videoPresentacion: "", videoRetiro: "",
       base64Video1: "", base64Video3: "", base64Firma: ""
     };
 
@@ -164,11 +168,18 @@
 
         case 3:
           html = `
-            <h2>🧾 Tus Datos</h2>
-            <p>Completa tu correo electrónico y número de teléfono.</p>
+            <h2>🧾 Tus Datos de Contacto</h2>
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1MZhtvEYAFAooVBbYT26nqbjwK8cqwSuT/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
-            <input id="telefono" placeholder="Teléfono *" value="${datos.telefono}">
+            <input id="telefono" type="tel" placeholder="Tu Teléfono principal *" value="${datos.telefono}">
+            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
+              <p style="margin-top:0; font-size:14px; color:#94a3b8;"><strong>Teléfono de Referencia:</strong> Necesitamos el número de un familiar en caso de pérdida de celular o emergencia.</p>
+              <input id="telefonoRef" type="tel" placeholder="Teléfono de familiar/referencia *" value="${datos.telefonoRef}" style="width: 100%; margin: 5px 0;">
+            </div>
+            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
+              <p style="margin-top:0; font-size:14px; color:#94a3b8;"><strong>Redes Sociales:</strong> Las usamos como canal alterno de comunicación y para hacer crecer nuestra comunidad de impacto social.</p>
+              <input id="redes" type="text" placeholder="Link de tu LinkedIn, Instagram o Facebook *" value="${datos.redes}" style="width: 100%; margin: 5px 0;">
+            </div>
             <button onclick="saveData()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -176,23 +187,32 @@
 
         case 4:
           html = `
-            <h2>🧑‍🎓 Tipo de Usuario</h2>
+            <h2>🧑‍🎓 Perfil y Área</h2>
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1NfGkPEZ44f6RjHCg_TNbkEfFST-ubI1J/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <select id="tipoUsuario" onchange="actualizarTipo()">
-              <option value="">Selecciona...</option>
+              <option value="">Modalidad de ingreso...</option>
               <option value="Estudiante" ${datos.tipoUsuario==='Estudiante'?'selected':''}>Estudiante</option>
               <option value="Egresado" ${datos.tipoUsuario==='Egresado'?'selected':''}>Egresado</option>
             </select>
             <div id="subtipoDiv" style="display:${datos.tipoUsuario==='Estudiante'?'block':'none'}">
-              <p>Elige si quieres ser:</p>
               <select id="subTipo">
                 <option value="Pasante" ${datos.subTipo==='Pasante'?'selected':''}>Pasante</option>
                 <option value="Practicante" ${datos.subTipo==='Practicante'?'selected':''}>Practicante</option>
                 <option value="Remunerado" ${datos.subTipo==='Remunerado'?'selected':''}>Remunerado</option>
               </select>
             </div>
-            <div id="egresadoDiv" style="display:${datos.tipoUsuario==='Egresado'?'block':'none'}; color:#eab308; margin:15px;">
+            <div id="egresadoDiv" style="display:${datos.tipoUsuario==='Egresado'?'block':'none'}; color:#eab308; margin:10px;">
               <strong>Modalidad remunerada</strong> – pago sujeto a negociación.
+            </div>
+            <select id="area" onchange="actualizarTipo()" style="margin-top: 20px;">
+              <option value="">Área a postular...</option>
+              <option value="Tecnología" ${datos.area==='Tecnología'?'selected':''}>Tecnología y Desarrollo</option>
+              <option value="Psicología" ${datos.area==='Psicología'?'selected':''}>Psicología / RRHH</option>
+              <option value="Proyectos Sociales" ${datos.area==='Proyectos Sociales'?'selected':''}>Proyectos Sociales</option>
+              <option value="Otra" ${datos.area==='Otra'?'selected':''}>Otra...</option>
+            </select>
+            <div id="areaOtraDiv" style="display:${datos.area==='Otra'?'block':'none'}">
+              <input id="areaOtra" type="text" placeholder="Escribe el área a la que postulas *" value="${datos.areaOtra}">
             </div>
             <button onclick="guardarTipo()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
@@ -429,22 +449,34 @@
         return alert("Ingresa tu nombre"); 
       next(); 
     }
-    function saveData() { 
+    function saveData() {
       datos.email = document.getElementById("email").value.trim(); 
       datos.telefono = document.getElementById("telefono").value.trim(); 
-      if (!datos.email || !datos.telefono) 
-        return alert("Completa los datos"); 
+      datos.telefonoRef = document.getElementById("telefonoRef").value.trim(); 
+      datos.redes = document.getElementById("redes").value.trim(); 
+      if (!datos.email || !datos.telefono || !datos.telefonoRef || !datos.redes) {
+        return alert("Por favor, completa todos los datos solicitados."); 
+      }
+      if (datos.telefono === datos.telefonoRef) {
+        return alert("❌ El teléfono de referencia no puede ser igual a tu teléfono principal. Por favor ingresa el número de un familiar o contacto distinto.");
+      }
       next(); 
     }
     function actualizarTipo() { 
-      datos.tipoUsuario = document.getElementById("tipoUsuario").value; 
+      const tipoSelect = document.getElementById("tipoUsuario");
+      const areaSelect = document.getElementById("area");
+      if (tipoSelect) datos.tipoUsuario = tipoSelect.value; 
+      if (areaSelect) datos.area = areaSelect.value;
       render(); 
     }
     function guardarTipo() { 
       datos.tipoUsuario = document.getElementById("tipoUsuario").value; 
       datos.subTipo = datos.tipoUsuario === "Estudiante" ? document.getElementById("subTipo").value : ""; 
-      if (!datos.tipoUsuario) 
-        return alert("Selecciona un tipo"); 
+      datos.area = document.getElementById("area").value;
+      datos.areaOtra = datos.area === "Otra" ? document.getElementById("areaOtra").value.trim() : "";
+      if (!datos.tipoUsuario) return alert("Por favor, selecciona tu tipo de usuario."); 
+      if (!datos.area) return alert("Por favor, selecciona el área a postular.");
+      if (datos.area === "Otra" && !datos.areaOtra) return alert("Por favor, escribe el nombre del área a la que postulas.");
       next(); 
     }
     function guardarHorario() { 
