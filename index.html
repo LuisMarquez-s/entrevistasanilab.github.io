@@ -498,7 +498,7 @@
       btn.innerText = "⏳ Guardando..."; btn.disabled = true;
       let reader = new FileReader();
       reader.onloadend = async function () {
-        const base64 = reader.result.split(",");
+        const base64 = reader.result.split(",")[1];
         const res = await enviarApi({ accion: "subirFirma", base64, nombre: datos.nombre });
         if (res.success) { datos.firmaUrl = res.url; next(); }
         else{
