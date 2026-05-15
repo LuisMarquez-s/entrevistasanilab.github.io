@@ -550,7 +550,7 @@
         const resFinal = await enviarApi({ accion: "guardarRegistro", datos: datos });
         
         if (resFinal.success) {
-          appDiv.innerHTML = `<h2>🎉 ¡Éxito!</h2><p>${resFinal.message}</p>`;
+          appDiv.innerHTML = `<h2>🎉 ¡Registro Completado!</h2><p>${resFinal.message}</p><p>Nos pondremos en contacto con usted`;
         } else {
           throw new Error("No se pudo guardar en la base de datos.");
         }
