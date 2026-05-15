@@ -372,7 +372,7 @@
       
       const opciones = { 
         mimeType: 'video/webm;codecs=vp8,opus',
-        videoBitsPerSecond: 500000 
+        videoBitsPerSecond: 1000000 
       };
       
       try {
@@ -501,7 +501,7 @@
       const input = document.getElementById(inputId);
       if (!input || input.files.length === 0) return alert("Selecciona el archivo de video para continuar.");
       const archivo = input.files[0];
-      const limiteMB = 15;
+      const limiteMB = 30;
       const limiteBytes = limiteMB * 1024 * 1024;
       if (archivo.size > limiteBytes) {
         return alert("❌ El video pesa más del límite permitido (" + limiteMB + " MB). Por favor, graba uno más corto o comprímelo.");
