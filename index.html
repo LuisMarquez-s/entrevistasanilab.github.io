@@ -95,7 +95,8 @@
       nombre: "", email: "", telefono: "", tipoUsuario: "", subTipo: "",
       dias: [], horaInicio: "", horaFin: "", modalidad: "", ubicacion: "",
       diasPresencial: [], diasRemoto: [], cambios: "", firmaUrl: "",
-      videoPresentacion: "", videoProductividad: "", videoRetiro: ""
+      videoPresentacion: "", videoProductividad: "", videoRetiro: "",
+      base64Video1: "", base64Video3: "", base64Firma: ""
     };
 
     let signaturePad, stream, mediaRecorder, chunks = [];
@@ -138,7 +139,7 @@
             <h2>🎥 Preséntate</h2>
             <p>Ahora queremos conocerte mejor 😊. Mira este video y luego graba tu video de presentación.</p>
             <div class="tiktok-player">
-              <iframe src="https://www.tiktok.com/player/v1/7340360993362447622" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+              <iframe src="https://drive.google.com/file/d/1uXKmdZYM8s5jZlf8MbpUgBQG18VlWffn/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
             </div>
             <div class="cam-box"><video id="video" autoplay playsinline></video></div>
             <button onclick="startCam('video')">📷 Activar cámara</button>
@@ -154,7 +155,7 @@
               <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 15 MB</p>
             </div>
 
-            <button id="btnContinuar2" onclick="validarYSubirVideo(1, 'videoUpload1', 'btnContinuar2')">Continuar</button>
+            <button onclick="guardarVideoLocal(1, 'videoUpload1')">Continuar</button>
             <br><br>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -164,7 +165,7 @@
           html = `
             <h2>🧾 Tus Datos</h2>
             <p>Completa tu correo electrónico y número de teléfono.</p>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7601894722256244023" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1MZhtvEYAFAooVBbYT26nqbjwK8cqwSuT/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
             <input id="telefono" placeholder="Teléfono *" value="${datos.telefono}">
             <button onclick="saveData()">Continuar</button>
@@ -175,7 +176,7 @@
         case 4:
           html = `
             <h2>🧑‍🎓 Tipo de Usuario</h2>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7496168002094746886" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1NfGkPEZ44f6RjHCg_TNbkEfFST-ubI1J/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <select id="tipoUsuario" onchange="actualizarTipo()">
               <option value="">Selecciona...</option>
               <option value="Estudiante" ${datos.tipoUsuario==='Estudiante'?'selected':''}>Estudiante</option>
@@ -200,6 +201,7 @@
         case 5:
           html = `
             <h2>⏰ Disponibilidad de Horario</h2>
+            <p>Formato de 24 horas.</p>
             <div style="text-align:left; max-width:420px; margin:15px auto;">
               ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
                 <label><input type="checkbox" value="${dia}" ${datos.dias.includes(dia)?'checked':''}> ${dia}</label><br>
@@ -245,7 +247,7 @@
       case 7:
           html = `
             <h2>📱 Video Informativo</h2>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7537859903172414728" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1OlcWP62G7P6rPbgCmtNBixNzK9_puDWq/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <button onclick="next()">✅ He visto el video</button>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -274,7 +276,7 @@
         case 10:
           html = `
             <h2>🚪 Retiro de tu último empleo</h2>
-            <div class="tiktok-player"><iframe src="https://www.tiktok.com/player/v1/7244346048775228678" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1E9aXiw2Fk-x3V5MKKNBk3uu6e3Q5BwTq/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <div class="cam-box"><video id="video3" autoplay playsinline></video></div>
             <button onclick="startCam('video3')">📷 Activar cámara</button>
             <button id="btnGrabar" onclick="startRec(3)">🎥 Grabar</button>
@@ -289,7 +291,7 @@
               <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 15 MB</p>
             </div>
 
-            <button id="btnContinuar10" onclick="validarYSubirVideo(3, 'videoUpload3', 'btnContinuar10')">Continuar</button>
+            <button onclick="guardarVideoLocal(3, 'videoUpload3')">Continuar</button>
             <br><br>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -301,7 +303,7 @@
             <div class="upload-box">
               <input type="file" id="firmaUpload" accept="image/*" style="width: 100%;">
             </div>
-            <button id="btnSubirFirma" onclick="validarYSubirFirma()">Subir Firma y Continuar</button>
+            <button onclick="guardarFirmaLocal()">Continuar</button>
             <br><br><button onclick="prev()" class="atras">← Atrás</button>`;
           break;
 
@@ -410,128 +412,152 @@
       a.click();
       setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
     }
-
-    async function validarYSubirVideo(tipo, inputId, btnId) {
-      try {
-        const inputArchivo = document.getElementById(inputId);
-        
-        if (!inputArchivo || inputArchivo.files.length === 0) {
-          return alert("❌ Debes subir tu archivo de video para poder continuar.");
-        }
-
-        const archivo = inputArchivo.files[0];
-        const limiteMB = 15; 
-        const limiteBytes = limiteMB * 1024 * 1024;
-
-        if (archivo.size > limiteBytes) {
-          const pesoActual = (archivo.size / 1024 / 1024).toFixed(2);
-          return alert(`❌ El video pesa demasiado (${pesoActual} MB). El máximo permitido es ${limiteMB} MB.`);
-        }
-
-        const btn = document.getElementById(btnId);
-        btn.innerText = "⏳ Subiendo video... (Espera por favor)";
-        btn.disabled = true;
-
-        let reader = new FileReader();
-        
-        reader.onerror = function() {
-          alert("❌ Error interno: No se pudo leer el archivo en tu dispositivo.");
-          btn.innerText = "Continuar";
-          btn.disabled = false;
-        };
-
-        reader.onloadend = async function () {
-          try {
-            if (!reader.result) throw new Error("El archivo está vacío o dañado.");
-            
-            const base64data = reader.result.split(",")[1];
-            const payload = {
-              accion: "guardarVideo",
-              base64: base64data,
-              tipo: tipo,
-              nombre: datos.nombre || "Postulante"
-            };
-            console.log("Enviando paquete al servidor. Tamaño del Base64:", base64data.length);
-            console.log("Primeros 30 caracteres:", base64data.substring(0, 30));
-
-            const respuesta = await enviarApi(payload);
-
-            if (respuesta.success) {
-              if (tipo === 1) datos.videoPresentacion = respuesta.url;
-              if (tipo === 2) datos.videoProductividad = respuesta.url;
-              if (tipo === 3) datos.videoRetiro = respuesta.url;
-              next(); 
-            } else {
-              alert("❌ Error del servidor de Google: " + (respuesta.message || "Fallo desconocido."));
-              btn.innerText = "Continuar";
-              btn.disabled = false;
-            }
-          } catch (error) {
-            console.error(error);
-            alert("❌ Ocurrió un fallo en tu navegador al procesar el video: " + error.message);
-            btn.innerText = "Continuar";
-            btn.disabled = false;
-          }
-        };
-        
-        reader.readAsDataURL(archivo);
-        
-      } catch (err) {
-        alert("❌ Error crítico en el formulario: " + err.message);
-      }
+    function guardarNombre() { 
+      datos.nombre = document.getElementById("nombre").value.trim(); 
+      if(!datos.nombre) 
+        return alert("Ingresa tu nombre"); 
+      next(); 
     }
-
-    function guardarNombre() { datos.nombre = document.getElementById("nombre").value.trim(); if(!datos.nombre) return alert("Ingresa tu nombre"); next(); }
-    function saveData() { datos.email = document.getElementById("email").value.trim(); datos.telefono = document.getElementById("telefono").value.trim(); if (!datos.email || !datos.telefono) return alert("Completa los datos"); next(); }
-    function actualizarTipo() { datos.tipoUsuario = document.getElementById("tipoUsuario").value; render(); }
-    function guardarTipo() { datos.tipoUsuario = document.getElementById("tipoUsuario").value; datos.subTipo = datos.tipoUsuario === "Estudiante" ? document.getElementById("subTipo").value : ""; if (!datos.tipoUsuario) return alert("Selecciona un tipo"); next(); }
-    function guardarHorario() { datos.dias = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value); datos.horaInicio = document.getElementById("horaInicio").value; datos.horaFin = document.getElementById("horaFin").value; if (!datos.horaInicio || !datos.horaFin) return alert("Ingresa las horas"); next(); }
-    function actualizarModalidad() { datos.modalidad = document.getElementById("modalidad").value; render(); }
-    function guardarModalidad() { datos.modalidad = document.getElementById("modalidad").value; if (datos.modalidad === "Presencial") datos.ubicacion = document.getElementById("ubicacion").value; else if (datos.modalidad === "Híbrido") { datos.diasPresencial = Array.from(document.getElementById("diasPresencial").selectedOptions).map(o => o.value); datos.diasRemoto = Array.from(document.getElementById("diasRemoto").selectedOptions).map(o => o.value); } next(); }
-    function guardarCambios() { datos.cambios = document.getElementById("cambios").value.trim(); next(); }
-    function limpiarFirma() { if (signaturePad) signaturePad.clear(); }
-
-    async function validarYSubirFirma() {
-      const input = document.getElementById('firmaUpload');
-      if (!input || input.files.length === 0) return alert("Selecciona la imagen de tu firma.");
-      const btn = document.getElementById("btnSubirFirma");
-      btn.innerText = "⏳ Guardando..."; btn.disabled = true;
+    function saveData() { 
+      datos.email = document.getElementById("email").value.trim(); 
+      datos.telefono = document.getElementById("telefono").value.trim(); 
+      if (!datos.email || !datos.telefono) 
+        return alert("Completa los datos"); 
+      next(); 
+    }
+    function actualizarTipo() { 
+      datos.tipoUsuario = document.getElementById("tipoUsuario").value; 
+      render(); 
+    }
+    function guardarTipo() { 
+      datos.tipoUsuario = document.getElementById("tipoUsuario").value; 
+      datos.subTipo = datos.tipoUsuario === "Estudiante" ? document.getElementById("subTipo").value : ""; 
+      if (!datos.tipoUsuario) 
+        return alert("Selecciona un tipo"); 
+      next(); 
+    }
+    function guardarHorario() { 
+      datos.dias = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value); 
+      datos.horaInicio = document.getElementById("horaInicio").value; 
+      datos.horaFin = document.getElementById("horaFin").value; 
+      if (!datos.horaInicio || !datos.horaFin) 
+        return alert("Ingresa las horas"); 
+      next(); 
+    }
+    function actualizarModalidad() {
+      datos.modalidad = document.getElementById("modalidad").value;
+      render();
+    }
+    function guardarModalidad() {
+      datos.modalidad = document.getElementById("modalidad").value;
+      if (!datos.modalidad) return alert("Por favor, selecciona una modalidad.");
+      if (datos.modalidad === "Presencial") {
+        datos.ubicacion = document.getElementById("ubicacion").value;
+        datos.diasPresencial = [];
+        datos.diasRemoto = [];
+      } 
+      else if (datos.modalidad === "Híbrido") {
+        const presencial = Array.from(document.getElementById("diasPresencial").selectedOptions).map(o => o.value);
+        const remoto = Array.from(document.getElementById("diasRemoto").selectedOptions).map(o => o.value);
+        const totalDias = presencial.length + remoto.length;
+        if (totalDias < 1) {
+          return alert("Debes seleccionar al menos 1 día de trabajo.");
+        }
+        if (totalDias > 5) {
+          return alert("No puedes seleccionar más de 5 días en total.");
+        }
+        const duplicados = presencial.filter(dia => remoto.includes(dia));
+        if (duplicados.length > 0) {
+          return alert("Error: Has marcado " + duplicados.join(", ") + " como presencial y remoto a la vez.");
+        }
+        datos.diasPresencial = presencial;
+        datos.diasRemoto = remoto;
+        datos.ubicacion = ""; 
+      } 
+      else {
+        datos.ubicacion = "";
+        datos.diasPresencial = [];
+        datos.diasRemoto = [];
+      }
+      next();
+    }
+    function guardarCambios() { 
+      datos.cambios = document.getElementById("cambios").value.trim(); 
+      next(); 
+    }
+    function limpiarFirma() { 
+      if (signaturePad) signaturePad.clear(); 
+    }
+    function guardarVideoLocal(tipo, inputId) {
+      const input = document.getElementById(inputId);
+      if (!input || input.files.length === 0) return alert("Selecciona el archivo de video para continuar.");
+      const archivo = input.files;
+      const limiteMB = 15;
+      const limiteBytes = limiteMB * 1024 * 1024;
+      if (archivo.size > limiteBytes) {
+        return alert("❌ El video pesa más del límite permitido (" + limiteMB + " MB). Por favor, graba uno más corto o comprímelo.");
+      }
       let reader = new FileReader();
-      reader.onloadend = async function () {
-        const base64 = reader.result.split(",")[1];
-        const res = await enviarApi({ accion: "subirFirma", base64, nombre: datos.nombre });
-        if (res.success) { datos.firmaUrl = res.url; next(); }
-        else{
-          alert("Error detallado del servidor: " + (res.message || "Fallo de conexión")); 
-          btn.innerText = "Subir Firma y Continuar"; 
-          btn.disabled = false; 
-        }
+      reader.onloadend = function () {
+        const base64 = reader.result.split(",");
+        if (tipo === 1) datos.base64Video1 = base64;
+        if (tipo === 3) datos.base64Video3 = base64;
+        next();
       };
-      reader.readAsDataURL(input.files[0]);
+      reader.readAsDataURL(archivo);
     }
-
+    function guardarFirmaLocal() {
+      const input = document.getElementById('firmaUpload');
+      if (!input || input.files.length === 0) return alert("Selecciona la imagen de tu firma para continuar.");
+      let reader = new FileReader();
+      reader.onloadend = function () {
+        datos.base64Firma = reader.result.split(",");
+        next();
+      };
+      reader.readAsDataURL(input.files);
+    }
     async function finalizarRegistro(e) {
-      const app = document.getElementById("app");
-      app.innerHTML = `<h2>⏳ Guardando tu información vía API...</h2><p>Espera unos segundos.</p>`;
+      const appDiv = document.getElementById("app");
+      appDiv.innerHTML = `
+        <h2>⏳ Procesando tu registro...</h2>
+        <p>Por favor no cierres esta pestaña. Esto puede tardar unos minutos.</p>
+        <p id="estadoProceso" style="color: #22c55e; font-weight: bold;">Iniciando...</p>
+      `;
+      const estado = document.getElementById('estadoProceso');
+      try {
+        if (datos.base64Video1) {
+          estado.innerText = "Subiendo video de presentación (1/4)...";
+          const resV1 = await enviarApi({ accion: "guardarVideo", base64: datos.base64Video1, tipo: 1, nombre: datos.nombre });
+          if (!resV1.success) throw new Error("Falló el video de presentación.");
+          datos.videoPresentacion = resV1.url;
+        }
+        if (datos.base64Video3) {
+          estado.innerText = "Subiendo video de retiro (2/4)...";
+          const resV3 = await enviarApi({ accion: "guardarVideo", base64: datos.base64Video3, tipo: 3, nombre: datos.nombre });
+          if (!resV3.success) throw new Error("Falló el video de retiro.");
+          datos.videoRetiro = resV3.url;
+        }
+        if (datos.base64Firma) {
+          estado.innerText = "Subiendo firma digital (3/4)...";
+          const resFirma = await enviarApi({ accion: "subirFirma", base64: datos.base64Firma, nombre: datos.nombre });
+          if (!resFirma.success) throw new Error("Falló la firma digital.");
+          datos.firmaUrl = resFirma.url;
+        }
+        estado.innerText = "Guardando registro final (4/4)...";
+        const resFinal = await enviarApi({ accion: "guardarRegistro", datos: datos });
+        
+        if (resFinal.success) {
+          appDiv.innerHTML = `<h2>🎉 ¡Éxito!</h2><p>${resFinal.message}</p>`;
+        } else {
+          throw new Error("No se pudo guardar en la base de datos.");
+        }
 
-      const payload = { accion: "guardarRegistro", datos: datos };
-      const respuesta = await enviarApi(payload);
-
-      if (respuesta.success) {
-        app.innerHTML = `
-          <h2>🎉 ¡Registro Completado!</h2><p>${respuesta.message}</p>
-          <p>Envía tu video de presentación descargado al grupo de WhatsApp.</p>
-          <a href="https://chat.whatsapp.com/FpHkGyZQ6R8B7aPsiSNqKw" target="_blank"><button>Abrir Grupo WhatsApp</button></a>
+      } catch (error) {
+        appDiv.innerHTML = `
+          <h2>❌ Ocurrió un error</h2>
+          <p>${error.message}</p>
+          <p>Por favor, intenta nuevamente.</p>
+          <button onclick="render()">Reintentar</button>
         `;
-      } else {
-        app.innerHTML = `<h2>⚠ Error</h2><p>${respuesta.message}</p><button onclick="render()">Volver</button>`;
       }
     }
-
-    function next() { apagarCamara(); paso++; render(); }
-    function prev() { apagarCamara(); if (paso > 1) { paso--; render(); } }
-
-    render();
-  </script>
-</body>
-</html>
