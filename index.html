@@ -152,7 +152,7 @@
             <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
               <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
               <input type="file" id="videoUpload1" accept="video/*" style="width: 100%; padding: 5px;">
-              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 15 MB</p>
+              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 30 MB</p>
             </div>
 
             <button onclick="guardarVideoLocal(1, 'videoUpload1')">Continuar</button>
@@ -292,7 +292,7 @@
             <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
               <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
               <input type="file" id="videoUpload3" accept="video/*" style="width: 100%; padding: 5px;">
-              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 15 MB</p>
+              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 30 MB</p>
             </div>
 
             <button onclick="guardarVideoLocal(3, 'videoUpload3')">Continuar</button>
@@ -346,16 +346,22 @@
         stream = null;
       }
     }
-
     async function startCam(id) {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+        const constraints = {
+          video: { 
+            facingMode: "user",
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          }, 
+          audio: true 
+        };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
         document.getElementById(id).srcObject = stream;
       } catch(e) {
         alert("Por favor activa los permisos de cámara y micrófono.");
       }
     }
-
     function startRec(tipo) {
       if (!stream) return alert("Primero activa la cámara");
       
