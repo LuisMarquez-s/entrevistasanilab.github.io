@@ -230,14 +230,14 @@
               </select>
             </div>
             <div id="hibridoDiv" style="display:${datos.modalidad==='Híbrido'?'block':'none'}">
-              <p>Días Presencial:</p>
-              <select id="diasPresencial" multiple style="height:110px;">
-                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => `<option value="${d}" ${datos.diasPresencial.includes(d)?'selected':''}>${d}</option>`).join('')}
-              </select>
-              <p>Días Remoto:</p>
-              <select id="diasRemoto" multiple style="height:110px;">
-                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => `<option value="${d}" ${datos.diasRemoto.includes(d)?'selected':''}>${d}</option>`).join('')}
-              </select>
+              <p style="font-size:15px; margin-bottom:5px; font-weight:bold;">Días Presencial:</p>
+              <div style="text-align:left; max-width:200px; margin:auto;">
+                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => `<label><input type="checkbox" class="cb-presencial" value="${d}" ${datos.diasPresencial.includes(d)?'checked':''}> ${d}</label><br>`).join('')}
+              </div>
+              <p style="font-size:15px; margin-bottom:5px; margin-top:15px; font-weight:bold;">Días Remoto:</p>
+              <div style="text-align:left; max-width:200px; margin:auto;">
+                ${['Lunes','Martes','Miércoles','Jueves','Viernes'].map(d => `<label><input type="checkbox" class="cb-remoto" value="${d}" ${datos.diasRemoto.includes(d)?'checked':''}> ${d}</label><br>`).join('')}
+              </div>
             </div>
             <button onclick="guardarModalidad()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
@@ -451,14 +451,15 @@
     function guardarModalidad() {
       datos.modalidad = document.getElementById("modalidad").value;
       if (!datos.modalidad) return alert("Por favor, selecciona una modalidad.");
+
       if (datos.modalidad === "Presencial") {
         datos.ubicacion = document.getElementById("ubicacion").value;
         datos.diasPresencial = [];
         datos.diasRemoto = [];
       } 
       else if (datos.modalidad === "Híbrido") {
-        const presencial = Array.from(document.getElementById("diasPresencial").selectedOptions).map(o => o.value);
-        const remoto = Array.from(document.getElementById("diasRemoto").selectedOptions).map(o => o.value);
+        const presencial = Array.from(document.querySelectorAll('.cb-presencial:checked')).map(cb => cb.value);
+        const remoto = Array.from(document.querySelectorAll('.cb-remoto:checked')).map(cb => cb.value);
         const totalDias = presencial.length + remoto.length;
         if (totalDias < 1) {
           return alert("Debes seleccionar al menos 1 día de trabajo.");
@@ -514,7 +515,7 @@
         datos.base64Firma = reader.result.split(",")[1];
         next();
       };
-      reader.readAsDataURL(input.files)[1];
+      reader.readAsDataURL(input.files)[0];
     }
     async function finalizarRegistro(e) {
       const appDiv = document.getElementById("app");
