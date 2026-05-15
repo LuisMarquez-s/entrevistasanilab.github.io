@@ -561,6 +561,15 @@
         `;
       }
     }
+    function next() { 
+      apagarCamara(); paso++; render(); 
+    }
+    function prev() { 
+      apagarCamara(); 
+      if (paso > 1) { 
+        paso--; render(); 
+      } 
+    }
     render();
   </script>
 </body>
