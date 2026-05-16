@@ -219,12 +219,13 @@
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
-
+          
         case 5:
           html = `
             <h2>⏰ Disponibilidad de Horario</h2>
             <p>Selecciona tus días y tu jornada (formato 24h).</p>
-            <div style="text-align:left; max-width:420px; margin:15px auto; background: #064e3b; padding: 15px; border-radius: 8px; border: 1px solid #047857;">
+            
+            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
               <p style="margin-top:0; color:#22c55e; font-weight:bold;">1. Días disponibles:</p>
               <div style="display:flex; flex-wrap:wrap; gap:10px;">
                 ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
@@ -232,32 +233,32 @@
                 `).join('')}
               </div>
             </div>
-            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857;">
+            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
               <p style="margin-top:0; color:#22c55e; font-weight:bold;">2. Turno Principal:</p>
               <div style="display: flex; gap: 10px;">
                 <div style="flex: 1;">
                   <label style="font-size: 13px; color: #a7f3d0;">Hora Inicio</label>
-                  <input type="time" id="horaInicio1" style="width: 100%; margin-top: 5px;" value="${datos.horaInicio1 || ''}">
+                  <input type="time" id="horaInicio1" style="width: 100%; margin: 5px 0 0 0; box-sizing: border-box;" value="${datos.horaInicio1 || ''}">
                 </div>
                 <div style="flex: 1;">
                   <label style="font-size: 13px; color: #a7f3d0;">Hora Fin</label>
-                  <input type="time" id="horaFin1" style="width: 100%; margin-top: 5px;" value="${datos.horaFin1 || ''}">
+                  <input type="time" id="horaFin1" style="width: 100%; margin: 5px 0 0 0; box-sizing: border-box;" value="${datos.horaFin1 || ''}">
                 </div>
               </div>
             </div>
-            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857;">
-              <label style="display:flex; align-items:center; cursor:pointer; color:#3b82f6; font-weight:bold;">
-                <input type="checkbox" id="checkTurno2" onchange="toggleTurno2()" ${datos.horaInicio2 ? 'checked' : ''} style="width:auto; margin:0 10px 0 0;">
+            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
+              <label style="display:flex; align-items:center; cursor:pointer; color:#a7f3d0; font-weight:bold;">
+                <input type="checkbox" id="checkTurno2" onchange="toggleTurno2()" ${datos.horaInicio2 ? 'checked' : ''} style="width:auto; margin:0 10px 0 0; box-sizing: border-box;">
                 + Agregar horario partido (Turno 2)
               </label>
               <div id="turno2Div" style="display:${datos.horaInicio2 ? 'flex' : 'none'}; gap: 10px; margin-top: 15px;">
                 <div style="flex: 1;">
                   <label style="font-size: 13px; color: #a7f3d0;">Regreso - Inicio</label>
-                  <input type="time" id="horaInicio2" style="width: 100%; margin-top: 5px;" value="${datos.horaInicio2 || ''}">
+                  <input type="time" id="horaInicio2" style="width: 100%; margin: 5px 0 0 0; box-sizing: border-box;" value="${datos.horaInicio2 || ''}">
                 </div>
                 <div style="flex: 1;">
                   <label style="font-size: 13px; color: #a7f3d0;">Salida Final</label>
-                  <input type="time" id="horaFin2" style="width: 100%; margin-top: 5px;" value="${datos.horaFin2 || ''}">
+                  <input type="time" id="horaFin2" style="width: 100%; margin: 5px 0 0 0; box-sizing: border-box;" value="${datos.horaFin2 || ''}">
                 </div>
               </div>
             </div>
