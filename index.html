@@ -8,7 +8,7 @@
   <style>
     body { 
       font-family: Arial, sans-serif; 
-      background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), url('https://economiaverde.pe/wp-content/uploads/2019/04/sanilab-galeria4.jpg'); 
+      background: linear-gradient(rgba(2, 44, 34, 0.88), rgba(2, 44, 34, 0.88)), url('https://images.unsplash.com/photo-1593113565214-80afcb4dd411?q=80&w=2000&auto=format&fit=crop'); 
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -17,12 +17,12 @@
       padding: 20px; 
     }
     .box { 
-      background: #1e293b; 
+      background: #064e3b;
       padding: 25px; 
       border-radius: 12px; 
       max-width: 720px; 
       margin: auto; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5); 
     }
     input, select, textarea { 
       padding: 12px; 
@@ -44,8 +44,8 @@
       font-size: 16px; 
       font-weight: bold; 
     }
-    button:disabled { background: #64748b; cursor: not-allowed; }
-    button.atras { background: #64748b; }
+    button:disabled { background: #047857; cursor: not-allowed; }
+    button.atras { background: #047857; }
     .tiktok-player { 
       width: 100%; 
       max-width: 380px; 
@@ -71,7 +71,7 @@
     }
     .resumen { 
       text-align: left; 
-      background: #334155; 
+      background: #047857;
       padding: 18px; 
       border-radius: 10px; 
       margin: 20px auto; 
@@ -155,10 +155,10 @@
             <p><strong>Descarga tu video antes de subirlo.</strong></p>
             <button onclick="descargarVideo()">⬇️ Descargar Video de Presentación</button>
             
-            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
+            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
               <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
               <input type="file" id="videoUpload1" accept="video/*" style="width: 100%; padding: 5px;">
-              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 30 MB</p>
+              <p style="font-size: 13px; color: #a7f3d0; margin-bottom: 0;">Tamaño máximo: 30 MB</p>
             </div>
 
             <button onclick="guardarVideoLocal(1, 'videoUpload1')">Continuar</button>
@@ -173,11 +173,11 @@
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1MZhtvEYAFAooVBbYT26nqbjwK8cqwSuT/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
             <input id="telefono" type="tel" placeholder="Tu Teléfono principal *" value="${datos.telefono}">
-            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
+            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
               <p style="margin-top:0; font-size:14px; color:#94a3b8;"><strong>Teléfono de Referencia:</strong> Necesitamos el número de un familiar en caso de pérdida de celular o emergencia.</p>
               <input id="telefonoRef" type="tel" placeholder="Teléfono de familiar/referencia *" value="${datos.telefonoRef}" style="width: 100%; margin: 5px 0;">
             </div>
-            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
+            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
               <p style="margin-top:0; font-size:14px; color:#94a3b8;"><strong>Redes Sociales:</strong> Las usamos como canal alterno de comunicación y para hacer crecer nuestra comunidad de impacto social.</p>
               <input id="redes" type="text" placeholder="Link de tu LinkedIn, Instagram o Facebook *" value="${datos.redes}" style="width: 100%; margin: 5px 0;">
             </div>
@@ -224,7 +224,7 @@
           html = `
             <h2>⏰ Disponibilidad de Horario</h2>
             <p>Selecciona tus días y tu jornada (formato 24h).</p>
-            <div style="text-align:left; max-width:420px; margin:15px auto; background: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
+            <div style="text-align:left; max-width:420px; margin:15px auto; background: #064e3b; padding: 15px; border-radius: 8px; border: 1px solid #047857;">
               <p style="margin-top:0; color:#22c55e; font-weight:bold;">1. Días disponibles:</p>
               <div style="display:flex; flex-wrap:wrap; gap:10px;">
                 ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
@@ -232,31 +232,31 @@
                 `).join('')}
               </div>
             </div>
-            <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #334155;">
+            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857;">
               <p style="margin-top:0; color:#22c55e; font-weight:bold;">2. Turno Principal:</p>
               <div style="display: flex; gap: 10px;">
                 <div style="flex: 1;">
-                  <label style="font-size: 13px; color: #cbd5e1;">Hora Inicio</label>
+                  <label style="font-size: 13px; color: #a7f3d0;">Hora Inicio</label>
                   <input type="time" id="horaInicio1" style="width: 100%; margin-top: 5px;" value="${datos.horaInicio1 || ''}">
                 </div>
                 <div style="flex: 1;">
-                  <label style="font-size: 13px; color: #cbd5e1;">Hora Fin</label>
+                  <label style="font-size: 13px; color: #a7f3d0;">Hora Fin</label>
                   <input type="time" id="horaFin1" style="width: 100%; margin-top: 5px;" value="${datos.horaFin1 || ''}">
                 </div>
               </div>
             </div>
-            <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #334155;">
+            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857;">
               <label style="display:flex; align-items:center; cursor:pointer; color:#3b82f6; font-weight:bold;">
                 <input type="checkbox" id="checkTurno2" onchange="toggleTurno2()" ${datos.horaInicio2 ? 'checked' : ''} style="width:auto; margin:0 10px 0 0;">
                 + Agregar horario partido (Turno 2)
               </label>
               <div id="turno2Div" style="display:${datos.horaInicio2 ? 'flex' : 'none'}; gap: 10px; margin-top: 15px;">
                 <div style="flex: 1;">
-                  <label style="font-size: 13px; color: #cbd5e1;">Regreso - Inicio</label>
+                  <label style="font-size: 13px; color: #a7f3d0;">Regreso - Inicio</label>
                   <input type="time" id="horaInicio2" style="width: 100%; margin-top: 5px;" value="${datos.horaInicio2 || ''}">
                 </div>
                 <div style="flex: 1;">
-                  <label style="font-size: 13px; color: #cbd5e1;">Salida Final</label>
+                  <label style="font-size: 13px; color: #a7f3d0;">Salida Final</label>
                   <input type="time" id="horaFin2" style="width: 100%; margin-top: 5px;" value="${datos.horaFin2 || ''}">
                 </div>
               </div>
@@ -282,8 +282,8 @@
               </select>
             </div>
             <div id="hibridoDiv" style="display:${datos.modalidad==='Híbrido'?'block':'none'}">
-              <p style="font-size:14px; margin-bottom:15px; color:#cbd5e1;">Selecciona exactamente 6 días en total (mínimo 1 y máximo 5 por columna).</p>
-              <div style="display: flex; justify-content: space-between; max-width: 400px; margin: 0 auto; text-align: left; background: #334155; padding: 15px; border-radius: 8px;">
+              <p style="font-size:14px; margin-bottom:15px; color:#a7f3d0;">Selecciona exactamente 6 días en total (mínimo 1 y máximo 5 por columna).</p>
+              <div style="display: flex; justify-content: space-between; max-width: 400px; margin: 0 auto; text-align: left; background: #047857; padding: 15px; border-radius: 8px;">
                 <div style="width: 45%;">
                   <p style="font-size:15px; margin-top:0; margin-bottom:10px; font-weight:bold; color:#22c55e; border-bottom: 1px solid #475569; padding-bottom: 5px;">Presencial</p>
                   ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(d => `<label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="checkbox" class="cb-presencial" value="${d}" ${datos.diasPresencial.includes(d)?'checked':''}> ${d}</label>`).join('')}
@@ -341,10 +341,10 @@
             <p><strong>Descarga tu video antes de subirlo.</strong></p>
             <button onclick="descargarVideo()">⬇️ Descargar Video de Retiro</button>
             
-            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
+            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
               <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
               <input type="file" id="videoUpload3" accept="video/*" style="width: 100%; padding: 5px;">
-              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 0;">Tamaño máximo: 30 MB</p>
+              <p style="font-size: 13px; color: #a7f3d0; margin-bottom: 0;">Tamaño máximo: 30 MB</p>
             </div>
 
             <button onclick="guardarVideoLocal(3, 'videoUpload3')">Continuar</button>
@@ -370,7 +370,7 @@
               <p><strong>Nombre:</strong> ${datos.nombre}</p>
               <p><strong>Tipo:</strong> ${datos.tipoUsuario} ${datos.subTipo ? `(${datos.subTipo})` : ''}</p>
               <p><strong>Días:</strong> ${datos.dias.join(', ') || 'No especificado'}</p>
-              <p><strong>Horario:</strong> ${datos.horaInicio || '--'} - ${datos.horaFin || '--'}</p>
+              <p><strong>Horario:</strong> ${datos.horaInicio2 ? datos.horaInicio + ' y ' + datos.horaFin : datos.horaInicio + ' - ' + datos.horaFin}</p>
             </div>
             <button onclick="finalizarRegistro(event)" style="background:#22c55e; padding:14px 32px; font-size:18px;">Finalizar Entrevista</button>
             <br><br>
@@ -536,8 +536,8 @@
       datos.horaInicio2 = checkT2 ? hI2 : "";
       datos.horaFin2 = checkT2 ? hF2 : "";
       if (checkT2) {
-        datos.horaInicio = hI1 + " y " + hI2;
-        datos.horaFin = hF1 + " y " + hF2;
+        datos.horaInicio = hI1 + " - " + hF1;
+        datos.horaFin = hI2 + " - " + hF2;
       } else {
         datos.horaInicio = hI1;
         datos.horaFin = hF1;
