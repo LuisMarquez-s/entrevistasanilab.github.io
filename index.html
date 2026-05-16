@@ -99,6 +99,7 @@
       nombre: "", email: "", telefono: "", telefonoRef: "", redes: "",
       tipoUsuario: "", subTipo: "", area: "", areaOtra: "",
       dias: [], horaInicio: "", horaFin: "", modalidad: "", ubicacion: "",
+      horaInicio1: "", horaFin1: "", horaInicio2: "", horaFin2: "",
       diasPresencial: [], diasRemoto: [], cambios: "", firmaUrl: "",
       videoPresentacion: "", videoRetiro: "",
       base64Video1: "", base64Video3: "", base64Firma: ""
@@ -222,14 +223,44 @@
         case 5:
           html = `
             <h2>⏰ Disponibilidad de Horario</h2>
-            <p>Formato de 24 horas.</p>
-            <div style="text-align:left; max-width:420px; margin:15px auto;">
-              ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
-                <label><input type="checkbox" value="${dia}" ${datos.dias.includes(dia)?'checked':''}> ${dia}</label><br>
-              `).join('')}
+            <p>Selecciona tus días y tu jornada (formato 24h).</p>
+            <div style="text-align:left; max-width:420px; margin:15px auto; background: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
+              <p style="margin-top:0; color:#22c55e; font-weight:bold;">1. Días disponibles:</p>
+              <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
+                  <label style="flex: 1 1 30%; cursor:pointer;"><input type="checkbox" class="cb-dia" value="${dia}" ${datos.dias.includes(dia)?'checked':''}> ${dia}</label>
+                `).join('')}
+              </div>
             </div>
-            <input type="time" id="horaInicio" value="${datos.horaInicio}">
-            <input type="time" id="horaFin" value="${datos.horaFin}">
+            <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #334155;">
+              <p style="margin-top:0; color:#22c55e; font-weight:bold;">2. Turno Principal:</p>
+              <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                  <label style="font-size: 13px; color: #cbd5e1;">Hora Inicio</label>
+                  <input type="time" id="horaInicio1" style="width: 100%; margin-top: 5px;" value="${datos.horaInicio1 || ''}">
+                </div>
+                <div style="flex: 1;">
+                  <label style="font-size: 13px; color: #cbd5e1;">Hora Fin</label>
+                  <input type="time" id="horaFin1" style="width: 100%; margin-top: 5px;" value="${datos.horaFin1 || ''}">
+                </div>
+              </div>
+            </div>
+            <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #334155;">
+              <label style="display:flex; align-items:center; cursor:pointer; color:#3b82f6; font-weight:bold;">
+                <input type="checkbox" id="checkTurno2" onchange="toggleTurno2()" ${datos.horaInicio2 ? 'checked' : ''} style="width:auto; margin:0 10px 0 0;">
+                + Agregar horario partido (Turno 2)
+              </label>
+              <div id="turno2Div" style="display:${datos.horaInicio2 ? 'flex' : 'none'}; gap: 10px; margin-top: 15px;">
+                <div style="flex: 1;">
+                  <label style="font-size: 13px; color: #cbd5e1;">Regreso - Inicio</label>
+                  <input type="time" id="horaInicio2" style="width: 100%; margin-top: 5px;" value="${datos.horaInicio2 || ''}">
+                </div>
+                <div style="flex: 1;">
+                  <label style="font-size: 13px; color: #cbd5e1;">Salida Final</label>
+                  <input type="time" id="horaFin2" style="width: 100%; margin-top: 5px;" value="${datos.horaFin2 || ''}">
+                </div>
+              </div>
+            </div>
             <button onclick="guardarHorario()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -479,12 +510,38 @@
       if (datos.area === "Otra" && !datos.areaOtra) return alert("Por favor, escribe el nombre del área a la que postulas.");
       next(); 
     }
+    function toggleTurno2() {
+      const isChecked = document.getElementById("checkTurno2").checked;
+      document.getElementById("turno2Div").style.display = isChecked ? "flex" : "none";
+      if (!isChecked) {
+        document.getElementById("horaInicio2").value = "";
+        document.getElementById("horaFin2").value = "";
+      }
+    }
     function guardarHorario() { 
-      datos.dias = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value); 
-      datos.horaInicio = document.getElementById("horaInicio").value; 
-      datos.horaFin = document.getElementById("horaFin").value; 
-      if (!datos.horaInicio || !datos.horaFin) 
-        return alert("Ingresa las horas"); 
+      const diasSeleccionados = Array.from(document.querySelectorAll('.cb-dia:checked')).map(cb => cb.value); 
+      if (diasSeleccionados.length === 0) return alert("Debes seleccionar al menos un día disponible.");
+      const hI1 = document.getElementById("horaInicio1").value;
+      const hF1 = document.getElementById("horaFin1").value;
+      if (!hI1 || !hF1) return alert("Debes ingresar las horas del Turno Principal.");
+      const checkT2 = document.getElementById("checkTurno2").checked;
+      const hI2 = document.getElementById("horaInicio2") ? document.getElementById("horaInicio2").value : "";
+      const hF2 = document.getElementById("horaFin2") ? document.getElementById("horaFin2").value : "";
+      if (checkT2 && (!hI2 || !hF2)) {
+        return alert("Has activado el horario partido. Debes ingresar las horas de tu regreso o desmarcar la casilla.");
+      }
+      datos.dias = diasSeleccionados;
+      datos.horaInicio1 = hI1;
+      datos.horaFin1 = hF1;
+      datos.horaInicio2 = checkT2 ? hI2 : "";
+      datos.horaFin2 = checkT2 ? hF2 : "";
+      if (checkT2) {
+        datos.horaInicio = hI1 + " y " + hI2;
+        datos.horaFin = hF1 + " y " + hF2;
+      } else {
+        datos.horaInicio = hI1;
+        datos.horaFin = hF1;
+      }
       next(); 
     }
     function actualizarModalidad() {
@@ -589,7 +646,7 @@
         const resFinal = await enviarApi({ accion: "guardarRegistro", datos: datos });
         
         if (resFinal.success) {
-          appDiv.innerHTML = `<h2>🎉 ¡Registro Completado!</h2><p>${resFinal.message}</p><p>Nos pondremos en contacto con usted`;
+          appDiv.innerHTML = `<h2>🎉 ¡Registro Completado!</h2><p>${resFinal.message}</p><p>Nos pondremos en contacto con usted en breve`;
         } else {
           throw new Error("No se pudo guardar en la base de datos.");
         }
