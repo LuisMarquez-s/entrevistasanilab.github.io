@@ -173,13 +173,13 @@
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1MZhtvEYAFAooVBbYT26nqbjwK8cqwSuT/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
             <input id="telefono" type="tel" placeholder="Tu Teléfono principal *" value="${datos.telefono}">
-            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
-              <p style="margin-top:0; font-size:14px; color:#94a3b8;"><strong>Teléfono de Referencia:</strong> Necesitamos el número de un familiar en caso de pérdida de celular o emergencia.</p>
-              <input id="telefonoRef" type="tel" placeholder="Teléfono de familiar/referencia *" value="${datos.telefonoRef}" style="width: 100%; margin: 5px 0;">
+            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; box-sizing: border-box;">
+              <p style="margin-top:0; font-size:14px; color:#a7f3d0;"><strong>Teléfono de Referencia:</strong> Necesitamos el número de un familiar en caso de pérdida de celular o emergencia.</p>
+              <input id="telefonoRef" type="tel" placeholder="Teléfono de familiar/referencia *" value="${datos.telefonoRef}" style="width: 100%; margin: 10px 0 0 0; box-sizing: border-box;">
             </div>
-            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
-              <p style="margin-top:0; font-size:14px; color:#94a3b8;"><strong>Redes Sociales:</strong> Las usamos como canal alterno de comunicación y para hacer crecer nuestra comunidad de impacto social.</p>
-              <input id="redes" type="text" placeholder="Link de tu LinkedIn, Instagram o Facebook *" value="${datos.redes}" style="width: 100%; margin: 5px 0;">
+            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; box-sizing: border-box;">
+              <p style="margin-top:0; font-size:14px; color:#a7f3d0;"><strong>Redes Sociales:</strong> Las usamos como canal alterno de comunicación y para hacer crecer nuestra comunidad de impacto social.</p>
+              <input id="redes" type="text" placeholder="Link de tu LinkedIn, Instagram o Facebook *" value="${datos.redes}" style="width: 100%; margin: 10px 0 0 0; box-sizing: border-box;">
             </div>
             <button onclick="saveData()">Continuar</button>
             <button onclick="prev()" class="atras">← Atrás</button>
@@ -207,9 +207,9 @@
             </div>
             <select id="area" onchange="actualizarTipo()" style="margin-top: 20px;">
               <option value="">Área a postular...</option>
-              <option value="Tecnología" ${datos.area==='Tecnología'?'selected':''}>Tecnología y Desarrollo</option>
-              <option value="Psicología" ${datos.area==='Psicología'?'selected':''}>Psicología / RRHH</option>
-              <option value="Proyectos Sociales" ${datos.area==='Proyectos Sociales'?'selected':''}>Proyectos Sociales</option>
+              <option value="Sistemas" ${datos.area==='Sistemas'?'selected':''}>Sistemas y Desarrollo</option>
+              <option value="Medio Ambiente y Ecología" ${datos.area==='Medio Ambiente y Ecología'?'selected':''}>Medio Ambiente y Ecología / RRHH</option>
+              <option value="Marketing y Publicidad" ${datos.area==='Marketing y Publicidad'?'selected':''}>Marketing y Publicidad</option>
               <option value="Otra" ${datos.area==='Otra'?'selected':''}>Otra...</option>
             </select>
             <div id="areaOtraDiv" style="display:${datos.area==='Otra'?'block':'none'}">
@@ -369,12 +369,16 @@
             <div class="resumen">
               <p><strong>Nombre:</strong> ${datos.nombre}</p>
               <p><strong>Tipo:</strong> ${datos.tipoUsuario} ${datos.subTipo ? `(${datos.subTipo})` : ''}</p>
+              <p><strong>Área:</strong> ${datos.area === 'Otra' ? datos.areaOtra : (datos.area || 'No especificada')}</p>
               <p><strong>Días:</strong> ${datos.dias.join(', ') || 'No especificado'}</p>
               <p><strong>Horario:</strong> ${datos.horaInicio2 ? datos.horaInicio + ' y ' + datos.horaFin : datos.horaInicio + ' - ' + datos.horaFin}</p>
             </div>
             <button onclick="finalizarRegistro(event)" style="background:#22c55e; padding:14px 32px; font-size:18px;">Finalizar Entrevista</button>
             <br><br>
             <button onclick="prev()" class="atras">← Atrás</button>
+            <p style="color: #fbbf24; font-size: 15px; margin-top: 20px;">
+              <i class="fa-solid fa-clock"></i> Tras hacer clic en Finalizar, mantente en la sala. <strong>Un coordinador ingresará en breve</strong> para hacer el checking de tu acuerdo.
+            </p>
           `;
           break;
 
