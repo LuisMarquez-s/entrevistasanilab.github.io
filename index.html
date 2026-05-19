@@ -8,7 +8,7 @@
   <style>
     body { 
       font-family: Arial, sans-serif; 
-      background: linear-gradient(rgba(2, 44, 34, 0.88), rgba(2, 44, 34, 0.88)), url('https://files.pucp.education/puntoedu/wp-content/uploads/2021/01/23074441/2017_05_raul-munoz-y-jose-rau-004-5000x3337-550x367-1.jpg'); 
+      background: linear-gradient(rgba(2, 44, 34, 0.88), rgba(2, 44, 34, 0.88)), url('https://static.wixstatic.com/media/5c368f_a2ce98e0758346f8b3298b5e9f426216~mv2.jpeg/v1/fit/w_776,h_485,q_90,enc_avif,quality_auto/5c368f_a2ce98e0758346f8b3298b5e9f426216~mv2.jpeg'); 
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -47,7 +47,7 @@
     }
     button:disabled { background: #047857; cursor: not-allowed; }
     button.atras { background: #047857; }
-    .botones-verticales button { display: block; width: 85%; margin: 10px auto; } /* Nueva clase para botones verticales */
+    .botones-verticales button { display: block; width: 85%; margin: 10px auto; }
     .tiktok-player { 
       width: 100%; max-width: 380px; height: 620px; 
       margin: 15px auto; border-radius: 12px; overflow: hidden; background: #000; 
@@ -167,13 +167,13 @@
             <h2>🧑‍🎓 Perfil y Área</h2>
             <select id="tipoUsuario" onchange="actualizarTipo()">
               <option value="">Modalidad de ingreso...</option>
+              <option value="Voluntario" ${datos.tipoUsuario==='Voluntario'?'selected':''}>Voluntario</option>
               <option value="Estudiante" ${datos.tipoUsuario==='Estudiante'?'selected':''}>Estudiante</option>
               <option value="Egresado" ${datos.tipoUsuario==='Egresado'?'selected':''}>Egresado</option>
             </select>
             
             <div id="subtipoDiv" style="display:${datos.tipoUsuario==='Estudiante'?'block':'none'}">
               <select id="subTipo">
-                <option value="Voluntario" ${datos.subTipo==='Voluntario'?'selected':''}>Voluntario</option>
                 <option value="Practicante" ${datos.subTipo==='Practicante'?'selected':''}>Practicante</option>
                 <option value="Remunerado" ${datos.subTipo==='Remunerado'?'selected':''}>Remunerado</option>
               </select>
@@ -192,7 +192,7 @@
         case 5:
           html = `
             <h2>⏰ Disponibilidad de Horario</h2>
-            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
+            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
               <p style="margin-top:0; color:#22c55e; font-weight:bold;">1. Días disponibles:</p>
               <div style="display:flex; flex-wrap:wrap; gap:10px;">
                 ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
@@ -200,13 +200,38 @@
                 `).join('')}
               </div>
             </div>
-            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left;">
+            
+            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
               <p style="margin-top:0; color:#22c55e; font-weight:bold;">2. Turno Principal:</p>
               <div style="display: flex; gap: 10px;">
-                <div style="flex: 1;"><label>Inicio</label><input type="time" id="horaInicio1" style="width: 100%;" value="${datos.horaInicio1 || ''}"></div>
-                <div style="flex: 1;"><label>Fin</label><input type="time" id="horaFin1" style="width: 100%;" value="${datos.horaFin1 || ''}"></div>
+                <div style="flex: 1;">
+                  <label style="font-size: 13px; color: #a7f3d0;">Hora Inicio</label>
+                  <input type="time" id="horaInicio1" style="width: 100%; margin: 5px 0 0 0;" value="${datos.horaInicio1 || ''}">
+                </div>
+                <div style="flex: 1;">
+                  <label style="font-size: 13px; color: #a7f3d0;">Hora Fin</label>
+                  <input type="time" id="horaFin1" style="width: 100%; margin: 5px 0 0 0;" value="${datos.horaFin1 || ''}">
+                </div>
               </div>
             </div>
+
+            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
+              <label style="display:flex; align-items:center; cursor:pointer; color:#a7f3d0; font-weight:bold;">
+                <input type="checkbox" id="checkTurno2" onchange="toggleTurno2()" ${datos.horaInicio2 ? 'checked' : ''} style="width:auto; margin:0 10px 0 0;">
+                + Agregar horario partido (Turno 2)
+              </label>
+              <div id="turno2Div" style="display:${datos.horaInicio2 ? 'flex' : 'none'}; gap: 10px; margin-top: 15px;">
+                <div style="flex: 1;">
+                  <label style="font-size: 13px; color: #a7f3d0;">Regreso - Inicio</label>
+                  <input type="time" id="horaInicio2" style="width: 100%; margin: 5px 0 0 0;" value="${datos.horaInicio2 || ''}">
+                </div>
+                <div style="flex: 1;">
+                  <label style="font-size: 13px; color: #a7f3d0;">Salida Final</label>
+                  <input type="time" id="horaFin2" style="width: 100%; margin: 5px 0 0 0;" value="${datos.horaFin2 || ''}">
+                </div>
+              </div>
+            </div>
+
             <button onclick="guardarHorario()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
@@ -240,9 +265,7 @@
             <div id="ubicacionDiv" style="display:${datos.modalidad==='Presencial' || esPresencialFijo ? 'block' : 'none'}">
               <select id="ubicacion">
                 <option value="">Elige tu sede...</option>
-                <option value="Lima" ${datos.ubicacion==='Lima'?'selected':''}>Lima</option>
-                <option value="Casaverde" ${datos.ubicacion==='Casaverde'?'selected':''}>Casaverde</option>
-                <option value="Pachacamac" ${datos.ubicacion==='Pachacamac'?'selected':''}>Pachacamac</option>
+                <option value="Lima - Casaverde - Pachacamac" ${datos.ubicacion==='Lima - Casaverde - Pachacamac'?'selected':''}>Lima - Casaverde - Pachacamac</option>
               </select>
             </div>
             
@@ -318,7 +341,7 @@
               <p><strong>Nombre:</strong> ${datos.nombre}</p>
               <p><strong>Área:</strong> ${datos.area}</p>
               <p><strong>Modalidad:</strong> ${datos.modalidad} ${datos.ubicacion ? `(${datos.ubicacion})` : ''}</p>
-              <p><strong>Horario:</strong> ${datos.horaInicio} - ${datos.horaFin}</p>
+              <p><strong>Horario:</strong> ${datos.horaInicio2 ? datos.horaInicio1 + ' a ' + datos.horaFin1 + ' y ' + datos.horaInicio2 + ' a ' + datos.horaFin2 : datos.horaInicio1 + ' a ' + datos.horaFin1}</p>
             </div>
             <button onclick="finalizarRegistro(event)" style="background:#22c55e; padding:14px 32px; font-size:18px;">Finalizar Registro</button>
             <br><br><button onclick="prev()" class="atras">← Atrás</button>
@@ -369,6 +392,7 @@
     }
 
     function guardarNombre() { datos.nombre = document.getElementById("nombre").value.trim(); if(!datos.nombre) return alert("Ingresa tu nombre"); next(); }
+    
     function saveData() { 
       datos.email = document.getElementById("email").value.trim(); datos.telefono = document.getElementById("telefono").value.trim(); 
       datos.telefonoRef = document.getElementById("telefonoRef").value.trim(); datos.redes = document.getElementById("redes").value.trim(); 
@@ -391,12 +415,38 @@
       next();
     }
 
+    function toggleTurno2() {
+      const isChecked = document.getElementById("checkTurno2").checked;
+      document.getElementById("turno2Div").style.display = isChecked ? "flex" : "none";
+      if (!isChecked) {
+        document.getElementById("horaInicio2").value = "";
+        document.getElementById("horaFin2").value = "";
+      }
+    }
+
     function guardarHorario() {
       datos.dias = Array.from(document.querySelectorAll('.cb-dia:checked')).map(cb => cb.value); 
       if (datos.dias.length === 0) return alert("Selecciona al menos un día.");
-      datos.horaInicio1 = document.getElementById("horaInicio1").value; datos.horaFin1 = document.getElementById("horaFin1").value;
-      if (!datos.horaInicio1 || !datos.horaFin1) return alert("Ingresa el horario.");
-      datos.horaInicio = datos.horaInicio1; datos.horaFin = datos.horaFin1;
+      datos.horaInicio1 = document.getElementById("horaInicio1").value; 
+      datos.horaFin1 = document.getElementById("horaFin1").value;
+      
+      if (!datos.horaInicio1 || !datos.horaFin1) return alert("Ingresa las horas del Turno Principal.");
+      
+      const checkT2 = document.getElementById("checkTurno2").checked;
+      const hI2 = document.getElementById("horaInicio2") ? document.getElementById("horaInicio2").value : "";
+      const hF2 = document.getElementById("horaFin2") ? document.getElementById("horaFin2").value : "";
+
+      if (checkT2 && (!hI2 || !hF2)) {
+        return alert("Has activado el horario partido. Debes ingresar las horas del segundo turno o desmarcar la casilla.");
+      }
+
+      datos.horaInicio2 = checkT2 ? hI2 : "";
+      datos.horaFin2 = checkT2 ? hF2 : "";
+      
+      // Asignar variables globales para el Backend
+      datos.horaInicio = datos.horaInicio1; 
+      datos.horaFin = datos.horaFin1;
+      
       next();
     }
 
