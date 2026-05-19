@@ -8,7 +8,7 @@
   <style>
     body { 
       font-family: Arial, sans-serif; 
-      background: linear-gradient(rgba(2, 44, 34, 0.88), rgba(2, 44, 34, 0.88)), url('https://static.wixstatic.com/media/5c368f_a2ce98e0758346f8b3298b5e9f426216~mv2.jpeg/v1/fit/w_776,h_485,q_90,enc_avif,quality_auto/5c368f_a2ce98e0758346f8b3298b5e9f426216~mv2.jpeg'); 
+      background: linear-gradient(rgba(2, 44, 34, 0.88), rgba(2, 44, 34, 0.88)), url('https://economiaverde.pe/wp-content/uploads/2019/04/sanilab-galeria4.jpg'); 
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -32,7 +32,6 @@
       border-radius: 6px; 
       border: none; 
       font-size: 16px; 
-      box-sizing: border-box;
     }
     button { 
       padding: 12px 28px; 
@@ -47,54 +46,66 @@
     }
     button:disabled { background: #047857; cursor: not-allowed; }
     button.atras { background: #047857; }
-    
-    /* Nueva clase para hacer los botones de la cámara más chicos y estéticos */
-    .btn-chico { 
-      display: block; 
-      width: 60%; 
-      max-width: 250px; 
-      margin: 8px auto; 
-      padding: 10px 15px; 
-      font-size: 14.5px; 
-    }
-
     .tiktok-player { 
-      width: 100%; max-width: 380px; height: 620px; 
-      margin: 15px auto; border-radius: 12px; overflow: hidden; background: #000; 
+      width: 100%; 
+      max-width: 380px; 
+      height: 620px; 
+      margin: 15px auto; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      background: #000; 
     }
     .cam-box { 
-      width: 260px; height: 260px; margin: 15px auto; border-radius: 12px; 
-      overflow: hidden; border: 3px solid #22c55e; background: black; 
+      width: 260px; 
+      height: 260px; 
+      margin: 15px auto; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      border: 3px solid #22c55e; 
+      background: black; 
     }
-    .cam-box video { width: 100%; height: 100%; object-fit: cover; }
+    .cam-box video { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+    }
     .resumen { 
-      text-align: left; background: #047857; padding: 18px; 
-      border-radius: 10px; margin: 20px auto; max-width: 550px; line-height: 1.6; 
+      text-align: left; 
+      background: #047857;
+      padding: 18px; 
+      border-radius: 10px; 
+      margin: 20px auto; 
+      max-width: 550px; 
+      line-height: 1.6; 
     }
-    .warning { color: #facc15; font-weight: bold; margin-top: 10px; font-size: 14px; }
+    .warning { color: #eab308; font-weight: bold; }
+    canvas { 
+      border: 2px solid #22c55e; 
+      border-radius: 8px; 
+      background: white; 
+    }
   </style>
 </head>
 <body>
   <div class="box" id="app"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+  
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzI0-rRxFOArP5HElYRY5MqQrJOqYRD-pzoeEA54x0eSV3_YFf5ZvpYC_V9gHdwhHM/exec";
 
     let paso = 1;
     let datos = {
       nombre: "", email: "", telefono: "", telefonoRef: "", redes: "",
-      tipoUsuario: "", subTipo: "", area: "",
+      tipoUsuario: "", subTipo: "", area: "", areaOtra: "",
       dias: [], horaInicio: "", horaFin: "", modalidad: "", ubicacion: "",
       horaInicio1: "", horaFin1: "", horaInicio2: "", horaFin2: "",
-      diasPresencial: [], diasRemoto: [], cambios: "",
-      videoPresentacion: "", cvUrl: "",
-      base64Video1: "", base64CV: "", cvMimeType: "", cvExt: "",
-      experienciaPrevia: "", textoRetiro: ""
+      diasPresencial: [], diasRemoto: [], cambios: "", firmaUrl: "",
+      videoPresentacion: "", videoRetiro: "",
+      base64Video1: "", base64Video3: "", base64Firma: ""
     };
 
-    let stream, mediaRecorder, chunks = [];
-
-    const areasPresencial = ["Infraestructura", "Relaciones Comunitarias", "Medio Ambiente", "Logística y Procesos"];
+    let signaturePad, stream, mediaRecorder, chunks = [];
 
     async function enviarApi(payload) {
       try {
@@ -103,9 +114,12 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
+        
         const textoRespuesta = await respuesta.text();
         return JSON.parse(textoRespuesta);
+        
       } catch (error) {
+        console.error("Error en la conexión con la API:", error);
         return { success: false, message: "Error de red al conectar con el servidor." };
       }
     }
@@ -129,29 +143,27 @@
         case 2:
           html = `
             <h2>🎥 Preséntate</h2>
-            <p>Ahora queremos conocerte mejor 😊. Mira este video y luego graba tu presentación.</p>
+            <p>Ahora queremos conocerte mejor 😊. Mira este video y luego graba tu video de presentación.</p>
             <div class="tiktok-player">
               <iframe src="https://drive.google.com/file/d/1uXKmdZYM8s5jZlf8MbpUgBQG18VlWffn/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
             </div>
             <div class="cam-box"><video id="video" autoplay playsinline></video></div>
-            
-            <div class="botones-verticales">
-              <button class="btn-chico" onclick="startCam('video')">📷 Activar cámara</button>
-              <button class="btn-chico" onclick="startRec(1)" id="btnGrabar">🎥 Grabar</button>
-              <button class="btn-chico" onclick="stopRec()" id="btnDetener" disabled>⏹ Detener</button>
-            </div>
-            
+            <button onclick="startCam('video')">📷 Activar cámara</button>
+            <button onclick="startRec(1)" id="btnGrabar">🎥 Grabar</button>
+            <button onclick="stopRec()" id="btnDetener" disabled>⏹ Detener</button>
             <div id="preview"></div>
-            <p style="font-size: 14px; margin-bottom: 5px;"><strong>Descarga tu video antes de subirlo.</strong></p>
-            <button class="btn-chico" onclick="descargarVideo()" style="margin-top:0;">⬇️ Descargar Video de Presentación</button>
+            <p><strong>Descarga tu video antes de subirlo.</strong></p>
+            <button onclick="descargarVideo()">⬇️ Descargar Video de Presentación</button>
             
             <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
               <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
               <input type="file" id="videoUpload1" accept="video/*" style="width: 100%; padding: 5px;">
               <p style="font-size: 13px; color: #a7f3d0; margin-bottom: 0;">Tamaño máximo: 30 MB</p>
             </div>
+
             <button onclick="guardarVideoLocal(1, 'videoUpload1')">Continuar</button>
-            <br><br><button onclick="prev()" class="atras">← Atrás</button>
+            <br><br>
+            <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
@@ -161,187 +173,195 @@
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1MZhtvEYAFAooVBbYT26nqbjwK8cqwSuT/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
             <input id="telefono" type="tel" placeholder="Tu Teléfono principal *" value="${datos.telefono}">
-            <input id="telefonoRef" type="tel" placeholder="Teléfono de familiar/referencia *" value="${datos.telefonoRef}">
-            <input id="redes" type="text" placeholder="Link de tu LinkedIn, Instagram o Facebook *" value="${datos.redes}">
-            <button onclick="saveData()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; box-sizing: border-box;">
+              <p style="margin-top:0; font-size:14px; color:#a7f3d0;"><strong>Teléfono de Referencia:</strong> Necesitamos el número de un familiar en caso de pérdida de celular o emergencia.</p>
+              <input id="telefonoRef" type="tel" placeholder="Teléfono de familiar/referencia *" value="${datos.telefonoRef}" style="width: 100%; margin: 10px 0 0 0; box-sizing: border-box;">
+            </div>
+            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; box-sizing: border-box;">
+              <p style="margin-top:0; font-size:14px; color:#a7f3d0;"><strong>Redes Sociales:</strong> Las usamos como canal alterno de comunicación y para hacer crecer nuestra comunidad de impacto social.</p>
+              <input id="redes" type="text" placeholder="Link de tu LinkedIn, Instagram o Facebook *" value="${datos.redes}" style="width: 100%; margin: 10px 0 0 0; box-sizing: border-box;">
+            </div>
+            <button onclick="saveData()">Continuar</button>
+            <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
         case 4:
-          let alertaArea = "";
-          if (datos.area === "Sistemas" || datos.area === "Marketing") {
-            alertaArea = `<p class="warning">📌 Nota: Esta área rara vez será presencial.</p>`;
-          }
-
           html = `
             <h2>🧑‍🎓 Perfil y Área</h2>
+            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1NfGkPEZ44f6RjHCg_TNbkEfFST-ubI1J/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <select id="tipoUsuario" onchange="actualizarTipo()">
               <option value="">Modalidad de ingreso...</option>
-              <option value="Voluntario" ${datos.tipoUsuario==='Voluntario'?'selected':''}>Voluntario</option>
               <option value="Estudiante" ${datos.tipoUsuario==='Estudiante'?'selected':''}>Estudiante</option>
               <option value="Egresado" ${datos.tipoUsuario==='Egresado'?'selected':''}>Egresado</option>
             </select>
-            
             <div id="subtipoDiv" style="display:${datos.tipoUsuario==='Estudiante'?'block':'none'}">
               <select id="subTipo">
+                <option value="Pasante" ${datos.subTipo==='Pasante'?'selected':''}>Pasante</option>
                 <option value="Practicante" ${datos.subTipo==='Practicante'?'selected':''}>Practicante</option>
                 <option value="Remunerado" ${datos.subTipo==='Remunerado'?'selected':''}>Remunerado</option>
               </select>
             </div>
-            
+            <div id="egresadoDiv" style="display:${datos.tipoUsuario==='Egresado'?'block':'none'}; color:#eab308; margin:10px;">
+              <strong>Modalidad remunerada</strong> – pago sujeto a negociación.
+            </div>
             <select id="area" onchange="actualizarTipo()" style="margin-top: 20px;">
               <option value="">Área a postular...</option>
-              ${["Proyectos", "Medio Ambiente", "Gerencia", "GTH", "Marketing", "Infraestructura", "Relaciones Comunitarias", "Taller", "Sistemas", "Comercial", "Logística y Procesos"]
-                .map(a => `<option value="${a}" ${datos.area===a?'selected':''}>${a}</option>`).join('')}
+              <option value="Sistemas" ${datos.area==='Sistemas'?'selected':''}>Sistemas y Desarrollo</option>
+              <option value="Medio Ambiente y Ecología" ${datos.area==='Medio Ambiente y Ecología'?'selected':''}>Medio Ambiente y Ecología</option>
+              <option value="Marketing y Publicidad" ${datos.area==='Marketing y Publicidad'?'selected':''}>Marketing y Publicidad</option>
+              <option value="Otra" ${datos.area==='Otra'?'selected':''}>Otra...</option>
             </select>
-            ${alertaArea}
-            <button onclick="guardarTipo()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <div id="areaOtraDiv" style="display:${datos.area==='Otra'?'block':'none'}">
+              <input id="areaOtra" type="text" placeholder="Escribe el área a la que postulas *" value="${datos.areaOtra}">
+            </div>
+            <button onclick="guardarTipo()">Continuar</button>
+            <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
           
         case 5:
           html = `
             <h2>⏰ Disponibilidad de Horario</h2>
+            <p>Selecciona tus días y tu jornada (formato 24h).</p>
+            
             <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
               <p style="margin-top:0; color:#22c55e; font-weight:bold;">1. Días disponibles:</p>
               <div style="display:flex; flex-wrap:wrap; gap:10px;">
                 ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
-                  <label style="flex: 1 1 30%;"><input type="checkbox" class="cb-dia" value="${dia}" ${datos.dias.includes(dia)?'checked':''}> ${dia}</label>
+                  <label style="flex: 1 1 30%; cursor:pointer;"><input type="checkbox" class="cb-dia" value="${dia}" ${datos.dias.includes(dia)?'checked':''}> ${dia}</label>
                 `).join('')}
               </div>
             </div>
-            
             <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
               <p style="margin-top:0; color:#22c55e; font-weight:bold;">2. Turno Principal:</p>
               <div style="display: flex; gap: 10px;">
                 <div style="flex: 1;">
                   <label style="font-size: 13px; color: #a7f3d0;">Hora Inicio</label>
-                  <input type="time" id="horaInicio1" style="width: 100%; margin: 5px 0 0 0;" value="${datos.horaInicio1 || ''}">
+                  <input type="time" id="horaInicio1" style="width: 100%; margin: 5px 0 0 0; box-sizing: border-box;" value="${datos.horaInicio1 || ''}">
                 </div>
                 <div style="flex: 1;">
                   <label style="font-size: 13px; color: #a7f3d0;">Hora Fin</label>
-                  <input type="time" id="horaFin1" style="width: 100%; margin: 5px 0 0 0;" value="${datos.horaFin1 || ''}">
+                  <input type="time" id="horaFin1" style="width: 100%; margin: 5px 0 0 0; box-sizing: border-box;" value="${datos.horaFin1 || ''}">
                 </div>
               </div>
             </div>
-
             <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
               <label style="display:flex; align-items:center; cursor:pointer; color:#a7f3d0; font-weight:bold;">
-                <input type="checkbox" id="checkTurno2" onchange="toggleTurno2()" ${datos.horaInicio2 ? 'checked' : ''} style="width:auto; margin:0 10px 0 0;">
+                <input type="checkbox" id="checkTurno2" onchange="toggleTurno2()" ${datos.horaInicio2 ? 'checked' : ''} style="width:auto; margin:0 10px 0 0; box-sizing: border-box;">
                 + Agregar horario partido (Turno 2)
               </label>
               <div id="turno2Div" style="display:${datos.horaInicio2 ? 'flex' : 'none'}; gap: 10px; margin-top: 15px;">
                 <div style="flex: 1;">
                   <label style="font-size: 13px; color: #a7f3d0;">Regreso - Inicio</label>
-                  <input type="time" id="horaInicio2" style="width: 100%; margin: 5px 0 0 0;" value="${datos.horaInicio2 || ''}">
+                  <input type="time" id="horaInicio2" style="width: 100%; margin: 5px 0 0 0; box-sizing: border-box;" value="${datos.horaInicio2 || ''}">
                 </div>
                 <div style="flex: 1;">
                   <label style="font-size: 13px; color: #a7f3d0;">Salida Final</label>
-                  <input type="time" id="horaFin2" style="width: 100%; margin: 5px 0 0 0;" value="${datos.horaFin2 || ''}">
+                  <input type="time" id="horaFin2" style="width: 100%; margin: 5px 0 0 0; box-sizing: border-box;" value="${datos.horaFin2 || ''}">
                 </div>
               </div>
             </div>
-
-            <button onclick="guardarHorario()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <button onclick="guardarHorario()">Continuar</button>
+            <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
         case 6:
-          const esPresencialFijo = areasPresencial.includes(datos.area);
-          
-          let selectModalidadHtml = "";
-          if (esPresencialFijo) {
-            selectModalidadHtml = `
-              <div style="background:#047857; padding:15px; border-radius:8px; margin-bottom:15px;">
-                ⚠️ Debido a que postulas a <strong>${datos.area}</strong>, el trabajo es estrictamente Presencial.
-              </div>
-            `;
-            datos.modalidad = "Presencial";
-          } else {
-            selectModalidadHtml = `
-              <select id="modalidad" onchange="actualizarModalidad()">
-                <option value="">Selecciona modalidad...</option>
-                <option value="Presencial" ${datos.modalidad==='Presencial'?'selected':''}>Presencial</option>
-                <option value="Remoto" ${datos.modalidad==='Remoto'?'selected':''}>Remoto</option>
-                <option value="Híbrido" ${datos.modalidad==='Híbrido'?'selected':''}>Híbrido</option>
-              </select>
-            `;
-          }
-
           html = `
             <h2>🏢 Modalidad de Trabajo</h2>
-            ${selectModalidadHtml}
-            
-            <div id="ubicacionDiv" style="display:${datos.modalidad==='Presencial' || esPresencialFijo ? 'block' : 'none'}">
+            <select id="modalidad" onchange="actualizarModalidad()">
+              <option value="">Selecciona...</option>
+              <option value="Presencial" ${datos.modalidad==='Presencial'?'selected':''}>Presencial</option>
+              <option value="Remoto" ${datos.modalidad==='Remoto'?'selected':''}>Remoto</option>
+              <option value="Híbrido" ${datos.modalidad==='Híbrido'?'selected':''}>Híbrido</option>
+            </select>
+            <div id="ubicacionDiv" style="display:${datos.modalidad==='Presencial'?'block':'none'}">
               <select id="ubicacion">
-                <option value="">Elige tu sede...</option>
-                <option value="Lima - Casaverde - Pachacamac" ${datos.ubicacion==='Lima - Casaverde - Pachacamac'?'selected':''}>Lima - Casaverde - Pachacamac</option>
+                <option value="Miraflores" ${datos.ubicacion==='Miraflores'?'selected':''}>Miraflores</option>
+                <option value="Campo" ${datos.ubicacion==='Campo'?'selected':''}>Campo</option>
               </select>
             </div>
-            
-            <div id="hibridoDiv" style="display:${datos.modalidad==='Híbrido' && !esPresencialFijo ? 'block' : 'none'}">
-              <p>Distribuye tus <strong>${datos.dias.length} días</strong> disponibles:</p>
+            <div id="hibridoDiv" style="display:${datos.modalidad==='Híbrido'?'block':'none'}">
+              <p style="font-size:14px; margin-bottom:15px; color:#a7f3d0;">Distribuye los <strong>${datos.dias.length} días</strong> que marcaste en tu disponibilidad anterior (${datos.dias.join(', ')}).</p>
               <div style="display: flex; justify-content: space-between; max-width: 400px; margin: 0 auto; text-align: left; background: #047857; padding: 15px; border-radius: 8px;">
                 <div style="width: 45%;">
-                  <p style="color:#22c55e; font-weight:bold;">Presencial</p>
-                  ${datos.dias.map(d => `<label style="display:block;"><input type="checkbox" class="cb-presencial" value="${d}" ${datos.diasPresencial.includes(d)?'checked':''}> ${d}</label>`).join('')}
+                  <p style="font-size:15px; margin-top:0; margin-bottom:10px; font-weight:bold; color:#22c55e; border-bottom: 1px solid #064e3b; padding-bottom: 5px;">Presencial</p>
+                  ${datos.dias.map(d => `<label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="checkbox" class="cb-presencial" value="${d}" ${datos.diasPresencial.includes(d)?'checked':''}> ${d}</label>`).join('')}
                 </div>
                 <div style="width: 45%;">
-                  <p style="color:#a7f3d0; font-weight:bold;">Remoto</p>
-                  ${datos.dias.map(d => `<label style="display:block;"><input type="checkbox" class="cb-remoto" value="${d}" ${datos.diasRemoto.includes(d)?'checked':''}> ${d}</label>`).join('')}
+                  <p style="font-size:15px; margin-top:0; margin-bottom:10px; font-weight:bold; color:#a7f3d0; border-bottom: 1px solid #064e3b; padding-bottom: 5px;">Remoto</p>
+                  ${datos.dias.map(d => `<label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="checkbox" class="cb-remoto" value="${d}" ${datos.diasRemoto.includes(d)?'checked':''}> ${d}</label>`).join('')}
                 </div>
               </div>
             </div>
-            <button onclick="guardarModalidad()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <br>
+            <button onclick="guardarModalidad()">Continuar</button>
+            <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
-        case 7:
-          html = `<h2>📱 Video Informativo</h2>
+      case 7:
+          html = `
+            <h2>📱 Video Informativo</h2>
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1OlcWP62G7P6rPbgCmtNBixNzK9_puDWq/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
-            <button onclick="next()">✅ He visto el video</button><br><br><button onclick="prev()" class="atras">← Atrás</button>`;
-          break;  
+            <button onclick="next()">✅ He visto el video</button>
+            <button onclick="prev()" class="atras">← Atrás</button>
+          `;
+          break;    
 
         case 8:
-          html = `<h2>✍️ Solicitud de Cambios</h2>
+          html = `
+            <h2>✍️ Solicitud de Cambios</h2>
             <textarea id="cambios" rows="5" placeholder="Ejemplo: Prefiero entrar más temprano los miércoles...">${datos.cambios || ''}</textarea>
-            <button onclick="guardarCambios()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>`;
+            <button onclick="guardarCambios()">Continuar</button>
+            <button onclick="prev()" class="atras">← Atrás</button>
+          `;
           break;
 
         case 9:
-          html = `<h2>📈 Productividad</h2>
-            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1senVZJhKpglTAGZe8_W7BQTVSUWzkCWC/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
-            <button onclick="next()">✅ He visto el video</button><br><br><button onclick="prev()" class="atras">← Atrás</button>`;
+          html = `
+            <h2>📈 Productividad</h2>
+            <p>Mira este consejo rápido de productividad antes de continuar:.</p>
+            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1senVZJhKpglTAGZe8_W7BQTVSUWzkCWC/preview" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>
+            <button onclick="next()">✅ He visto el video</button>
+            <br><br>
+            <button onclick="prev()" class="atras">← Atrás</button>
+          `;
           break;
 
         case 10:
           html = `
-            <h2>🚪 Experiencia Laboral</h2>
-            <select id="expPrevia" onchange="actualizarExp()">
-              <option value="">¿Tienes experiencia laboral previa?</option>
-              <option value="Si" ${datos.experienciaPrevia==='Si'?'selected':''}>Sí</option>
-              <option value="No" ${datos.experienciaPrevia==='No'?'selected':''}>No</option>
-            </select>
-
-            <div id="retiroDiv" style="display:${datos.experienciaPrevia==='Si'?'block':'none'}">
-              <p style="margin-top:15px;">Cuéntanos brevemente el motivo de retiro de tu último empleo:</p>
-              <textarea id="textoRetiro" rows="4">${datos.textoRetiro || ''}</textarea>
-            </div>
+            <h2>🚪 Retiro de tu último empleo</h2>
+            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1E9aXiw2Fk-x3V5MKKNBk3uu6e3Q5BwTq/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+            <div class="cam-box"><video id="video3" autoplay playsinline></video></div>
+            <button onclick="startCam('video3')">📷 Activar cámara</button>
+            <button id="btnGrabar" onclick="startRec(3)">🎥 Grabar</button>
+            <button id="btnDetener" onclick="stopRec()" disabled>⏹ Detener</button>
+            <div id="preview"></div>
+            <p><strong>Descarga tu video antes de subirlo.</strong></p>
+            <button onclick="descargarVideo()">⬇️ Descargar Video de Retiro</button>
             
-            <button onclick="guardarRetiro()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 20px auto; width: 85%; text-align: left;">
+              <p style="margin-top: 0;"><strong>📤 Sube tu video aquí para continuar:</strong></p>
+              <input type="file" id="videoUpload3" accept="video/*" style="width: 100%; padding: 5px;">
+              <p style="font-size: 13px; color: #a7f3d0; margin-bottom: 0;">Tamaño máximo: 30 MB</p>
+            </div>
+
+            <button onclick="guardarVideoLocal(3, 'videoUpload3')">Continuar</button>
+            <br><br>
+            <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
         case 11:
-          html = `
-            <h2>📄 Sube tu CV</h2>
-            <p>Por favor, sube tu Currículum Vitae (Formato PDF o Word).</p>
-            <div style="background: #047857; padding: 20px; border-radius: 8px; margin: 15px auto; width: 85%;">
-              <input type="file" id="cvUpload" accept=".pdf,.doc,.docx" style="width: 100%; color: white;">
+          html = `<h2>✍️ Firma Digital</h2>
+            <p>Por favor, sube una imagen de su firma.</p>
+            <div class="upload-box">
+              <input type="file" id="firmaUpload" accept="image/*" style="width: 100%;">
             </div>
-            <button onclick="guardarCVLocal()">Continuar</button>
-            <br><br><button onclick="prev()" class="atras">← Atrás</button>
-          `;
+            <button onclick="guardarFirmaLocal()">Continuar</button>
+            <br><br><button onclick="prev()" class="atras">← Atrás</button>`;
           break;
 
         case 12:
@@ -349,41 +369,92 @@
             <h2>✅ Resumen Final de tu Registro</h2>
             <div class="resumen">
               <p><strong>Nombre:</strong> ${datos.nombre}</p>
-              <p><strong>Área:</strong> ${datos.area}</p>
-              <p><strong>Modalidad:</strong> ${datos.modalidad} ${datos.ubicacion ? `(${datos.ubicacion})` : ''}</p>
-              <p><strong>Horario:</strong> ${datos.horaInicio2 ? datos.horaInicio1 + ' a ' + datos.horaFin1 + ' y ' + datos.horaInicio2 + ' a ' + datos.horaFin2 : datos.horaInicio1 + ' a ' + datos.horaFin1}</p>
+              <p><strong>Tipo:</strong> ${datos.tipoUsuario} ${datos.subTipo ? `(${datos.subTipo})` : ''}</p>
+              <p><strong>Área:</strong> ${datos.area === 'Otra' ? datos.areaOtra : (datos.area || 'No especificada')}</p>
+              <p><strong>Días:</strong> ${datos.dias.join(', ') || 'No especificado'}</p>
+              <p><strong>Horario:</strong> ${datos.horaInicio2 ? datos.horaInicio + ' y ' + datos.horaFin : datos.horaInicio + ' - ' + datos.horaFin}</p>
             </div>
             <button onclick="finalizarRegistro(event)" style="background:#22c55e; padding:14px 32px; font-size:18px;">Finalizar Registro</button>
-            <br><br><button onclick="prev()" class="atras">← Atrás</button>
+            <br><br>
+            <button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
+
+        default:
+          html = `<h2>🎉 ¡Registro Completado!</h2><p>Gracias por registrarte en Sanilab.</p>`;
       }
 
       document.getElementById("app").innerHTML = html;
+
+      if (paso === 11) {
+        setTimeout(() => {
+          const canvas = document.getElementById("canvasFirma");
+          if (canvas) signaturePad = new SignaturePad(canvas);
+        }, 100);
+      }
     }
 
-    function apagarCamara() { if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; } }
+    function apagarCamara() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+    }
     async function startCam(id) {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+        const constraints = {
+          video: { 
+            facingMode: "user",
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          }, 
+          audio: true 
+        };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
         document.getElementById(id).srcObject = stream;
-      } catch(e) { alert("Activa permisos de cámara y micrófono."); }
+      } catch(e) {
+        alert("Por favor activa los permisos de cámara y micrófono.");
+      }
     }
-    
     function startRec(tipo) {
       if (!stream) return alert("Primero activa la cámara");
+      
       document.getElementById("btnGrabar").disabled = true;
       document.getElementById("btnDetener").disabled = false;
+      
       chunks = [];
-      try { mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8,opus' }); } 
-      catch (e) { mediaRecorder = new MediaRecorder(stream); }
+      
+      const opciones = { 
+        mimeType: 'video/webm;codecs=vp8,opus',
+        videoBitsPerSecond: 1000000 
+      };
+      
+      try {
+        mediaRecorder = new MediaRecorder(stream, opciones);
+      } catch (e) {
+        mediaRecorder = new MediaRecorder(stream);
+      }
 
       mediaRecorder.ondataavailable = e => chunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        const url = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' }));
-        document.getElementById("preview").innerHTML = `<video src="${url}" controls width="100%"></video><p style="color:#22c55e;">✅ Grabación finalizada. Descárgalo y súbelo abajo.</p>`;
+
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        
+        document.getElementById("preview").innerHTML = `
+          <video src="${url}" controls width="100%"></video>
+          <p style="color:#22c55e;">✅ Grabación finalizada. Haz clic en Descargar y súbelo abajo.</p>
+        `;
       };
+
       mediaRecorder.start();
+
+      setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+          stopRec();
+          alert("⏱️ Se alcanzó el tiempo máximo de 2 minutos.");
+        }
+      }, 120000);
     }
 
     function stopRec() {
@@ -394,37 +465,53 @@
     }
 
     function descargarVideo() {
-      if (chunks.length === 0) return alert("Primero graba un video.");
-      const url = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' }));
+      if (chunks.length === 0) return alert("Primero debes grabar un video.");
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.style.display = 'none'; a.href = url; a.download = `Video_${datos.nombre || 'Sanilab'}.webm`;
-      document.body.appendChild(a); a.click();
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `Video_${datos.nombre || 'Sanilab'}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
     }
-
-    function guardarNombre() { datos.nombre = document.getElementById("nombre").value.trim(); if(!datos.nombre) return alert("Ingresa tu nombre"); next(); }
-    
-    function saveData() { 
-      datos.email = document.getElementById("email").value.trim(); datos.telefono = document.getElementById("telefono").value.trim(); 
-      datos.telefonoRef = document.getElementById("telefonoRef").value.trim(); datos.redes = document.getElementById("redes").value.trim(); 
-      if (!datos.email || !datos.telefono || !datos.telefonoRef) return alert("Completa los datos obligatorios.");
-      if (datos.telefono === datos.telefonoRef) return alert("El teléfono de referencia debe ser distinto.");
+    function guardarNombre() { 
+      datos.nombre = document.getElementById("nombre").value.trim(); 
+      if(!datos.nombre) 
+        return alert("Ingresa tu nombre"); 
       next(); 
     }
-    
-    function actualizarTipo() {
-      const ts = document.getElementById("tipoUsuario"); const as = document.getElementById("area");
-      if(ts) datos.tipoUsuario = ts.value; if(as) datos.area = as.value;
-      render();
+    function saveData() {
+      datos.email = document.getElementById("email").value.trim(); 
+      datos.telefono = document.getElementById("telefono").value.trim(); 
+      datos.telefonoRef = document.getElementById("telefonoRef").value.trim(); 
+      datos.redes = document.getElementById("redes").value.trim(); 
+      if (!datos.email || !datos.telefono || !datos.telefonoRef || !datos.redes) {
+        return alert("Por favor, completa todos los datos solicitados."); 
+      }
+      if (datos.telefono === datos.telefonoRef) {
+        return alert("❌ El teléfono de referencia no puede ser igual a tu teléfono principal. Por favor ingresa el número de un familiar o contacto distinto.");
+      }
+      next(); 
     }
-    
-    function guardarTipo() {
-      datos.tipoUsuario = document.getElementById("tipoUsuario").value;
-      datos.subTipo = datos.tipoUsuario === "Estudiante" ? document.getElementById("subTipo").value : "";
+    function actualizarTipo() { 
+      const tipoSelect = document.getElementById("tipoUsuario");
+      const areaSelect = document.getElementById("area");
+      if (tipoSelect) datos.tipoUsuario = tipoSelect.value; 
+      if (areaSelect) datos.area = areaSelect.value;
+      render(); 
+    }
+    function guardarTipo() { 
+      datos.tipoUsuario = document.getElementById("tipoUsuario").value; 
+      datos.subTipo = datos.tipoUsuario === "Estudiante" ? document.getElementById("subTipo").value : ""; 
       datos.area = document.getElementById("area").value;
-      if (!datos.tipoUsuario || !datos.area) return alert("Selecciona modalidad de ingreso y área.");
-      next();
+      datos.areaOtra = datos.area === "Otra" ? document.getElementById("areaOtra").value.trim() : "";
+      if (!datos.tipoUsuario) return alert("Por favor, selecciona tu tipo de usuario."); 
+      if (!datos.area) return alert("Por favor, selecciona el área a postular.");
+      if (datos.area === "Otra" && !datos.areaOtra) return alert("Por favor, escribe el nombre del área a la que postulas.");
+      next(); 
     }
-
     function toggleTurno2() {
       const isChecked = document.getElementById("checkTurno2").checked;
       document.getElementById("turno2Div").style.display = isChecked ? "flex" : "none";
@@ -433,136 +520,157 @@
         document.getElementById("horaFin2").value = "";
       }
     }
-
-    function guardarHorario() {
-      datos.dias = Array.from(document.querySelectorAll('.cb-dia:checked')).map(cb => cb.value); 
-      if (datos.dias.length === 0) return alert("Selecciona al menos un día.");
-      datos.horaInicio1 = document.getElementById("horaInicio1").value; 
-      datos.horaFin1 = document.getElementById("horaFin1").value;
-      
-      if (!datos.horaInicio1 || !datos.horaFin1) return alert("Ingresa las horas del Turno Principal.");
-      
+    function guardarHorario() { 
+      const diasSeleccionados = Array.from(document.querySelectorAll('.cb-dia:checked')).map(cb => cb.value); 
+      if (diasSeleccionados.length === 0) return alert("Debes seleccionar al menos un día disponible.");
+      const hI1 = document.getElementById("horaInicio1").value;
+      const hF1 = document.getElementById("horaFin1").value;
+      if (!hI1 || !hF1) return alert("Debes ingresar las horas del Turno Principal.");
       const checkT2 = document.getElementById("checkTurno2").checked;
       const hI2 = document.getElementById("horaInicio2") ? document.getElementById("horaInicio2").value : "";
       const hF2 = document.getElementById("horaFin2") ? document.getElementById("horaFin2").value : "";
-
       if (checkT2 && (!hI2 || !hF2)) {
-        return alert("Has activado el horario partido. Debes ingresar las horas del segundo turno o desmarcar la casilla.");
+        return alert("Has activado el horario partido. Debes ingresar las horas de tu regreso o desmarcar la casilla.");
       }
-
+      datos.dias = diasSeleccionados;
+      datos.horaInicio1 = hI1;
+      datos.horaFin1 = hF1;
       datos.horaInicio2 = checkT2 ? hI2 : "";
       datos.horaFin2 = checkT2 ? hF2 : "";
-      
-      datos.horaInicio = datos.horaInicio1; 
-      datos.horaFin = datos.horaFin1;
-      
-      next();
+      if (checkT2) {
+        datos.horaInicio = hI1 + " - " + hF1;
+        datos.horaFin = hI2 + " - " + hF2;
+      } else {
+        datos.horaInicio = hI1;
+        datos.horaFin = hF1;
+      }
+      next(); 
     }
-
-    function actualizarModalidad() { if(document.getElementById("modalidad")) datos.modalidad = document.getElementById("modalidad").value; render(); }
-    
+    function actualizarModalidad() {
+      datos.modalidad = document.getElementById("modalidad").value;
+      render();
+    }
     function guardarModalidad() {
-      if(!document.getElementById("modalidad")) datos.modalidad = "Presencial";
-      else datos.modalidad = document.getElementById("modalidad").value;
-      
-      if (!datos.modalidad) return alert("Selecciona una modalidad.");
-      
+      datos.modalidad = document.getElementById("modalidad").value;
+      if (!datos.modalidad) return alert("Por favor, selecciona una modalidad.");
       if (datos.modalidad === "Presencial") {
         datos.ubicacion = document.getElementById("ubicacion").value;
-        if(!datos.ubicacion) return alert("Selecciona una sede obligatoriamente.");
-      } else if (datos.modalidad === "Híbrido") {
-        const pre = Array.from(document.querySelectorAll('.cb-presencial:checked')).map(cb => cb.value);
-        const rem = Array.from(document.querySelectorAll('.cb-remoto:checked')).map(cb => cb.value);
-        
-        // Validación estricta para el Híbrido
-        if (pre.length < 1) return alert("Debes seleccionar al menos 1 día en Presencial.");
-        if (rem.length < 1) return alert("Debes seleccionar al menos 1 día en Remoto.");
-        
-        if (pre.length + rem.length !== datos.dias.length) {
-          return alert(`Debes distribuir exactamente los ${datos.dias.length} días que seleccionaste en el paso anterior. Has asignado ${pre.length + rem.length}.`);
+        datos.diasPresencial = [];
+        datos.diasRemoto = [];
+      } 
+      else if (datos.modalidad === "Híbrido") {
+        const presencial = Array.from(document.querySelectorAll('.cb-presencial:checked')).map(cb => cb.value);
+        const remoto = Array.from(document.querySelectorAll('.cb-remoto:checked')).map(cb => cb.value);
+        const totalDias = presencial.length + remoto.length;
+        if (presencial.length < 1) return alert("Debes seleccionar al menos 1 día en Presencial.");
+        if (remoto.length < 1) return alert("Debes seleccionar al menos 1 día en Remoto.");
+        if (totalDias !== datos.dias.length) {
+          return alert("Debes distribuir exactamente los " + datos.dias.length + " días que seleccionaste en el paso anterior. Actualmente has asignado " + totalDias + ".");
         }
-        
-        const duplicados = pre.filter(dia => rem.includes(dia));
+        const duplicados = presencial.filter(dia => remoto.includes(dia));
         if (duplicados.length > 0) {
-          return alert(`Error: Has marcado "${duplicados.join(", ")}" en ambas columnas. Elige solo un formato por día.`);
+          return alert("Error: Has marcado " + duplicados.join(", ") + " en ambas columnas. Elige solo un formato por día.");
         }
-
-        datos.diasPresencial = pre; datos.diasRemoto = rem;
+        datos.diasPresencial = presencial;
+        datos.diasRemoto = remoto;
+        datos.ubicacion = ""; 
+      } 
+      else {
+        datos.ubicacion = "";
+        datos.diasPresencial = [];
+        datos.diasRemoto = [];
       }
       next();
     }
-    
-    function guardarCambios() { datos.cambios = document.getElementById("cambios").value.trim(); next(); }
-
-    function actualizarExp() { datos.experienciaPrevia = document.getElementById("expPrevia").value; render(); }
-    
-    function guardarRetiro() {
-      if(!datos.experienciaPrevia) return alert("Selecciona una opción.");
-      if(datos.experienciaPrevia === "Si") {
-        datos.textoRetiro = document.getElementById("textoRetiro").value.trim();
-        if(!datos.textoRetiro) return alert("Por favor escribe el motivo.");
-      } else { datos.textoRetiro = "Sin experiencia previa"; }
-      next();
+    function guardarCambios() { 
+      datos.cambios = document.getElementById("cambios").value.trim(); 
+      next(); 
     }
-
+    function limpiarFirma() { 
+      if (signaturePad) signaturePad.clear(); 
+    }
     function guardarVideoLocal(tipo, inputId) {
       const input = document.getElementById(inputId);
-      if (!input || input.files.length === 0) return alert("Sube el video para continuar.");
-      let reader = new FileReader();
-      reader.onloadend = function () {
-        datos.base64Video1 = reader.result.split(",");
-        next();
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
-
-    function guardarCVLocal() {
-      const input = document.getElementById('cvUpload');
-      if (!input || input.files.length === 0) return alert("Selecciona tu CV (PDF/Word).");
-      
+      if (!input || input.files.length === 0) return alert("Selecciona el archivo de video para continuar.");
       const archivo = input.files[0];
-      datos.cvMimeType = archivo.type;
-      datos.cvExt = archivo.name.split('.').pop();
-      
+      const limiteMB = 30;
+      const limiteBytes = limiteMB * 1024 * 1024;
+      if (archivo.size > limiteBytes) {
+        return alert("❌ El video pesa más del límite permitido (" + limiteMB + " MB). Por favor, graba uno más corto o comprímelo.");
+      }
       let reader = new FileReader();
       reader.onloadend = function () {
-        datos.base64CV = reader.result.split(",");
+        const base64 = reader.result.split(",")[1];
+        if (tipo === 1) datos.base64Video1 = base64;
+        if (tipo === 3) datos.base64Video3 = base64;
         next();
       };
       reader.readAsDataURL(archivo);
     }
-
+    function guardarFirmaLocal() {
+      const input = document.getElementById('firmaUpload');
+      if (!input || input.files.length === 0) return alert("Selecciona la imagen de tu firma para continuar.");
+      let reader = new FileReader();
+      reader.onloadend = function () {
+        datos.base64Firma = reader.result.split(",")[1];
+        next();
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
     async function finalizarRegistro(e) {
-      e.target.disabled = true; e.target.innerText = "⏳ Guardando...";
       const appDiv = document.getElementById("app");
-      appDiv.innerHTML = `<h2>⏳ Procesando registro...</h2><p id="estadoProceso" style="color:#22c55e;">Iniciando...</p>`;
+      appDiv.innerHTML = `
+        <h2>⏳ Procesando tu registro...</h2>
+        <p>Por favor no cierres esta pestaña. Esto puede tardar unos minutos.</p>
+        <p id="estadoProceso" style="color: #22c55e; font-weight: bold;">Iniciando...</p>
+      `;
       const estado = document.getElementById('estadoProceso');
-      
       try {
         if (datos.base64Video1) {
-          estado.innerText = "Subiendo video de presentación (1/3)...";
+          estado.innerText = "Subiendo video de presentación (1/4)...";
           const resV1 = await enviarApi({ accion: "guardarVideo", base64: datos.base64Video1, tipo: 1, nombre: datos.nombre });
-          if (!resV1.success) throw new Error("Falló el video.");
+          if (!resV1.success) throw new Error("Falló el video de presentación.");
           datos.videoPresentacion = resV1.url;
         }
-        if (datos.base64CV) {
-          estado.innerText = "Subiendo CV (2/3)...";
-          const resCV = await enviarApi({ accion: "subirCV", base64: datos.base64CV, nombre: datos.nombre, mimeType: datos.cvMimeType, extension: datos.cvExt });
-          if (!resCV.success) throw new Error("Falló la subida del CV.");
-          datos.cvUrl = resCV.url;
+        if (datos.base64Video3) {
+          estado.innerText = "Subiendo video de retiro (2/4)...";
+          const resV3 = await enviarApi({ accion: "guardarVideo", base64: datos.base64Video3, tipo: 3, nombre: datos.nombre });
+          if (!resV3.success) throw new Error("Falló el video de retiro.");
+          datos.videoRetiro = resV3.url;
         }
-        estado.innerText = "Guardando datos (3/3)...";
+        if (datos.base64Firma) {
+          estado.innerText = "Subiendo firma digital (3/4)...";
+          const resFirma = await enviarApi({ accion: "subirFirma", base64: datos.base64Firma, nombre: datos.nombre });
+          if (!resFirma.success) throw new Error("Falló la firma digital.");
+          datos.firmaUrl = resFirma.url;
+        }
+        estado.innerText = "Guardando registro final (4/4)...";
         const resFinal = await enviarApi({ accion: "guardarRegistro", datos: datos });
         
-        if (resFinal.success) { appDiv.innerHTML = `<h2>🎉 ¡Registro Completado!</h2><p>Nos pondremos en contacto pronto.</p>`; } 
-        else { throw new Error("Fallo al guardar."); }
+        if (resFinal.success) {
+          appDiv.innerHTML = `<h2>🎉 ¡Registro Completado!</h2><p>${resFinal.message}</p><p>Nos pondremos en contacto con usted en breve`;
+        } else {
+          throw new Error("No se pudo guardar en la base de datos.");
+        }
+
       } catch (error) {
-        appDiv.innerHTML = `<h2>❌ Ocurrió un error</h2><p>${error.message}</p><button onclick="render()">Reintentar</button>`;
+        appDiv.innerHTML = `
+          <h2>❌ Ocurrió un error</h2>
+          <p>${error.message}</p>
+          <p>Por favor, intenta nuevamente.</p>
+          <button onclick="render()">Reintentar</button>
+        `;
       }
     }
-
-    function next() { apagarCamara(); paso++; render(); }
-    function prev() { apagarCamara(); if (paso > 1) { paso--; render(); } }
+    function next() { 
+      apagarCamara(); paso++; render(); 
+    }
+    function prev() { 
+      apagarCamara(); 
+      if (paso > 1) { 
+        paso--; render(); 
+      } 
+    }
     render();
   </script>
 </body>
