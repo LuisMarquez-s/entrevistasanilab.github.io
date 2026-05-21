@@ -48,6 +48,7 @@
     button:disabled { background: #047857; cursor: not-allowed; }
     button.atras { background: #047857; }
     
+    /* Nueva clase para hacer los botones de la cámara más chicos y estéticos */
     .btn-chico { 
       display: block; 
       width: 60%; 
@@ -70,7 +71,7 @@
       text-align: left; background: #047857; padding: 18px; 
       border-radius: 10px; margin: 20px auto; max-width: 550px; line-height: 1.6; 
     }
-    .warning { color: #facc15; font-weight: bold; margin-top: 10px; font-size: 14px; text-align: left; padding: 5px 10px; }
+    .warning { color: #facc15; font-weight: bold; margin-top: 10px; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -83,12 +84,13 @@
     let datos = {
       nombre: "", email: "", telefono: "", telefonoRef: "", redes: "",
       tipoUsuario: "", subTipo: "", area: "",
-      dias: [], horaInicio: "", horaFin: "", modalidad: "", ubicacion: "",
-      horariosPorDia: {},
+      horaInicio: "", horaFin: "", modalidad: "", ubicacion: "",
+      horaInicio1: "", horaFin1: "", horaInicio2: "", horaFin2: "",
       diasPresencial: [], diasRemoto: [], cambios: "",
       videoPresentacion: "", cvUrl: "",
       base64Video1: "", base64CV: "", cvMimeType: "", cvExt: "",
       experienciaPrevia: "", textoRetiro: "",
+      horariosPorDia: {}, dias: [],
       aceptaCompromiso: false
     };
 
@@ -158,7 +160,6 @@
         case 3:
           html = `
             <h2>🧾 Tus Datos de Contacto</h2>
-            <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1MZhtvEYAFAooVBbYT26nqbjwK8cqwSuT/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
             <input id="telefono" type="tel" placeholder="Tu Teléfono principal *" value="${datos.telefono}">
             <input id="telefonoRef" type="tel" placeholder="Teléfono de familiar/referencia *" value="${datos.telefonoRef}">
@@ -202,8 +203,8 @@
           `;
           setTimeout(actualizarInfoPerfil, 50);
           break;
-          
-        case 5:
+
+          case 5:
           html = `
             <h2>⏰ Disponibilidad de Horario</h2>
             <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 20px;">
@@ -232,7 +233,7 @@
             <button onclick="guardarHorariosDinamicos()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
-
+          
         case 6:
           const esPresencialFijo = areasPresencial.includes(datos.area);
           let selectModalidadHtml = "";
@@ -254,7 +255,7 @@
                 <option value="Híbrido" ${datos.modalidad==='Híbrido'?'selected':''}>Híbrido</option>
               </select>
             `;
-            if (datos.modalidad === "Presencial") datos.modalidad = "";
+            if (datos.modalidad === "Presencial") datos.modalidad = ""; // Limpia si venía marcado de antes
           }
 
           if (datos.modalidad === "Híbrido" && !esPresencialFijo) {
@@ -348,7 +349,6 @@
             <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 20px;">
                 En Sanilab valoramos profundamente la responsabilidad. Por favor, lee y acepta nuestras normativas.
             </p>
-            
             <div style="background: #064e3b; padding: 20px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; font-size: 14px; line-height: 1.6;">
                 <ul style="padding-left: 20px; color: #fff; margin: 0;">
                     <li style="margin-bottom: 12px;">Comprendo que la modalidad y los horarios acordados son un compromiso serio con la organización.</li>
@@ -356,14 +356,12 @@
                     <li style="margin-bottom: 0;"><strong>Política de Retiro:</strong> En caso de necesitar retirarme del proyecto por motivos de fuerza mayor, me comprometo a avisar con un mínimo de <strong>15 días de anticipación</strong> para realizar una correcta entrega de cargo.</li>
                 </ul>
             </div>
-
             <div style="width: 85%; margin: 20px auto; text-align: left;">
                 <label style="display:flex; align-items:flex-start; cursor:pointer; color:#a7f3d0; font-weight:bold; font-size: 15px;">
                     <input type="checkbox" id="checkCompromiso" style="width:auto; margin: 4px 10px 0 0;" ${datos.aceptaCompromiso ? 'checked' : ''}>
                     Sí, he leído, entiendo y acepto las reglas y mi compromiso con Sanilab.
                 </label>
             </div>
-
             <button onclick="guardarCompromiso()">Continuar</button>
             <br><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -374,12 +372,12 @@
             <h2>✅ Resumen Final de tu Registro</h2>
             <div class="resumen">
               <p><strong>Nombre:</strong> ${datos.nombre}</p>
+              <p><strong>Modalidad:</strong> ${datos.tipoUsuario}</p>
               <p><strong>Área:</strong> ${datos.area}</p>
-              <p><strong>Modalidad:</strong> ${datos.modalidad} ${datos.ubicacion ? `(${datos.ubicacion})` : ''}</p>
               <p><strong>Días Elegidos:</strong> ${datos.dias.join(', ') || 'No especificado'}</p>
               <p><strong>Compromiso:</strong> Aceptado ✔️</p>
             </div>
-            <button onclick="finalizarRegistro(event)" style="background:#22c55e; padding:14px 32px; font-size:18px;">Finalizar Registro</button>
+            <button onclick="finalizarRegistro(event)" style="background:#22c55e; padding:14px 32px; font-size:18px;">Finalizar Entrevista</button>
             <br><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
@@ -451,31 +449,38 @@
       next();
     }
 
-    function toggleInputHorario(dia) {
-        const input = document.getElementById(`input-hora-${dia}`);
-        const checkbox = document.querySelector(`.cb-dia-dinamico[value="${dia}"]`);
-        input.style.display = checkbox.checked ? 'block' : 'none';
-        if (!checkbox.checked) input.value = '';
+    function toggleTurno2() {
+      const isChecked = document.getElementById("checkTurno2").checked;
+      document.getElementById("turno2Div").style.display = isChecked ? "flex" : "none";
+      if (!isChecked) {
+        document.getElementById("horaInicio2").value = "";
+        document.getElementById("horaFin2").value = "";
+      }
     }
 
-    function guardarHorariosDinamicos() {
-        const checks = document.querySelectorAll('.cb-dia-dinamico:checked');
-        if (checks.length === 0) return alert("Debes seleccionar al menos un día disponible.");
+    function guardarHorario() {
+      datos.dias = Array.from(document.querySelectorAll('.cb-dia:checked')).map(cb => cb.value); 
+      if (datos.dias.length === 0) return alert("Selecciona al menos un día.");
+      datos.horaInicio1 = document.getElementById("horaInicio1").value; 
+      datos.horaFin1 = document.getElementById("horaFin1").value;
+      
+      if (!datos.horaInicio1 || !datos.horaFin1) return alert("Ingresa las horas del Turno Principal.");
+      
+      const checkT2 = document.getElementById("checkTurno2").checked;
+      const hI2 = document.getElementById("horaInicio2") ? document.getElementById("horaInicio2").value : "";
+      const hF2 = document.getElementById("horaFin2") ? document.getElementById("horaFin2").value : "";
 
-        datos.horariosPorDia = {};
-        datos.dias = [];
-        let faltaHorario = false;
+      if (checkT2 && (!hI2 || !hF2)) {
+        return alert("Has activado el horario partido. Debes ingresar las horas del segundo turno o desmarcar la casilla.");
+      }
 
-        checks.forEach(cb => {
-            const dia = cb.value;
-            const hora = document.getElementById(`input-hora-${dia}`).value.trim();
-            if (!hora) faltaHorario = true;
-            datos.horariosPorDia[dia] = hora;
-            datos.dias.push(dia);
-        });
-
-        if (faltaHorario) return alert("Por favor, escribe el horario para todos los días seleccionados.");
-        next();
+      datos.horaInicio2 = checkT2 ? hI2 : "";
+      datos.horaFin2 = checkT2 ? hF2 : "";
+      
+      datos.horaInicio = datos.horaInicio1; 
+      datos.horaFin = datos.horaFin1;
+      
+      next();
     }
 
     function actualizarModalidad() { if(document.getElementById("modalidad")) datos.modalidad = document.getElementById("modalidad").value; render(); }
@@ -484,9 +489,7 @@
       const esPresencialFijo = areasPresencial.includes(datos.area);
       if(esPresencialFijo) datos.modalidad = "Presencial";
       else datos.modalidad = document.getElementById("modalidad").value;
-      
       if (!datos.modalidad) return alert("Selecciona una modalidad.");
-      
       if (datos.modalidad === "Presencial") {
         datos.ubicacion = document.getElementById("ubicacion").value;
         if(!datos.ubicacion) return alert("Selecciona una sede obligatoriamente.");
@@ -494,19 +497,14 @@
       } else if (datos.modalidad === "Híbrido") {
         const pre = Array.from(document.querySelectorAll('.cb-presencial:checked')).map(cb => cb.value);
         const rem = Array.from(document.querySelectorAll('.cb-remoto:checked')).map(cb => cb.value);
-        
         if (pre.length < 1) return alert("Debes seleccionar al menos 1 día en Presencial.");
         if (rem.length < 1) return alert("Debes seleccionar al menos 1 día en Remoto.");
-        
         if (pre.length > 2) {
           return alert("❌ Solo se puede elegir un máximo de 2 días presenciales para la modalidad híbrida.");
         }
-        
         if (pre.length + rem.length !== datos.dias.length) return alert(`Debes distribuir exactamente los ${datos.dias.length} días elegidos. Has asignado ${pre.length + rem.length}.`);
-        
         const duplicados = pre.filter(dia => rem.includes(dia));
         if (duplicados.length > 0) return alert(`Error: Has marcado "${duplicados.join(", ")}" en ambas columnas. Elige solo un formato por día.`);
-
         datos.diasPresencial = pre; datos.diasRemoto = rem; datos.ubicacion = "";
       } else {
         datos.ubicacion = ""; datos.diasPresencial = []; datos.diasRemoto = [];
@@ -535,14 +533,14 @@
         datos.base64Video1 = reader.result.split(",");
         next();
       };
-      reader.readAsDataURL(input.files);
+      reader.readAsDataURL(input.files[0]);
     }
 
     function guardarCVLocal() {
       const input = document.getElementById('cvUpload');
       if (!input || input.files.length === 0) return alert("Selecciona tu CV (PDF/Word).");
       
-      const archivo = input.files;
+      const archivo = input.files[0];
       datos.cvMimeType = archivo.type;
       datos.cvExt = archivo.name.split('.').pop();
       
@@ -552,49 +550,6 @@
         next();
       };
       reader.readAsDataURL(archivo);
-    }
-
-    function guardarCompromiso() {
-      const check = document.getElementById("checkCompromiso");
-      if (!check || !check.checked) {
-        return alert("⚠️ Debes aceptar el compromiso y las reglas de Sanilab para poder finalizar tu postulación.");
-      }
-      datos.aceptaCompromiso = true;
-      next();
-    }
-
-    function actualizarInfoPerfil() {
-        const tipo = document.getElementById("tipoUsuario").value;
-        const infoPanel = document.getElementById("infoPerfil");
-        const texto = document.getElementById("textoInfo");
-        const msgArea = document.getElementById("msgAreaEspecial");
-        const area = document.getElementById("area").value;
-
-        if (!tipo) {
-            infoPanel.style.display = "none";
-        } else {
-            infoPanel.style.display = "block";
-            if (tipo === "Voluntario") {
-                texto.innerHTML = "🌟 <strong>Voluntariado:</strong> Es una modalidad 100% ad-honorem. Te permite ganar experiencia real en proyectos de impacto socioambiental, ideal para construir tu CV y red de contactos profesional.";
-            } else if (tipo === "Estudiante") {
-                texto.innerHTML = "📚 <strong>Estudiante:</strong> Enfocado en tus prácticas profesionales o pre-profesionales. Sanilab apoya tu formación académica con flexibilidad para tus estudios.";
-            } else if (tipo === "Egresado") {
-                texto.innerHTML = "💼 <strong>Remunerado:</strong> Para perfiles que ya terminaron su formación. El monto está sujeto a negociación y disponibilidad de presupuesto en el área seleccionada.";
-            }
-        }
-
-        if (area === "Sistemas" || area === "Marketing") {
-            msgArea.style.display = "block";
-            msgArea.innerHTML = `📌 Para el área de <strong>${area}</strong>, el trabajo suele ser remoto; lo presencial es muy ocasional.`;
-        } else if (areasPresencial.includes(area)) {
-            msgArea.style.display = "block";
-            msgArea.innerHTML = `⚠️ Debido a que postulas a <strong>${area}</strong>, el trabajo es estrictamente Presencial.`;
-        } else {
-            msgArea.style.display = "none";
-        }
-
-        const subtipoDiv = document.getElementById("subtipoDiv");
-        if (subtipoDiv) subtipoDiv.style.display = (tipo === "Estudiante") ? "block" : "none";
     }
 
     async function finalizarRegistro(e) {
@@ -628,6 +583,68 @@
 
     function next() { apagarCamara(); paso++; render(); }
     function prev() { apagarCamara(); if (paso > 1) { paso--; render(); } }
+    function toggleInputHorario(dia) {
+      const input = document.getElementById(`input-hora-${dia}`);
+      const checkbox = document.querySelector(`.cb-dia-dinamico[value="${dia}"]`);
+      input.style.display = checkbox.checked ? 'block' : 'none';
+      if (!checkbox.checked) input.value = '';
+    }
+    function guardarHorariosDinamicos() {
+      const checks = document.querySelectorAll('.cb-dia-dinamico:checked');
+      if (checks.length === 0) return alert("Debes seleccionar al menos un día disponible.");
+      datos.horariosPorDia = {};
+      datos.dias = [];
+      let faltaHorario = false;
+      checks.forEach(cb => {
+        const dia = cb.value;
+        const hora = document.getElementById(`input-hora-${dia}`).value.trim();
+        if (!hora) {
+            faltaHorario = true;
+        }
+        datos.horariosPorDia[dia] = hora;
+        datos.dias.push(dia);
+      });
+      if (faltaHorario) return alert("Por favor, escribe el horario para todos los días seleccionados.");
+      next();
+    }
+    function actualizarInfoPerfil() {
+        const tipo = document.getElementById("tipoUsuario").value;
+        const infoPanel = document.getElementById("infoPerfil");
+        const texto = document.getElementById("textoInfo");
+        const msgArea = document.getElementById("msgAreaEspecial");
+        const area = document.getElementById("area").value;
+        if (!tipo) {
+            infoPanel.style.display = "none";
+        } else {
+            infoPanel.style.display = "block";
+            if (tipo === "Voluntario") {
+                texto.innerHTML = "🌟 <strong>Voluntariado:</strong> Es una modalidad 100% ad-honorem. Te permite ganar experiencia real en proyectos de impacto socioambiental, ideal para construir tu CV y red de contactos profesional.";
+            } else if (tipo === "Estudiante") {
+                texto.innerHTML = "📚 <strong>Estudiante:</strong> Enfocado en tus prácticas profesionales o pre-profesionales. Sanilab apoya tu formación académica con flexibilidad para tus estudios.";
+            } else if (tipo === "Egresado") {
+                texto.innerHTML = "💼 <strong>Remunerado:</strong> Para perfiles que ya terminaron su formación. El monto está sujeto a negociación y disponibilidad de presupuesto en el área seleccionada.";
+            }
+        }
+        if (area === "Sistemas" || area === "Marketing") {
+            msgArea.style.display = "block";
+            msgArea.innerHTML = `📌 Para el área de <strong>${area}</strong>, el trabajo suele ser remoto; lo presencial es muy ocasional.`;
+        } else if (areasPresencial.includes(area)) {
+            msgArea.style.display = "block";
+            msgArea.innerHTML = `⚠️ Debido a que postulas a <strong>${area}</strong>, el trabajo es estrictamente Presencial.`;
+        } else {
+            msgArea.style.display = "none";
+        }
+        const subtipoDiv = document.getElementById("subtipoDiv");
+        if (subtipoDiv) subtipoDiv.style.display = (tipo === "Estudiante") ? "block" : "none";
+    }
+    function guardarCompromiso() {
+      const check = document.getElementById("checkCompromiso");
+      if (!check.checked) {
+        return alert("⚠️ Debes aceptar el compromiso y las reglas de Sanilab para poder finalizar tu postulación.");
+      }
+      datos.aceptaCompromiso = true;
+      next();
+    }
     render();
   </script>
 </body>
