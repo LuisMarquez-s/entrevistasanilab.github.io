@@ -562,22 +562,24 @@
         if (datos.base64Video1) {
           estado.innerText = "Subiendo video de presentación (1/3)...";
           const resV1 = await enviarApi({ accion: "guardarVideo", base64: datos.base64Video1, tipo: 1, nombre: datos.nombre });
-          if (!resV1.success) throw new Error("Falló el video.");
+          // AQUÍ MOSTRAMOS EL MENSAJE REAL DEL SERVIDOR
+          if (!resV1.success) throw new Error("Error en video: " + (resV1.message || "Archivo muy pesado o error de red."));
           datos.videoPresentacion = resV1.url;
         }
         if (datos.base64CV) {
           estado.innerText = "Subiendo CV (2/3)...";
           const resCV = await enviarApi({ accion: "subirCV", base64: datos.base64CV, nombre: datos.nombre, mimeType: datos.cvMimeType, extension: datos.cvExt });
-          if (!resCV.success) throw new Error("Falló la subida del CV.");
+          if (!resCV.success) throw new Error("Error en CV: " + (resCV.message || "Ocurrió un problema con el documento."));
           datos.cvUrl = resCV.url;
         }
         estado.innerText = "Guardando datos (3/3)...";
         const resFinal = await enviarApi({ accion: "guardarRegistro", datos: datos });
         
         if (resFinal.success) { appDiv.innerHTML = `<h2>🎉 ¡Registro Completado!</h2><p>Nos pondremos en contacto pronto.</p>`; } 
-        else { throw new Error("Fallo al guardar."); }
+        else { throw new Error(resFinal.message || "Fallo al guardar los textos en la hoja de cálculo."); }
       } catch (error) {
-        appDiv.innerHTML = `<h2>❌ Ocurrió un error</h2><p>${error.message}</p><button onclick="render()">Reintentar</button>`;
+        // AHORA EL MENSAJE DE ERROR SERÁ ESPECÍFICO
+        appDiv.innerHTML = `<h2>❌ Ocurrió un error</h2><p style="color: #facc15;">${error.message}</p><br><button onclick="render()">Reintentar</button>`;
       }
     }
 
