@@ -190,7 +190,9 @@
             <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 20px;">
                 Indica los días que puedes participar y escribe tu rango de horas disponible para cada uno (Ej: 8am - 1pm).
             </p>
-            
+            <p style="font-size: 14px; color: #facc15; font-weight: bold; margin-bottom: 20px;">
+                La suma total de tus horas a la semana debe ser de 48 horas.
+            </p>
             <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
               <p style="margin-top:0; color:#22c55e; font-weight:bold;">Selecciona tus días y horarios:</p>
               
@@ -282,18 +284,12 @@
           break;  
 
         case 7:
-          html = `<h2>✍️ Solicitud de Cambios</h2>
-            <textarea id="cambios" rows="5" placeholder="Ejemplo: Prefiero entrar más temprano los miércoles...">${datos.cambios || ''}</textarea>
-            <button onclick="guardarCambios()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>`;
-          break;
-
-        case 8:
           html = `<h2>📈 Productividad</h2>
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1pFwlGdYD18-Xvw4Ml5v_Lsg7M4d4E6cx/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <button onclick="next()">✅ He visto el video</button><br><br><button onclick="prev()" class="atras">← Atrás</button>`;
           break;
 
-        case 9:
+        case 8:
           html = `
             <h2>🚪 Experiencia Laboral</h2>
             <select id="expPrevia" onchange="actualizarExp()">
@@ -311,7 +307,7 @@
           `;
           break;
 
-        case 10:
+        case 9:
           html = `
             <h2>📄 Sube tu CV</h2>
             <p>Por favor, sube tu Currículum Vitae (Formato PDF o Word).</p>
@@ -323,16 +319,30 @@
           `;
           break;
 
-        case 11:
+        case 10:
           html = `
-            <h2>🤝 Video de Compromiso</h2>
+            <h2>🤝 Compromiso y Reglas</h2>
             <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 15px;">
-                Como último paso, sigue las instrucciones para grabar y subir un video corto leyendo en voz alta el siguiente compromiso:
+                En Sanilab valoramos la responsabilidad. Lee nuestras normativas, marca la casilla de aceptación y sube tu video de confirmación.
             </p>
-            <div style="background: #064e3b; padding: 20px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #facc15; font-size: 16px; font-style: italic; line-height: 1.6;">
+            <div style="background: #064e3b; padding: 20px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; font-size: 14px; line-height: 1.6;">
+                <ul style="padding-left: 20px; color: #fff; margin: 0;">
+                    <li style="margin-bottom: 12px;">Comprendo que la modalidad y los horarios acordados son un compromiso serio con la organización.</li>
+                    <li style="margin-bottom: 12px;">Acepto participar activamente en las reuniones y mantener una comunicación constante con mi equipo.</li>
+                    <li style="margin-bottom: 0;"><strong>Política de Retiro:</strong> En caso de necesitar retirarme del proyecto, me comprometo a avisar con un mínimo de <strong>15 días de anticipación</strong> para realizar una correcta entrega de cargo.</li>
+                </ul>
+            </div>
+            <div style="width: 85%; margin: 15px auto 25px auto; text-align: left; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                <label style="display:flex; align-items:flex-start; cursor:pointer; color:#facc15; font-weight:bold; font-size: 15px;">
+                    <input type="checkbox" id="checkCompromiso" style="width:auto; margin: 4px 10px 0 0;" ${datos.aceptaCompromiso ? 'checked' : ''}>
+                    Sí, he leído, entiendo y acepto las reglas y mi compromiso con Sanilab.
+                </label>
+            </div>
+            <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 10px;">Lee en voz alta este texto para tu video:</p>
+            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 0 auto 20px auto; width: 85%; text-align: center; border: 1px solid #facc15; font-size: 15px; font-style: italic; line-height: 1.5;">
                 "Sí, yo <strong>${datos.nombre || '[Tu Nombre]'}</strong>, estoy comprometido/a con la organización Sanilab. Acepto las reglas de retiro y me comprometo a avisar con 15 días de anticipación si debo dejar el proyecto."
             </div>
-            <div style="background: rgba(255,255,255,0.05); border: 2px dashed #22c55e; border-radius: 12px; padding: 20px 15px; width: 90%; margin: 20px auto; text-align: center;">
+            <div style="background: rgba(255,255,255,0.05); border: 2px dashed #22c55e; border-radius: 12px; padding: 20px 15px; width: 90%; margin: 15px auto; text-align: center;">
                 <div class="cam-box"><video id="video" autoplay playsinline></video></div>
                 <div class="botones-verticales">
                   <button class="btn-chico" onclick="startCam('video')">📷 Activar cámara</button>
@@ -345,6 +355,7 @@
                 <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto 0 auto; text-align: left; box-sizing: border-box;">
                   <p style="margin-top: 0; font-weight: bold; color: #facc15;">📤 Sube tu video aquí:</p>
                   <input type="file" id="videoUploadCompromiso" accept="video/*" style="width: 100%; padding: 5px; color: white;">
+                  <p style="font-size: 13px; color: #a7f3d0; margin-top: 8px; margin-bottom: 0;">Tamaño máximo: 25 MB</p>
                 </div>
             </div>
             <button onclick="guardarVideoCompromiso()">Continuar</button>
@@ -352,7 +363,7 @@
           `;
           break;
 
-        case 12:
+        case 11:
           html = `
             <h2>✅ Resumen Final de tu Registro</h2>
             <div class="resumen">
@@ -516,15 +527,25 @@
       next();
     }
 
-    function guardarVideoLocal(tipo, inputId) {
-      const input = document.getElementById(inputId);
-      if (!input || input.files.length === 0) return alert("Sube el video para continuar.");
+    function guardarVideoCompromiso() {
+      const check = document.getElementById("checkCompromiso");
+      if (!check || !check.checked) {
+        return alert("⚠️ Debes marcar la casilla amarilla aceptando el compromiso y las reglas de Sanilab.");
+      }
+      const input = document.getElementById("videoUploadCompromiso");
+      if (!input || input.files.length === 0) return alert("⚠️ Debes subir tu video leyendo el compromiso para poder finalizar.");
+      const archivo = input.files[0];
+      const limiteMB = 25;
+      if (archivo.size > limiteMB * 1024 * 1024) {
+        return alert(`❌ El video es muy pesado. El límite es de ${limiteMB} MB. Por favor, graba un video más corto leyendo solo el texto resaltado.`);
+      }
       let reader = new FileReader();
       reader.onloadend = function () {
-        datos.base64Video1 = reader.result.split(",");
+        datos.base64VideoCompromiso = reader.result.split(",");
+        datos.aceptaCompromiso = true;
         next();
       };
-      reader.readAsDataURL(input.files[0]);
+      reader.readAsDataURL(archivo);
     }
 
     function guardarCVLocal() {
