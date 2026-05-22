@@ -235,13 +235,13 @@
                 <option value="Híbrido" ${datos.modalidad==='Híbrido'?'selected':''}>Híbrido</option>
               </select>
             `;
-            if (datos.modalidad === "Presencial") datos.modalidad = ""; // Limpia si venía marcado de antes
+            if (datos.modalidad === "Presencial") datos.modalidad = "";
           }
 
           if (datos.modalidad === "Híbrido" && !esPresencialFijo) {
             advertenciaModalidadHtml = `
               <div class="warning" style="background: rgba(234, 179, 8, 0.1); padding: 10px; border-radius: 8px; border: 1px solid #eab308; margin: 15px auto; width: 85%;">
-                  ⚠️ <strong>Nota sobre la modalidad Híbrida:</strong> Por favor, elige tus días presenciales de preferencia. Ten en cuenta que esto puede cambiar, no es un horario final y solo se puede elegir un <strong>máximo de 2 días presenciales</strong>.
+                  ⚠️ <strong>Nota:</strong> La presencialidad será a coordinar (1 o 2 veces por semana) en nuestra sede en Lima - Miraflores. Marque sus dias de preferencia</strong>.
               </div>
             `;
           }
