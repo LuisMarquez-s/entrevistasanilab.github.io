@@ -683,10 +683,7 @@
     function actualizarInfoArea() {
         const area = document.getElementById("area").value;
         const msgArea = document.getElementById("msgAreaEspecial");
-        if (area === "Sistemas" || area === "Marketing") {
-            msgArea.style.display = "block";
-            msgArea.innerHTML = `📌 Para el área de <strong>${area}</strong>, el trabajo suele ser remoto; lo presencial es ocasional.`;
-        } else if (areasPresencial.includes(area)) {
+        if (areasPresencial.includes(area)) {
             msgArea.style.display = "block";
             msgArea.innerHTML = `⚠️ Debido a que postulas a <strong>${area}</strong>, el trabajo es estrictamente Presencial.`;
         } else {
