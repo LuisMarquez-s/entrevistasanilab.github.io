@@ -339,8 +339,8 @@
                 </label>
             </div>
             <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 10px;">Lee en voz alta este texto para tu video:</p>
-            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 0 auto 20px auto; width: 85%; text-align: center; border: 1px solid #facc15; font-size: 15px; font-style: italic; line-height: 1.5;">
-                "Sí, yo <strong>${datos.nombre || '[Tu Nombre]'}</strong>, estoy comprometido/a con la organización Sanilab. Acepto las reglas de retiro y me comprometo a avisar con 15 días de anticipación si debo dejar el proyecto."
+            <div style="background: #064e3b; padding: 20px; border-radius: 8px; margin: 0 auto 20px auto; width: 85%; text-align: center; border: 1px solid #facc15; font-size: 16px; font-style: italic; line-height: 1.6;">
+                "Yo, <strong>${datos.nombre || '[Tu Nombre]'}</strong>, me comprometo formalmente a seguir las reglas y valores de Sanilab. Acepto cumplir con mis tareas asignadas, mantener comunicación constante y, en caso de retiro voluntario, notificar a la organización con un mínimo de 15 días de anticipación."
             </div>
             <div style="background: rgba(255,255,255,0.05); border: 2px dashed #22c55e; border-radius: 12px; padding: 20px 15px; width: 90%; margin: 15px auto; text-align: center;">
                 <div class="cam-box"><video id="video" autoplay playsinline></video></div>
@@ -604,8 +604,20 @@
       }
     }
 
-    function next() { apagarCamara(); paso++; render(); }
-    function prev() { apagarCamara(); if (paso > 1) { paso--; render(); } }
+    function next() { 
+      apagarCamara(); 
+      paso++; 
+      render(); 
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function prev() { 
+      apagarCamara(); 
+      if (paso > 1) { 
+        paso--; 
+        render(); 
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } 
+    }
     function toggleInputHorario(dia) {
       const input = document.getElementById(`input-hora-${dia}`);
       const checkbox = document.querySelector(`.cb-dia-dinamico[value="${dia}"]`);
