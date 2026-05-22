@@ -71,6 +71,23 @@
       border-radius: 10px; margin: 20px auto; max-width: 550px; line-height: 1.6; 
     }
     .warning { color: #facc15; font-weight: bold; margin-top: 10px; font-size: 14px; }
+    .perfil-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #047857;
+      border-radius: 8px;
+      padding: 12px 15px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s ease;
+      color: #a7f3d0;
+    }
+    .perfil-card:hover { background: rgba(4, 120, 87, 0.5); }
+    .perfil-card.active {
+      background: #064e3b;
+      border-color: #facc15;
+      color: white;
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -150,38 +167,41 @@
 
         case 3:
           html = `
-            <h2>🧑‍🎓 Perfil y Modalidad de Ingreso</h2>
-            <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 15px;">Selecciona cómo deseas unirte a Sanilab para ver los detalles:</p>
-
-            <select id="tipoUsuario" onchange="actualizarInfoPerfil()">
-              <option value="">Selecciona modalidad de ingreso...</option>
-              <option value="Voluntario" ${datos.tipoUsuario==='Voluntario'?'selected':''}>Voluntario (Ad Honorem / Impacto Social)</option>
-              <option value="Estudiante" ${datos.tipoUsuario==='Estudiante'?'selected':''}>Estudiante (Practicante)</option>
-              <option value="Egresado" ${datos.tipoUsuario==='Egresado'?'selected':''}>Egresado (Remunerado / Negociable)</option>
-            </select>
-            
+            <h2>🧑‍🎓 Perfil de Ingreso</h2>
+            <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 15px;">Selecciona la opción que mejor se adapte a ti para ver los detalles:</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin: 0 auto 15px auto; width: 85%;">
+                <div id="card-Voluntario" class="perfil-card ${datos.tipoUsuario === 'Voluntario' ? 'active' : ''}" onclick="seleccionarPerfil('Voluntario')">
+                    <strong style="font-size: 16px;">🌟 Voluntario</strong><br>
+                    <span style="font-size: 13px;">(Ad Honorem / Impacto Social)</span>
+                </div>
+                <div id="card-Estudiante" class="perfil-card ${datos.tipoUsuario === 'Estudiante' ? 'active' : ''}" onclick="seleccionarPerfil('Estudiante')">
+                    <strong style="font-size: 16px;">📚 Estudiante</strong><br>
+                    <span style="font-size: 13px;">(Prácticas Profesionales / Pre-profesionales)</span>
+                </div>
+                <div id="card-Egresado" class="perfil-card ${datos.tipoUsuario === 'Egresado' ? 'active' : ''}" onclick="seleccionarPerfil('Egresado')">
+                    <strong style="font-size: 16px;">💼 Egresado</strong><br>
+                    <span style="font-size: 13px;">(Remunerado / Negociable)</span>
+                </div>
+            </div>
+            <input type="hidden" id="tipoUsuario" value="${datos.tipoUsuario}">
             <div id="infoPerfil" style="background: rgba(255,255,255,0.1); border: 1px dashed #22c55e; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; min-height: 60px; text-align: left; font-size: 14px; display: none;">
                 <p id="textoInfo" style="margin:0; color: #fff;"></p>
             </div>
-
             <div id="subtipoDiv" style="display:${datos.tipoUsuario==='Estudiante'?'block':'none'}">
-              <select id="subTipo">
+              <select id="subTipo" style="margin-top: 10px;">
                 <option value="Practicante" ${datos.subTipo==='Practicante'?'selected':''}>Practicante Pre-Profesional</option>
                 <option value="Remunerado" ${datos.subTipo==='Remunerado'?'selected':''}>Practicante con Subvención (Sujeto a vacante)</option>
               </select>
             </div>
-            
-            <select id="area" onchange="actualizarInfoPerfil()" style="margin-top: 10px;">
+            <select id="area" onchange="actualizarInfoArea()" style="margin-top: 15px;">
               <option value="">Área a postular...</option>
               ${["Proyectos", "Medio Ambiente", "Gerencia", "GTH", "Marketing", "Infraestructura", "Relaciones Comunitarias", "Taller", "Sistemas", "Comercial", "Logística y Procesos"]
                 .map(a => `<option value="${a}" ${datos.area===a?'selected':''}>${a}</option>`).join('')}
             </select>
-            
             <div id="msgAreaEspecial" class="warning" style="display:none; width:85%; margin: 10px auto; background: rgba(234, 179, 8, 0.1); border: 1px solid #eab308; border-radius: 6px; padding: 10px;"></div>
-
             <button onclick="guardarTipo()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
-          setTimeout(actualizarInfoPerfil, 50);
+          if(datos.tipoUsuario) setTimeout(() => seleccionarPerfil(datos.tipoUsuario), 50);
           break;
 
           case 4:
@@ -642,32 +662,36 @@
       if (faltaHorario) return alert("Por favor, escribe el horario para todos los días seleccionados.");
       next();
     }
-    function actualizarInfoPerfil() {
-        const tipo = document.getElementById("tipoUsuario").value;
+    function seleccionarPerfil(tipo) {
+        document.getElementById("tipoUsuario").value = tipo;
+        datos.tipoUsuario = tipo;
+        document.querySelectorAll('.perfil-card').forEach(el => el.classList.remove('active'));
+        document.getElementById("card-" + tipo).classList.add('active');
         const infoPanel = document.getElementById("infoPerfil");
         const texto = document.getElementById("textoInfo");
-        const msgArea = document.getElementById("msgAreaEspecial");
-        const area = document.getElementById("area").value;
-        if (!tipo) {
-            infoPanel.style.display = "none";
-        } else {
-            infoPanel.style.display = "block";
-            if (tipo === "Voluntario") {
-                texto.innerHTML = "🌟 <strong>Voluntariado:</strong> Es una modalidad 100% ad-honorem. Te permite ganar experiencia real en proyectos de impacto socioambiental, ideal para construir tu CV y red de contactos profesional.";
-            } else if (tipo === "Estudiante") {
-                texto.innerHTML = "📚 <strong>Estudiante:</strong> Enfocado en tus prácticas profesionales o pre-profesionales. Sanilab apoya tu formación académica con flexibilidad para tus estudios.";
-            } else if (tipo === "Egresado") {
-                texto.innerHTML = "💼 <strong>Remunerado:</strong> Para perfiles que ya terminaron su formación. El monto está sujeto a negociación y disponibilidad de presupuesto en el área seleccionada.";
-            }
+        const subtipoDiv = document.getElementById("subtipoDiv");
+        infoPanel.style.display = "block";
+        if (tipo === "Voluntario") {
+            texto.innerHTML = "🌟 <strong>Voluntariado:</strong> Modalidad 100% ad-honorem. Te permite ganar experiencia real en proyectos de impacto socioambiental, ideal para construir tu CV.";
+        } else if (tipo === "Estudiante") {
+            texto.innerHTML = "📚 <strong>Estudiante:</strong> Enfocado en tus prácticas. Apoyamos tu formación académica con flexibilidad para tus estudios universitarios o técnicos.";
+        } else if (tipo === "Egresado") {
+            texto.innerHTML = "💼 <strong>Remunerado:</strong> Para perfiles que ya terminaron su formación. El monto está sujeto a negociación y disponibilidad de presupuesto en el área.";
         }
-        if (areasPresencial.includes(area)) {
+        subtipoDiv.style.display = (tipo === "Estudiante") ? "block" : "none";
+    }
+    function actualizarInfoArea() {
+        const area = document.getElementById("area").value;
+        const msgArea = document.getElementById("msgAreaEspecial");
+        if (area === "Sistemas" || area === "Marketing") {
+            msgArea.style.display = "block";
+            msgArea.innerHTML = `📌 Para el área de <strong>${area}</strong>, el trabajo suele ser remoto; lo presencial es ocasional.`;
+        } else if (areasPresencial.includes(area)) {
             msgArea.style.display = "block";
             msgArea.innerHTML = `⚠️ Debido a que postulas a <strong>${area}</strong>, el trabajo es estrictamente Presencial.`;
         } else {
             msgArea.style.display = "none";
         }
-        const subtipoDiv = document.getElementById("subtipoDiv");
-        if (subtipoDiv) subtipoDiv.style.display = (tipo === "Estudiante") ? "block" : "none";
     }
     function guardarCompromiso() {
       const check = document.getElementById("checkCompromiso");
