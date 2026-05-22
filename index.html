@@ -495,7 +495,7 @@
       if (datos.modalidad === "Presencial") {
         datos.ubicacion = document.getElementById("ubicacion").value;
         if(!datos.ubicacion) return alert("Selecciona una sede obligatoriamente.");
-        datos.diasPresencial = []; datos.diasRemoto = [];
+        datos.diasPresencial = []; datos.diasRemoto = []; 
       } else if (datos.modalidad === "Híbrido") {
         const pre = Array.from(document.querySelectorAll('.cb-presencial:checked')).map(cb => cb.value);
         const rem = Array.from(document.querySelectorAll('.cb-remoto:checked')).map(cb => cb.value);
@@ -507,7 +507,7 @@
         if (pre.length + rem.length !== datos.dias.length) return alert(`Debes distribuir exactamente los ${datos.dias.length} días elegidos. Has asignado ${pre.length + rem.length}.`);
         const duplicados = pre.filter(dia => rem.includes(dia));
         if (duplicados.length > 0) return alert(`Error: Has marcado "${duplicados.join(", ")}" en ambas columnas. Elige solo un formato por día.`);
-        datos.diasPresencial = pre; datos.diasRemoto = rem; datos.ubicacion = "";
+        datos.diasPresencial = pre; datos.diasRemoto = rem; datos.ubicacion = "Lima - Miraflores";
       } else {
         datos.ubicacion = ""; datos.diasPresencial = []; datos.diasRemoto = [];
       }
