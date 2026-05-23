@@ -208,7 +208,7 @@
           html = `
             <h2>⏰ Disponibilidad de Horario</h2>
             <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 20px;">
-                Indica los días que puedes participar y escribe tu rango de horas disponible para cada uno (Ej: 8am - 1pm).
+                Indica los días que puedes participar y escribe tu rango de horas disponible para cada uno (Ej: 9am - 5pm).
             </p>
             <p style="font-size: 14px; color: #facc15; font-weight: bold; margin-bottom: 20px;">
                 La suma total de tus horas a la semana debe ser de 48 horas.
@@ -224,7 +224,7 @@
                            ${datos.horariosPorDia[dia] ? 'checked' : ''}> ${dia}
                   </label>
                   <input type="text" id="input-hora-${dia}" 
-                         placeholder="Ej: 9:00 - 13:00" 
+                         placeholder="Ej: 9:00 - 17:00" 
                          style="display: ${datos.horariosPorDia[dia] ? 'block' : 'none'}; 
                                 margin: 0; padding: 8px; width: 100%; font-size: 14px;"
                          value="${datos.horariosPorDia[dia] || ''}">
