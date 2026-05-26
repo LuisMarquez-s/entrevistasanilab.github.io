@@ -1,97 +1,546 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanilab - Sistema de Registro</title>
+  <title>Sanilab · Sistema de Postulación</title>
   <link rel="icon" type="image/png" href="sanilab.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      background: linear-gradient(rgba(2, 44, 34, 0.88), rgba(2, 44, 34, 0.88)), url('https://static.wixstatic.com/media/5c368f_a2ce98e0758346f8b3298b5e9f426216~mv2.jpeg/v1/fit/w_776,h_485,q_90,enc_avif,quality_auto/5c368f_a2ce98e0758346f8b3298b5e9f426216~mv2.jpeg'); 
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      color: white; 
-      text-align: center; 
-      padding: 20px; 
-    }
-    .box { 
-      background: #064e3b;
-      padding: 25px; 
-      border-radius: 12px; 
-      max-width: 720px; 
-      margin: auto; 
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5); 
-    }
-    input, select, textarea { 
-      padding: 12px; 
-      width: 85%; 
-      margin: 10px auto; 
-      display: block; 
-      border-radius: 6px; 
-      border: none; 
-      font-size: 16px; 
-      box-sizing: border-box;
-    }
-    button { 
-      padding: 12px 28px; 
-      margin: 10px 5px; 
-      background: #22c55e; 
-      border: none; 
-      color: white; 
-      border-radius: 6px; 
-      cursor: pointer; 
-      font-size: 16px; 
-      font-weight: bold; 
-    }
-    button:disabled { background: #047857; cursor: not-allowed; }
-    button.atras { background: #047857; }
-    
-    .btn-chico { 
-      display: block; 
-      width: 60%; 
-      max-width: 250px; 
-      margin: 8px auto; 
-      padding: 10px 15px; 
-      font-size: 14.5px; 
+    :root {
+      --forest-950: #0a1f1a;
+      --forest-900: #0f2e25;
+      --forest-800: #14392e;
+      --forest-700: #1c5040;
+      --forest-600: #246b56;
+      --moss:       #4a8e6c;
+      --sage:       #a3c9a8;
+      --cream:      #f5efe0;
+      --paper:      #faf6ec;
+      --gold:       #d4a64a;
+      --gold-soft:  #e8c97a;
+      --rust:       #c8553d;
+      --ink:        #1a1f1c;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --shadow-soft: 0 1px 2px rgba(10,31,26,.08), 0 12px 40px rgba(10,31,26,.18);
+      --shadow-deep: 0 2px 4px rgba(10,31,26,.12), 0 24px 60px rgba(10,31,26,.35);
     }
 
-    .tiktok-player { 
-      width: 100%; max-width: 380px; height: 620px; 
-      margin: 15px auto; border-radius: 12px; overflow: hidden; background: #000; 
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--forest-950);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
-    .cam-box { 
-      width: 260px; height: 260px; margin: 15px auto; border-radius: 12px; 
-      overflow: hidden; border: 3px solid #22c55e; background: black; 
+
+    body {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(74,142,108,.25) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(212,166,74,.12) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(10,31,26,.92), rgba(15,46,37,.94)),
+        url('https://static.wixstatic.com/media/5c368f_a2ce98e0758346f8b3298b5e9f426216~mv2.jpeg/v1/fit/w_776,h_485,q_90,enc_avif,quality_auto/5c368f_a2ce98e0758346f8b3298b5e9f426216~mv2.jpeg');
+      background-size: 100% 100%, 100% 100%, 100% 100%, cover;
+      background-position: center;
+      background-attachment: fixed;
+      padding: 32px 16px 64px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      pointer-events: none;
+      opacity: .06;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      z-index: 1;
+    }
+
+    .box {
+      position: relative;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 44px 38px 38px;
+      border-radius: var(--radius-lg);
+      max-width: 720px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-deep);
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .box::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg,
+        var(--forest-700) 0%,
+        var(--moss) 30%,
+        var(--gold) 60%,
+        var(--gold-soft) 100%);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(28,80,64,.12);
+    }
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 19px;
+      letter-spacing: .02em;
+      color: var(--forest-700);
+    }
+    .brand-mark::before {
+      content: "❦";
+      font-size: 18px;
+      color: var(--gold);
+    }
+    .brand-tag {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--moss);
+      font-weight: 500;
+    }
+
+    h2 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(26px, 4vw, 34px);
+      line-height: 1.15;
+      color: var(--forest-800);
+      margin: 0 0 8px;
+      letter-spacing: -0.015em;
+      font-variation-settings: "opsz" 144;
+    }
+    h2::after {
+      content: "";
+      display: block;
+      width: 38px; height: 2px;
+      background: var(--gold);
+      margin: 14px auto 18px;
+      border-radius: 2px;
+    }
+    p {
+      color: #3a4a42;
+      line-height: 1.65;
+      font-size: 15px;
+      margin: 12px auto;
+      max-width: 540px;
+    }
+    p strong { color: var(--forest-800); font-weight: 600; }
+
+    input, select, textarea {
+      padding: 13px 16px;
+      width: 100%;
+      max-width: 460px;
+      margin: 8px auto;
+      display: block;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid rgba(28,80,64,.18);
+      background: #fff;
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--forest-600);
+      box-shadow: 0 0 0 4px rgba(74,142,108,.15);
+    }
+    input::placeholder, textarea::placeholder { color: #94a39b; }
+    textarea { resize: vertical; min-height: 110px; font-family: inherit; }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231c5040' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 18px center;
+      padding-right: 42px;
+      cursor: pointer;
+    }
+
+    label {
+      font-size: 14px;
+      color: var(--forest-800);
+    }
+    input[type="checkbox"] {
+      width: auto;
+      display: inline-block;
+      margin: 0 8px 0 0;
+      accent-color: var(--forest-600);
+      transform: translateY(2px);
+    }
+
+    button {
+      padding: 13px 30px;
+      margin: 10px 4px;
+      background: var(--forest-800);
+      border: none;
+      color: var(--cream);
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 14.5px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      transition: transform .15s, box-shadow .2s, background .2s;
+      box-shadow: 0 2px 0 rgba(10,31,26,.2), 0 8px 20px rgba(20,57,46,.25);
+      position: relative;
+    }
+    button:hover:not(:disabled) {
+      background: var(--forest-700);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 0 rgba(10,31,26,.2), 0 12px 24px rgba(20,57,46,.3);
+    }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+
+    button.atras {
+      background: transparent;
+      color: var(--forest-700);
+      box-shadow: none;
+      border: 1.5px solid rgba(28,80,64,.25);
+      padding: 11px 22px;
+      font-size: 13.5px;
+    }
+    button.atras:hover:not(:disabled) {
+      background: rgba(28,80,64,.06);
+      color: var(--forest-800);
+    }
+
+    .btn-chico {
+      display: block;
+      width: 65%;
+      max-width: 250px;
+      margin: 8px auto;
+      padding: 10px 18px;
+      font-size: 14px;
+    }
+
+    .tiktok-player {
+      width: 100%;
+      max-width: 360px;
+      aspect-ratio: 9 / 16;
+      height: auto;
+      margin: 20px auto;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--forest-950);
+      box-shadow: 0 8px 30px rgba(10,31,26,.25);
+      position: relative;
+    }
+    .tiktok-player::after {
+      content: "";
+      position: absolute; inset: 0;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius-md);
+      pointer-events: none;
+    }
+
+    .cam-box {
+      width: 240px; height: 240px;
+      margin: 18px auto;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 2px solid var(--forest-600);
+      background: #000;
+      box-shadow: 0 6px 24px rgba(10,31,26,.2);
+      position: relative;
+    }
+    .cam-box::before {
+      content: "EN VIVO";
+      position: absolute;
+      top: 12px; left: 12px;
+      background: var(--rust);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: .12em;
+      z-index: 1;
+      opacity: .9;
     }
     .cam-box video { width: 100%; height: 100%; object-fit: cover; }
-    .resumen { 
-      text-align: left; background: #047857; padding: 18px; 
-      border-radius: 10px; margin: 20px auto; max-width: 550px; line-height: 1.6; 
+
+    .resumen {
+      text-align: left;
+      background: linear-gradient(180deg, #fff 0%, var(--paper) 100%);
+      border: 1px solid rgba(28,80,64,.15);
+      padding: 24px 26px;
+      border-radius: var(--radius-md);
+      margin: 22px auto;
+      max-width: 540px;
+      line-height: 1.75;
+      box-shadow: 0 1px 2px rgba(10,31,26,.05);
     }
-    .warning { color: #facc15; font-weight: bold; margin-top: 10px; font-size: 14px; }
+    .resumen p {
+      margin: 6px 0;
+      color: var(--ink);
+      font-size: 14.5px;
+    }
+    .resumen strong {
+      color: var(--forest-700);
+      font-weight: 600;
+      letter-spacing: .01em;
+    }
+
+    .warning {
+      color: #8a6a14;
+      font-weight: 500;
+      font-size: 14px;
+      background: linear-gradient(180deg, #fef9e7 0%, #fdf3d0 100%);
+      border-left: 3px solid var(--gold);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      text-align: left;
+    }
+
     .perfil-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid #047857;
-      border-radius: 8px;
-      padding: 12px 15px;
+      background: #fff;
+      border: 1.5px solid rgba(28,80,64,.15);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
       cursor: pointer;
       text-align: left;
-      transition: all 0.3s ease;
-      color: #a7f3d0;
+      transition: all .25s ease;
+      color: var(--forest-800);
+      position: relative;
+      overflow: hidden;
     }
-    .perfil-card:hover { background: rgba(4, 120, 87, 0.5); }
+    .perfil-card::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: transparent;
+      transition: background .25s;
+    }
+    .perfil-card:hover {
+      border-color: var(--moss);
+      transform: translateX(2px);
+      box-shadow: 0 4px 16px rgba(28,80,64,.1);
+    }
     .perfil-card.active {
-      background: #064e3b;
-      border-color: #facc15;
-      color: white;
-      box-shadow: 0 0 10px rgba(250, 204, 21, 0.3);
+      background: linear-gradient(180deg, #fff 0%, #f9f6e8 100%);
+      border-color: var(--gold);
+      box-shadow: 0 4px 20px rgba(212,166,74,.18);
+    }
+    .perfil-card.active::before { background: var(--gold); }
+    .perfil-card strong {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 17px;
+      color: var(--forest-800);
+    }
+    .perfil-card span {
+      color: #5a6a62;
+      font-size: 13px;
+    }
+
+    #infoPerfil {
+      background: linear-gradient(180deg, var(--forest-800) 0%, var(--forest-900) 100%) !important;
+      color: var(--cream) !important;
+      border: none !important;
+      border-radius: var(--radius-md) !important;
+      padding: 18px 22px !important;
+      position: relative;
+    }
+    #infoPerfil p { color: var(--cream) !important; }
+    #infoPerfil strong { color: var(--gold-soft); }
+
+    /* Bloques de horario y modalidad híbrida */
+    [style*="background: #064e3b"],
+    [style*="background:#064e3b"] {
+      background: linear-gradient(180deg, #fff 0%, #f4ede0 100%) !important;
+      border: 1px solid rgba(28,80,64,.18) !important;
+      box-shadow: 0 2px 8px rgba(10,31,26,.05);
+    }
+    [style*="background: #064e3b"] p,
+    [style*="background:#064e3b"] p { color: var(--forest-800) !important; }
+
+    [style*="background: #047857"],
+    [style*="background:#047857"] {
+      background: linear-gradient(180deg, var(--forest-700) 0%, var(--forest-800) 100%) !important;
+      color: var(--cream) !important;
+      border-radius: var(--radius-md);
+    }
+    [style*="background: #047857"] p,
+    [style*="background:#047857"] p { color: var(--cream) !important; }
+
+    [style*="border: 2px dashed"],
+    [style*="border:2px dashed"] {
+      border: 1.5px dashed var(--moss) !important;
+      background: rgba(255,255,255,.5) !important;
+      border-radius: var(--radius-md) !important;
+    }
+
+    [style*="border: 1px dashed"],
+    [style*="border:1px dashed"] {
+      border: 1.5px dashed var(--gold) !important;
+      background: linear-gradient(180deg, #fffbef 0%, #fdf3d0 100%) !important;
+      border-radius: var(--radius-md) !important;
+    }
+
+    [style*="font-style: italic"] {
+      background: linear-gradient(180deg, var(--forest-800) 0%, var(--forest-900) 100%) !important;
+      color: var(--cream) !important;
+      font-family: 'Fraunces', serif !important;
+      font-style: italic !important;
+      border-radius: var(--radius-md) !important;
+      border: none !important;
+      position: relative;
+      font-size: 16.5px !important;
+    }
+    [style*="font-style: italic"] strong { color: var(--gold-soft); }
+
+    [style*="rgba(255, 255, 255, 0.05)"],
+    [style*="rgba(255,255,255,0.05)"],
+    [style*="rgba(255,255,255,.05)"] {
+      background: rgba(28,80,64,.04) !important;
+      border-radius: var(--radius-sm);
+    }
+
+    [style*="rgba(255, 255, 255, 0.1)"],
+    [style*="rgba(255,255,255,0.1)"] {
+      background: rgba(28,80,64,.06) !important;
+    }
+
+    #msgAreaEspecial[style*="display:block"],
+    #msgAreaEspecial[style*="display: block"] {
+      background: linear-gradient(180deg, #fef9e7 0%, #fdf3d0 100%) !important;
+      border: 1px solid var(--gold) !important;
+      color: #6b520f !important;
+      border-radius: var(--radius-sm) !important;
+      padding: 12px 16px !important;
+    }
+    #msgAreaEspecial strong { color: var(--forest-800); }
+
+    input[type="file"] {
+      background: #fff;
+      border: 1.5px dashed var(--moss);
+      padding: 14px;
+      color: var(--forest-800);
+      cursor: pointer;
+    }
+    input[type="file"]::file-selector-button {
+      background: var(--forest-700);
+      color: var(--cream);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 12px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    input[type="file"]::file-selector-button:hover { background: var(--forest-800); }
+
+    [style*="color: #facc15"],
+    [style*="color:#facc15"] {
+      color: var(--forest-700) !important;
+      font-weight: 600 !important;
+    }
+    [style*="color: #a7f3d0"],
+    [style*="color:#a7f3d0"] {
+      color: #5a6a62 !important;
+    }
+    [style*="color: #22c55e"],
+    [style*="color:#22c55e"] {
+      color: var(--forest-700) !important;
+    }
+    [style*="color:#fff"], [style*="color: #fff"] {
+      color: var(--ink) !important;
+    }
+
+    a { color: var(--forest-700); text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
+    a:hover { color: var(--forest-800); }
+
+    .progress-wrap {
+      position: relative;
+      max-width: 720px;
+      margin: 0 auto 18px;
+      z-index: 2;
+    }
+    .progress-text {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .progress {
+      height: 3px;
+      background: rgba(245,239,224,.12);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--moss), var(--gold-soft));
+      width: 0%;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .box > * { animation: fadeUp .5s cubic-bezier(.16,1,.3,1) both; }
+    .box > *:nth-child(1) { animation-delay: .02s; }
+    .box > *:nth-child(2) { animation-delay: .08s; }
+    .box > *:nth-child(3) { animation-delay: .14s; }
+    .box > *:nth-child(4) { animation-delay: .2s; }
+    .box > *:nth-child(5) { animation-delay: .26s; }
+    .box > *:nth-child(6) { animation-delay: .32s; }
+    .box > *:nth-child(n+7) { animation-delay: .38s; }
+
+    @media (max-width: 640px) {
+      body { padding: 18px 10px 40px; }
+      .box { padding: 32px 22px 28px; border-radius: var(--radius-md); }
+      h2 { font-size: 24px; }
+      .cam-box { width: 220px; height: 220px; }
+      button { padding: 12px 24px; font-size: 14px; }
+      input, select, textarea { font-size: 16px; }
     }
   </style>
 </head>
 <body>
-  <div class="box" id="app"></div>
+
+  <div class="progress-wrap">
+    <div class="progress-text" id="progressText">Paso 1 de 11</div>
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+
+  <div class="box">
+    <div class="brand">
+      <div class="brand-mark">Sanilab</div>
+      <span class="brand-tag">Sistema de Postulación</span>
+    </div>
+    <div id="app"></div>
+  </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzI0-rRxFOArP5HElYRY5MqQrJOqYRD-pzoeEA54x0eSV3_YFf5ZvpYC_V9gHdwhHM/exec";
@@ -113,6 +562,15 @@
     let stream, mediaRecorder, chunks = [];
 
     const areasPresencial = ["Infraestructura", "Relaciones Comunitarias", "Medio Ambiente", "Logística y Procesos"];
+    const TOTAL_PASOS = 11;
+
+    function actualizarProgreso() {
+      const pct = Math.min((paso / TOTAL_PASOS) * 100, 100);
+      const bar = document.getElementById("progressBar");
+      const txt = document.getElementById("progressText");
+      if (bar) bar.style.width = pct + "%";
+      if (txt) txt.textContent = `Paso ${Math.min(paso, TOTAL_PASOS)} de ${TOTAL_PASOS}`;
+    }
 
     async function enviarApi(payload) {
       try {
@@ -134,57 +592,57 @@
       switch(paso) {
         case 1:
           html = `
-            <h2>👋 Hola. Bienvenido al Sistema de Entrevista de Sanilab</h2>
+            <h2>Bienvenido a Sanilab</h2>
             <p>Mira este pequeño video para que nos conozcas mejor antes de iniciar:</p>
             <div class="tiktok-player">
               <iframe src="https://drive.google.com/file/d/1HcbnSB_mgM4gjpw6X5OViRM_DsfzoARx/preview" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
-            <button onclick="next()">Continuar</button>
+            <button onclick="next()">Comenzar mi postulación →</button>
           `;
           break;
 
-        case 2: 
+        case 2:
           html = `
-            <h2>🧾 Tus Datos Personales</h2>
-            <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 20px;">Por favor, llena tus datos para poder comunicarnos contigo.</p>
-            
-            <img src="https://images.unsplash.com/photo-1516387938699-a93567ec168e?q=80&w=600&auto=format&fit=crop" style="width: 100%; max-width: 380px; border-radius: 12px; margin-bottom: 15px; border: 2px solid #047857;" alt="Contacto">
-            
+            <h2>Tus datos personales</h2>
+            <p style="font-size: 14px; color: #5a6a62; margin-bottom: 20px;">Por favor, llena tus datos para poder comunicarnos contigo.</p>
+
+            <img src="https://images.unsplash.com/photo-1516387938699-a93567ec168e?q=80&w=600&auto=format&fit=crop" style="width: 100%; max-width: 380px; border-radius: 14px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(10,31,26,.18);" alt="Contacto">
+
             <input id="nombre" type="text" placeholder="Nombre completo *" value="${datos.nombre}">
             <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
-            <input id="telefono" type="tel" placeholder="Tu Teléfono principal *" value="${datos.telefono}">
-            
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin: 15px auto; width: 85%;">
-                <p style="font-size: 14px; margin: 0 0 10px 0; color: #facc15; text-align: left;">Contacto de Emergencia/Referencia:</p>
+            <input id="telefono" type="tel" placeholder="Tu teléfono principal *" value="${datos.telefono}">
+
+            <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; margin: 15px auto; width: 100%; max-width: 460px;">
+                <p style="font-size: 13px; margin: 0 0 12px 0; color: #facc15; text-align: left; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;">Contacto de emergencia / referencia</p>
                 <input id="telefonoRef" type="tel" placeholder="Teléfono de referencia *" value="${datos.telefonoRef|| ''}" style="width: 100%; margin-top: 0;">
                 <input id="vinculoRef" type="text" placeholder="¿Qué vínculo tienen? (Ej: Madre, Hermano) *" value="${datos.vinculoRef || ''}" style="width: 100%;">
             </div>
 
             <input id="redes" type="text" placeholder="Link de tu LinkedIn, Instagram o Facebook *" value="${datos.redes}">
-            <button onclick="saveData()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <button onclick="saveData()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
         case 3:
           html = `
-            <h2>🧑‍🎓 Perfil de Ingreso</h2>
-            <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 15px;">Selecciona la opción que mejor se adapte a ti para ver los detalles:</p>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin: 0 auto 15px auto; width: 85%;">
+            <h2>Perfil de ingreso</h2>
+            <p style="font-size: 14px; color: #5a6a62; margin-bottom: 18px;">Selecciona la opción que mejor se adapte a ti para ver los detalles:</p>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 0 auto 18px auto; width: 100%; max-width: 460px;">
                 <div id="card-Voluntario" class="perfil-card ${datos.tipoUsuario === 'Voluntario' ? 'active' : ''}" onclick="seleccionarPerfil('Voluntario')">
-                    <strong style="font-size: 16px;">🌟 Voluntario</strong><br>
-                    <span style="font-size: 13px;">(Ad Honorem / Impacto Social)</span>
+                    <strong>🌟 Voluntario</strong><br>
+                    <span>Ad Honorem · Impacto Social</span>
                 </div>
                 <div id="card-Estudiante" class="perfil-card ${datos.tipoUsuario === 'Estudiante' ? 'active' : ''}" onclick="seleccionarPerfil('Estudiante')">
-                    <strong style="font-size: 16px;">📚 Estudiante</strong><br>
-                    <span style="font-size: 13px;">(Prácticas Profesionales / Pre-profesionales)</span>
+                    <strong>📚 Estudiante</strong><br>
+                    <span>Prácticas Profesionales o Pre-profesionales</span>
                 </div>
                 <div id="card-Egresado" class="perfil-card ${datos.tipoUsuario === 'Egresado' ? 'active' : ''}" onclick="seleccionarPerfil('Egresado')">
-                    <strong style="font-size: 16px;">💼 Egresado</strong><br>
-                    <span style="font-size: 13px;">(Remunerado / Negociable)</span>
+                    <strong>💼 Egresado</strong><br>
+                    <span>Remunerado · Sujeto a negociación</span>
                 </div>
             </div>
             <input type="hidden" id="tipoUsuario" value="${datos.tipoUsuario}">
-            <div id="infoPerfil" style="background: rgba(255,255,255,0.1); border: 1px dashed #22c55e; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; min-height: 60px; text-align: left; font-size: 14px; display: none;">
+            <div id="infoPerfil" style="background: rgba(255,255,255,0.1); border: 1px dashed #22c55e; padding: 15px; border-radius: 8px; margin: 15px auto; width: 100%; max-width: 460px; min-height: 60px; text-align: left; font-size: 14px; display: none;">
                 <p id="textoInfo" style="margin:0; color: #fff;"></p>
             </div>
             <div id="subtipoDiv" style="display:${datos.tipoUsuario==='Estudiante'?'block':'none'}">
@@ -198,49 +656,49 @@
               ${["Proyectos", "Medio Ambiente", "Gerencia", "GTH", "Marketing", "Infraestructura", "Relaciones Comunitarias", "Taller", "Sistemas", "Comercial", "Logística y Procesos"]
                 .map(a => `<option value="${a}" ${datos.area===a?'selected':''}>${a}</option>`).join('')}
             </select>
-            <div id="msgAreaEspecial" class="warning" style="display:none; width:85%; margin: 10px auto; background: rgba(234, 179, 8, 0.1); border: 1px solid #eab308; border-radius: 6px; padding: 10px;"></div>
-            <button onclick="guardarTipo()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <div id="msgAreaEspecial" class="warning" style="display:none; max-width:460px; margin: 12px auto;"></div>
+            <button onclick="guardarTipo()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           if(datos.tipoUsuario) setTimeout(() => seleccionarPerfil(datos.tipoUsuario), 50);
           break;
 
           case 4:
           html = `
-            <h2>⏰ Disponibilidad de Horario</h2>
-            <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 20px;">
+            <h2>Disponibilidad de horario</h2>
+            <p style="font-size: 14px; color: #5a6a62; margin-bottom: 18px;">
                 Indica los días que puedes participar y escribe tu rango de horas disponible para cada uno (Ej: 9am - 5pm).
             </p>
-            <p style="font-size: 14px; color: #facc15; font-weight: bold; margin-bottom: 20px;">
-                La suma total de tus horas a la semana debe ser de 48 horas.
-            </p>
-            <div style="background: #064e3b; padding: 15px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
-              <p style="margin-top:0; color:#22c55e; font-weight:bold;">Selecciona tus días y horarios:</p>
-              
+            <div class="warning" style="max-width:460px; margin: 0 auto 18px;">
+              La suma total de tus horas a la semana debe ser de <strong>48 horas</strong>.
+            </div>
+            <div style="background: #064e3b; padding: 18px 20px; border-radius: 12px; margin: 15px auto; width: 100%; max-width: 460px; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
+              <p style="margin-top:0; color:#22c55e; font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:12px;">Selecciona tus días y horarios</p>
+
               ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
-                <div style="display: flex; align-items: center; margin-bottom: 12px; gap: 10px;">
-                  <label style="flex: 0 0 100px; cursor:pointer;">
-                    <input type="checkbox" class="cb-dia-dinamico" value="${dia}" 
+                <div style="display: flex; align-items: center; margin-bottom: 12px; gap: 12px;">
+                  <label style="flex: 0 0 105px; cursor:pointer; font-weight:500;">
+                    <input type="checkbox" class="cb-dia-dinamico" value="${dia}"
                            onchange="toggleInputHorario('${dia}')"
                            ${datos.horariosPorDia[dia] ? 'checked' : ''}> ${dia}
                   </label>
-                  <input type="text" id="input-hora-${dia}" 
-                         placeholder="Ej: 9:00 - 17:00" 
-                         style="display: ${datos.horariosPorDia[dia] ? 'block' : 'none'}; 
-                                margin: 0; padding: 8px; width: 100%; font-size: 14px;"
+                  <input type="text" id="input-hora-${dia}"
+                         placeholder="Ej: 9:00 - 17:00"
+                         style="display: ${datos.horariosPorDia[dia] ? 'block' : 'none'};
+                                margin: 0; padding: 9px 12px; width: 100%; font-size: 14px; max-width: none;"
                          value="${datos.horariosPorDia[dia] || ''}">
                 </div>
               `).join('')}
             </div>
 
-            <button onclick="guardarHorariosDinamicos()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <button onclick="guardarHorariosDinamicos()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
-          
+
         case 5:
           const esPresencialFijo = areasPresencial.includes(datos.area);
           let selectModalidadHtml = "";
           let advertenciaModalidadHtml = "";
-          
+
           if (esPresencialFijo) {
             selectModalidadHtml = `
               <p style="margin-bottom:10px;">Tu área requiere trabajo estrictamente presencial:</p>
@@ -262,56 +720,58 @@
 
           if (datos.modalidad === "Híbrido" && !esPresencialFijo) {
             advertenciaModalidadHtml = `
-              <div class="warning" style="background: rgba(234, 179, 8, 0.1); padding: 10px; border-radius: 8px; border: 1px solid #eab308; margin: 15px auto; width: 85%;">
-                  ⚠️ <strong>Nota:</strong> La presencialidad será a coordinar (1 o 2 veces por semana) en nuestra sede en Lima - Miraflores. Marque sus dias de preferencia</strong>.
+              <div class="warning" style="max-width: 460px; margin: 15px auto;">
+                  ⚠️ <strong>Nota:</strong> La presencialidad será a coordinar (1 o 2 veces por semana) en nuestra sede en Lima - Miraflores. Marca tus días de preferencia.
               </div>
             `;
           }
 
           html = `
-            <h2>🏢 Modalidad de Trabajo</h2>
+            <h2>Modalidad de trabajo</h2>
             ${selectModalidadHtml}
             ${advertenciaModalidadHtml}
-            
+
             <div id="ubicacionDiv" style="display:${datos.modalidad==='Presencial' || esPresencialFijo ? 'block' : 'none'}">
               <select id="ubicacion">
                 <option value="">Elige tu sede...</option>
                 <option value="Lima - Casaverde - Pachacamac" ${datos.ubicacion==='Lima - Casaverde - Pachacamac'?'selected':''}>Lima - Casaverde - Pachacamac</option>
               </select>
             </div>
-            
+
             <div id="hibridoDiv" style="display:${datos.modalidad==='Híbrido' && !esPresencialFijo ? 'block' : 'none'}">
               <p>Distribuye tus <strong>${datos.dias.length} días</strong> disponibles:</p>
-              <div style="display: flex; justify-content: space-between; max-width: 400px; margin: 0 auto; text-align: left; background: #047857; padding: 15px; border-radius: 8px;">
-                <div style="width: 45%;">
-                  <p style="color:#22c55e; font-weight:bold;">Presencial</p>
-                  ${datos.dias.map(d => `<label style="display:block;"><input type="checkbox" class="cb-presencial" value="${d}" ${datos.diasPresencial.includes(d)?'checked':''}> ${d}</label>`).join('')}
+              <div style="display: flex; justify-content: space-between; max-width: 460px; margin: 0 auto; text-align: left; background: #047857; padding: 18px; border-radius: 14px; gap: 16px;">
+                <div style="width: 48%;">
+                  <p style="color:#22c55e; font-weight:600; margin-top:0; letter-spacing:.05em; text-transform:uppercase; font-size:12px;">Presencial</p>
+                  ${datos.dias.map(d => `<label style="display:block; padding:3px 0;"><input type="checkbox" class="cb-presencial" value="${d}" ${datos.diasPresencial.includes(d)?'checked':''}> ${d}</label>`).join('')}
                 </div>
-                <div style="width: 45%;">
-                  <p style="color:#a7f3d0; font-weight:bold;">Remoto</p>
-                  ${datos.dias.map(d => `<label style="display:block;"><input type="checkbox" class="cb-remoto" value="${d}" ${datos.diasRemoto.includes(d)?'checked':''}> ${d}</label>`).join('')}
+                <div style="width: 48%;">
+                  <p style="color:#a7f3d0; font-weight:600; margin-top:0; letter-spacing:.05em; text-transform:uppercase; font-size:12px;">Remoto</p>
+                  ${datos.dias.map(d => `<label style="display:block; padding:3px 0;"><input type="checkbox" class="cb-remoto" value="${d}" ${datos.diasRemoto.includes(d)?'checked':''}> ${d}</label>`).join('')}
                 </div>
               </div>
             </div>
-            <button onclick="guardarModalidad()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <button onclick="guardarModalidad()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
         case 6:
-          html = `<h2>📱 Video Informativo</h2>
+          html = `<h2>Video informativo</h2>
+            <p>Tómate un momento para ver este video:</p>
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1OlcWP62G7P6rPbgCmtNBixNzK9_puDWq/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
-            <button onclick="next()">✅ He visto el video</button><br><br><button onclick="prev()" class="atras">← Atrás</button>`;
-          break;  
+            <button onclick="next()">✓ He visto el video</button><br><br><button onclick="prev()" class="atras">← Atrás</button>`;
+          break;
 
         case 7:
-          html = `<h2>📈 Productividad</h2>
+          html = `<h2>Productividad</h2>
+            <p>Una breve guía sobre nuestra cultura de productividad:</p>
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1pFwlGdYD18-Xvw4Ml5v_Lsg7M4d4E6cx/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
-            <button onclick="next()">✅ He visto el video</button><br><br><button onclick="prev()" class="atras">← Atrás</button>`;
+            <button onclick="next()">✓ He visto el video</button><br><br><button onclick="prev()" class="atras">← Atrás</button>`;
           break;
 
         case 8:
           html = `
-            <h2>🚪 Experiencia Laboral</h2>
+            <h2>Experiencia laboral</h2>
             <select id="expPrevia" onchange="actualizarExp()">
               <option value="">¿Tienes experiencia laboral previa?</option>
               <option value="Si" ${datos.experienciaPrevia==='Si'?'selected':''}>Sí</option>
@@ -322,47 +782,47 @@
               <p style="margin-top:15px;">Cuéntanos brevemente el motivo de retiro de tu último empleo:</p>
               <textarea id="textoRetiro" rows="4">${datos.textoRetiro || ''}</textarea>
             </div>
-            
-            <button onclick="guardarRetiro()">Continuar</button><br><button onclick="prev()" class="atras">← Atrás</button>
+
+            <button onclick="guardarRetiro()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
         case 9:
           html = `
-            <h2>📄 Sube tu CV</h2>
-            <p>Por favor, sube tu Currículum Vitae (Formato PDF o Word).</p>
-            <div style="background: #047857; padding: 20px; border-radius: 8px; margin: 15px auto; width: 85%;">
+            <h2>Sube tu CV</h2>
+            <p>Por favor, sube tu Currículum Vitae en formato PDF o Word.</p>
+            <div style="background: #047857; padding: 24px 20px; border-radius: 14px; margin: 18px auto; width: 100%; max-width: 460px;">
               <input type="file" id="cvUpload" accept=".pdf,.doc,.docx" style="width: 100%; color: white;">
             </div>
-            <button onclick="guardarCVLocal()">Continuar</button>
+            <button onclick="guardarCVLocal()">Continuar →</button>
             <br><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
         case 10:
           html = `
-            <h2>🤝 Compromiso y Reglas</h2>
-            <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 15px;">
+            <h2>Compromiso y reglas</h2>
+            <p style="font-size: 14px; color: #5a6a62; margin-bottom: 18px;">
                 En Sanilab valoramos la responsabilidad. Lee nuestras normativas, marca la casilla de aceptación y sube tu video de confirmación.
             </p>
-            <div style="background: #064e3b; padding: 20px; border-radius: 8px; margin: 15px auto; width: 85%; text-align: left; border: 1px solid #047857; font-size: 14px; line-height: 1.6;">
-                <ul style="padding-left: 20px; color: #fff; margin: 0;">
+            <div style="background: #064e3b; padding: 22px 24px; border-radius: 14px; margin: 15px auto; width: 100%; max-width: 460px; text-align: left; border: 1px solid #047857; font-size: 14.5px; line-height: 1.7;">
+                <ul style="padding-left: 18px; color: #fff; margin: 0;">
                     <li style="margin-bottom: 12px;">Comprendo que la modalidad y los horarios acordados son un compromiso serio con la organización.</li>
                     <li style="margin-bottom: 12px;">Acepto participar activamente en las reuniones y mantener una comunicación constante con mi equipo.</li>
                     <li style="margin-bottom: 0;"><strong>Política de Retiro:</strong> En caso de necesitar retirarme del proyecto, me comprometo a avisar con un mínimo de <strong>15 días de anticipación</strong> para realizar una correcta entrega de cargo.</li>
                 </ul>
             </div>
-            <div style="width: 85%; margin: 15px auto 25px auto; text-align: left; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
-                <label style="display:flex; align-items:flex-start; cursor:pointer; color:#facc15; font-weight:bold; font-size: 15px;">
-                    <input type="checkbox" id="checkCompromiso" style="width:auto; margin: 4px 10px 0 0;" ${datos.aceptaCompromiso ? 'checked' : ''}>
+            <div style="width: 100%; max-width: 460px; margin: 15px auto 22px auto; text-align: left; background: rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 10px;">
+                <label style="display:flex; align-items:flex-start; cursor:pointer; color:#facc15; font-weight:600; font-size: 14.5px; line-height:1.5;">
+                    <input type="checkbox" id="checkCompromiso" style="width:auto; margin: 4px 12px 0 0;" ${datos.aceptaCompromiso ? 'checked' : ''}>
                     Sí, he leído, entiendo y acepto las reglas y mi compromiso con Sanilab.
                 </label>
             </div>
-            <p style="font-size: 14px; color: #a7f3d0; margin-bottom: 10px;">Lee en voz alta este texto para tu video:</p>
-            <div style="background: #064e3b; padding: 20px; border-radius: 8px; margin: 0 auto 20px auto; width: 85%; text-align: center; border: 1px solid #facc15; font-size: 16px; font-style: italic; line-height: 1.6;">
+            <p style="font-size: 14px; color: #5a6a62; margin-bottom: 10px;">Lee en voz alta este texto para tu video:</p>
+            <div style="background: #064e3b; padding: 22px 24px; border-radius: 14px; margin: 0 auto 22px auto; width: 100%; max-width: 460px; text-align: center; border: 1px solid #facc15; font-size: 16px; font-style: italic; line-height: 1.7;">
                 "Yo, <strong>${datos.nombre || '[Tu Nombre]'}</strong>, me comprometo formalmente a seguir las reglas y valores de Sanilab. Acepto cumplir con mis tareas asignadas, mantener comunicación constante y, en caso de retiro voluntario, notificar a la organización con un mínimo de 15 días de anticipación."
             </div>
-            <div style="background: rgba(255,255,255,0.05); border: 2px dashed #22c55e; border-radius: 12px; padding: 20px 15px; width: 90%; margin: 15px auto; text-align: center;">
+            <div style="background: rgba(255,255,255,0.05); border: 2px dashed #22c55e; border-radius: 14px; padding: 22px 18px; width: 100%; max-width: 460px; margin: 15px auto; text-align: center;">
                 <div class="cam-box"><video id="video" autoplay playsinline></video></div>
                 <div class="botones-verticales">
                   <button class="btn-chico" onclick="startCam('video')">📷 Activar cámara</button>
@@ -370,36 +830,38 @@
                   <button class="btn-chico" onclick="stopRec()" id="btnDetener" disabled>⏹ Detener</button>
                 </div>
                 <div id="preview"></div>
-                <hr style="border: 0; border-bottom: 1px solid #047857; margin: 20px 0;">
-                <button class="btn-chico" onclick="descargarVideo()" style="margin-top:10px; background: #0284c7;">⬇️ Descargar Video</button>
-                <div style="background: #047857; padding: 15px; border-radius: 8px; margin: 15px auto 0 auto; text-align: left; box-sizing: border-box;">
-                  <p style="margin-top: 0; font-weight: bold; color: #facc15;">📤 Sube tu video aquí:</p>
+                <hr style="border: 0; border-bottom: 1px solid rgba(28,80,64,.15); margin: 20px 0;">
+                <button class="btn-chico" onclick="descargarVideo()" style="margin-top:10px; background: #246b56;">⬇️ Descargar video</button>
+                <div style="background: #047857; padding: 16px; border-radius: 10px; margin: 18px auto 0 auto; text-align: left; box-sizing: border-box;">
+                  <p style="margin-top: 0; font-weight: 600; color: #facc15; letter-spacing:.05em; text-transform:uppercase; font-size:12px;">📤 Sube tu video aquí</p>
                   <input type="file" id="videoUploadCompromiso" accept="video/*" style="width: 100%; padding: 5px; color: white;">
                   <p style="font-size: 13px; color: #a7f3d0; margin-top: 8px; margin-bottom: 0;">Tamaño máximo: 25 MB</p>
                 </div>
             </div>
-            <button onclick="guardarVideoCompromiso()">Continuar</button>
+            <button onclick="guardarVideoCompromiso()">Continuar →</button>
             <br><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
         case 11:
           html = `
-            <h2>✅ Resumen Final de tu Registro</h2>
+            <h2>Resumen final</h2>
+            <p style="color:#5a6a62;">Confirma que toda tu información sea correcta antes de enviar.</p>
             <div class="resumen">
-              <p><strong>Nombre:</strong> ${datos.nombre}</p>
-              <p><strong>Modalidad:</strong> ${datos.tipoUsuario}</p>
-              <p><strong>Área:</strong> ${datos.area}</p>
-              <p><strong>Días Elegidos:</strong> ${datos.dias.join(', ') || 'No especificado'}</p>
-              <p><strong>Compromiso:</strong> Aceptado ✔️</p>
+              <p><strong>Nombre</strong><br>${datos.nombre}</p>
+              <p><strong>Modalidad</strong><br>${datos.tipoUsuario}</p>
+              <p><strong>Área</strong><br>${datos.area}</p>
+              <p><strong>Días elegidos</strong><br>${datos.dias.join(', ') || 'No especificado'}</p>
+              <p><strong>Compromiso</strong><br>Aceptado ✓</p>
             </div>
-            <button onclick="finalizarRegistro(event)" style="background:#22c55e; padding:14px 32px; font-size:18px;">Finalizar Entrevista</button>
+            <button onclick="finalizarRegistro(event)" style="padding:14px 36px; font-size:15.5px;">Finalizar entrevista</button>
             <br><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
       }
 
       document.getElementById("app").innerHTML = html;
+      actualizarProgreso();
     }
 
     function apagarCamara() { if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; } }
@@ -409,19 +871,19 @@
         document.getElementById(id).srcObject = stream;
       } catch(e) { alert("Activa permisos de cámara y micrófono."); }
     }
-    
+
     function startRec(tipo) {
       if (!stream) return alert("Primero activa la cámara");
       document.getElementById("btnGrabar").disabled = true;
       document.getElementById("btnDetener").disabled = false;
       chunks = [];
-      try { mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8,opus' }); } 
+      try { mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8,opus' }); }
       catch (e) { mediaRecorder = new MediaRecorder(stream); }
 
       mediaRecorder.ondataavailable = e => chunks.push(e.data);
       mediaRecorder.onstop = () => {
         const url = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' }));
-        document.getElementById("preview").innerHTML = `<video src="${url}" controls width="100%"></video><p style="color:#22c55e;">✅ Grabación finalizada. Descárgalo y súbelo abajo.</p>`;
+        document.getElementById("preview").innerHTML = `<video src="${url}" controls width="100%" style="border-radius:10px; margin-top:14px;"></video><p style="color:#246b56; font-weight:600;">✓ Grabación finalizada. Descárgalo y súbelo abajo.</p>`;
       };
       mediaRecorder.start();
     }
@@ -440,29 +902,29 @@
       a.style.display = 'none'; a.href = url; a.download = `Video_${datos.nombre || 'Sanilab'}.webm`;
       document.body.appendChild(a); a.click();
     }
-    
-    function saveData() { 
+
+    function saveData() {
       datos.nombre = document.getElementById("nombre").value.trim();
-      datos.email = document.getElementById("email").value.trim(); 
-      datos.telefono = document.getElementById("telefono").value.trim(); 
-      datos.telefonoRef = document.getElementById("telefonoRef").value.trim(); 
+      datos.email = document.getElementById("email").value.trim();
+      datos.telefono = document.getElementById("telefono").value.trim();
+      datos.telefonoRef = document.getElementById("telefonoRef").value.trim();
       datos.vinculoRef = document.getElementById("vinculoRef") ? document.getElementById("vinculoRef").value.trim() : "";
-      datos.redes = document.getElementById("redes").value.trim(); 
+      datos.redes = document.getElementById("redes").value.trim();
       if (!datos.nombre || !datos.email || !datos.telefono || !datos.telefonoRef || !datos.vinculoRef) {
           return alert("Completa todos los datos obligatorios");
       }
       if (datos.telefono === datos.telefonoRef) {
           return alert("⚠️ ERROR: El teléfono de referencia no puede ser tu mismo número. Por favor, coloca el número de un contacto distinto e indica qué vínculo tienen.");
       }
-      next(); 
+      next();
     }
-    
+
     function actualizarTipo() {
       const ts = document.getElementById("tipoUsuario"); const as = document.getElementById("area");
       if(ts) datos.tipoUsuario = ts.value; if(as) datos.area = as.value;
       render();
     }
-    
+
     function guardarTipo() {
       datos.tipoUsuario = document.getElementById("tipoUsuario").value;
       datos.subTipo = datos.tipoUsuario === "Estudiante" ? document.getElementById("subTipo").value : "";
@@ -481,13 +943,13 @@
     }
 
     function guardarHorario() {
-      datos.dias = Array.from(document.querySelectorAll('.cb-dia:checked')).map(cb => cb.value); 
+      datos.dias = Array.from(document.querySelectorAll('.cb-dia:checked')).map(cb => cb.value);
       if (datos.dias.length === 0) return alert("Selecciona al menos un día.");
-      datos.horaInicio1 = document.getElementById("horaInicio1").value; 
+      datos.horaInicio1 = document.getElementById("horaInicio1").value;
       datos.horaFin1 = document.getElementById("horaFin1").value;
-      
+
       if (!datos.horaInicio1 || !datos.horaFin1) return alert("Ingresa las horas del Turno Principal.");
-      
+
       const checkT2 = document.getElementById("checkTurno2").checked;
       const hI2 = document.getElementById("horaInicio2") ? document.getElementById("horaInicio2").value : "";
       const hF2 = document.getElementById("horaFin2") ? document.getElementById("horaFin2").value : "";
@@ -498,15 +960,15 @@
 
       datos.horaInicio2 = checkT2 ? hI2 : "";
       datos.horaFin2 = checkT2 ? hF2 : "";
-      
-      datos.horaInicio = datos.horaInicio1; 
+
+      datos.horaInicio = datos.horaInicio1;
       datos.horaFin = datos.horaFin1;
-      
+
       next();
     }
 
     function actualizarModalidad() { if(document.getElementById("modalidad")) datos.modalidad = document.getElementById("modalidad").value; render(); }
-    
+
     function guardarModalidad() {
       const esPresencialFijo = areasPresencial.includes(datos.area);
       if(esPresencialFijo) datos.modalidad = "Presencial";
@@ -515,7 +977,7 @@
       if (datos.modalidad === "Presencial") {
         datos.ubicacion = document.getElementById("ubicacion").value;
         if(!datos.ubicacion) return alert("Selecciona una sede obligatoriamente.");
-        datos.diasPresencial = []; datos.diasRemoto = []; 
+        datos.diasPresencial = []; datos.diasRemoto = [];
       } else if (datos.modalidad === "Híbrido") {
         const pre = Array.from(document.querySelectorAll('.cb-presencial:checked')).map(cb => cb.value);
         const rem = Array.from(document.querySelectorAll('.cb-remoto:checked')).map(cb => cb.value);
@@ -533,11 +995,11 @@
       }
       next();
     }
-    
+
     function guardarCambios() { datos.cambios = document.getElementById("cambios").value.trim(); next(); }
 
     function actualizarExp() { datos.experienciaPrevia = document.getElementById("expPrevia").value; render(); }
-    
+
     function guardarRetiro() {
       if(!datos.experienciaPrevia) return alert("Selecciona una opción.");
       if(datos.experienciaPrevia === "Si") {
@@ -571,11 +1033,11 @@
     function guardarCVLocal() {
       const input = document.getElementById('cvUpload');
       if (!input || input.files.length === 0) return alert("Selecciona tu CV (PDF/Word).");
-      
+
       const archivo = input.files[0];
       datos.cvMimeType = archivo.type;
       datos.cvExt = archivo.name.split('.').pop();
-      
+
       let reader = new FileReader();
       reader.onloadend = function () {
         datos.base64CV = reader.result.split(",");
@@ -587,9 +1049,9 @@
     async function finalizarRegistro(e) {
       e.target.disabled = true; e.target.innerText = "⏳ Guardando...";
       const appDiv = document.getElementById("app");
-      appDiv.innerHTML = `<h2>⏳ Procesando registro...</h2><p id="estadoProceso" style="color:#22c55e;">Iniciando...</p>`;
+      appDiv.innerHTML = `<h2>Procesando registro</h2><p id="estadoProceso" style="color:#246b56; font-weight:500;">Iniciando...</p>`;
       const estado = document.getElementById('estadoProceso');
-      
+
       try {
         if (datos.base64CV) {
           estado.innerText = "Subiendo CV (1/3)...";
@@ -605,38 +1067,39 @@
         }
         estado.innerText = "Guardando datos (3/3)...";
         const resFinal = await enviarApi({ accion: "guardarRegistro", datos: datos });
-        if (resFinal.success) { 
+        if (resFinal.success) {
             appDiv.innerHTML = `
-              <h2>🎉 ¡Registro Completado!</h2>
+              <h2>¡Postulación completada!</h2>
               <p>Tu postulación ha sido enviada exitosamente a nuestro sistema.</p>
-              <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-top: 25px; border: 1px dashed #22c55e;">
-                  <p style="color: #facc15; font-weight: bold; margin-bottom: 10px; font-size: 18px;">👇 Siguiente paso de tu entrevista:</p>
-                  <p style="font-size: 15px; margin-bottom: 15px; color: #a7f3d0;">Nos comunicaremos en breve. Mientras tanto, preparate para la entrevista con este video.</p>
+              <div style="background: rgba(255,255,255,0.05); padding: 22px; border-radius: 14px; margin-top: 25px; border: 1px dashed #22c55e;">
+                  <p style="color: #facc15; font-weight: 600; margin-bottom: 10px; font-size: 16px; letter-spacing:.05em; text-transform:uppercase;">Siguiente paso</p>
+                  <p style="font-size: 15px; margin-bottom: 15px; color: #5a6a62;">Nos comunicaremos en breve. Mientras tanto, prepárate para la entrevista con este video.</p>
                   <div class="tiktok-player" style="margin: 0 auto;">
                     <iframe src="https://drive.google.com/file/d/1uXKmdZYM8s5jZlf8MbpUgBQG18VlWffn/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
                   </div>
               </div>
-            `; 
+            `;
+            document.getElementById("progressBar").style.width = "100%";
         }
         else { throw new Error(resFinal.message || "Fallo al guardar los textos en la hoja de cálculo."); }
       } catch (error) {
-        appDiv.innerHTML = `<h2>❌ Ocurrió un error</h2><p style="color: #facc15;">${error.message}</p><br><button onclick="render()">Reintentar</button>`;
+        appDiv.innerHTML = `<h2>Ocurrió un error</h2><p style="color: var(--rust);">${error.message}</p><br><button onclick="render()">Reintentar</button>`;
       }
     }
 
-    function next() { 
-      apagarCamara(); 
-      paso++; 
-      render(); 
+    function next() {
+      apagarCamara();
+      paso++;
+      render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    function prev() { 
-      apagarCamara(); 
-      if (paso > 1) { 
-        paso--; 
-        render(); 
+    function prev() {
+      apagarCamara();
+      if (paso > 1) {
+        paso--;
+        render();
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      } 
+      }
     }
     function toggleInputHorario(dia) {
       const input = document.getElementById(`input-hora-${dia}`);
