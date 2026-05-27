@@ -751,7 +751,7 @@
 
           if (esPresencialFijo) {
             selectModalidadHtml = `
-              <p style="margin-bottom:10px;">Nota: El trabajo de esta área será mayormente presencial</p>
+              <p style="margin-bottom:10px;">Tu área requiere trabajo presencial con reuniones remotas a coordinar</p>
               <select id="modalidad" onchange="actualizarModalidad()">
                 <option value="Presencial" selected>Presencial</option>
               </select>
@@ -1198,7 +1198,7 @@
         const msgArea = document.getElementById("msgAreaEspecial");
         if (areasPresencial.includes(area)) {
             msgArea.style.display = "block";
-            msgArea.innerHTML = `⚠️ Debido a que postulas a <strong>${area}</strong>, el trabajo es estrictamente Presencial.`;
+            msgArea.innerHTML = `⚠️ Nota: El trabajo de esta área será mayormente presencial.`;
         } else {
             msgArea.style.display = "none";
         }
