@@ -610,7 +610,7 @@
     let paso = 1;
     let datos = {
       nombre: "", email: "", telefono: "", dni: "", redes: "",
-      distrito: "", provincia: "", pais: "", fechaNacimiento: "",
+      direccion: "", distrito: "", provincia: "", pais: "", fechaNacimiento: "",
       telefonoRef: "", vinculoRef: "",
       telefonoRef2: "", vinculoRef2: "",
       carrera: "", centroEstudios: "",
@@ -695,12 +695,12 @@
             <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
             <input id="redes" type="text" placeholder="Link de red social (LinkedIn, FB, IG) *" value="${datos.redes}">
             
-            <div style="text-align:left; max-width:460px; margin: 15px auto;">
-                <p style="color:var(--cream); font-size:14px; margin-bottom:8px; font-weight:500;">Dirección de domicilio:</p>
+            <input id="direccion" type="text" placeholder="Dirección de domicilio *" value="${datos.direccion || ''}">
+            <div class="row-inputs">
                 <input id="distrito" type="text" placeholder="Distrito *" value="${datos.distrito}">
                 <input id="provincia" type="text" placeholder="Provincia *" value="${datos.provincia}">
-                <input id="pais" type="text" placeholder="País *" value="${datos.pais}">
             </div>
+            <input id="pais" type="text" placeholder="País *" value="${datos.pais}">
 
             <button onclick="guardarDatosPersonales()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -1047,11 +1047,12 @@
       datos.telefono = document.getElementById("telefono").value.trim();
       datos.email = document.getElementById("email").value.trim();
       datos.redes = document.getElementById("redes").value.trim();
+      datos.direccion = document.getElementById("direccion").value.trim();
       datos.distrito = document.getElementById("distrito").value.trim();
       datos.provincia = document.getElementById("provincia").value.trim();
       datos.pais = document.getElementById("pais").value.trim();
       
-      if (!datos.nombre || !datos.email || !datos.telefono || !datos.dni || !datos.fechaNacimiento || !datos.distrito || !datos.provincia || !datos.pais || !datos.redes) {
+      if (!datos.nombre || !datos.email || !datos.telefono || !datos.dni || !datos.fechaNacimiento || !datos.direccion || !datos.distrito || !datos.provincia || !datos.pais || !datos.redes) {
           return alert("⚠️ Por favor completa todos los datos obligatorios.");
       }
       next();
