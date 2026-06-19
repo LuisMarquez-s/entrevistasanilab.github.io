@@ -77,7 +77,6 @@
       border: 1px solid rgba(163,201,168,.12);
     }
 
-    /* Detalle decorativo: cinta dorada superior */
     .box::before {
       content: "";
       position: absolute;
@@ -167,6 +166,9 @@
       transition: border-color .2s, box-shadow .2s, transform .15s;
       text-align: left;
     }
+    input[type="time"], input[type="date"] {
+      cursor: text;
+    }
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--gold);
@@ -182,6 +184,16 @@
       background-position: right 18px center;
       padding-right: 42px;
       cursor: pointer;
+    }
+
+    .row-inputs {
+      display: flex;
+      gap: 10px;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    .row-inputs input, .row-inputs select {
+      margin-top: 8px;
     }
 
     label {
@@ -580,7 +592,7 @@
 <body>
 
   <div class="progress-wrap">
-    <div class="progress-text" id="progressText">Paso 1 de 11</div>
+    <div class="progress-text" id="progressText">Paso 1 de 12</div>
     <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
   </div>
 
@@ -597,22 +609,42 @@
 
     let paso = 1;
     let datos = {
-      nombre: "", email: "", telefono: "", telefonoRef: "", redes: "",
-      tipoUsuario: "", subTipo: "", area: "",
-      horaInicio: "", horaFin: "", modalidad: "", ubicacion: "",
-      horaInicio1: "", horaFin1: "", horaInicio2: "", horaFin2: "",
-      diasPresencial: [], diasRemoto: [], cambios: "",
-      videoPresentacion: "", cvUrl: "",
-      base64Video1: "", base64CV: "", cvMimeType: "", cvExt: "",
+      nombre: "", email: "", telefono: "", dni: "", redes: "",
+      distrito: "", provincia: "", pais: "", fechaNacimiento: "",
+      telefonoRef: "", vinculoRef: "",
+      telefonoRef2: "", vinculoRef2: "",
+      carrera: "", centroEstudios: "",
+      tipoUsuario: "", subTipo: "", puesto: "", area: "",
+      fechaInicio: "", periodoMeses: "",
+      modalidad: "", ubicacion: "",
+      diasPresencial: [], diasRemoto: [],
+      horariosPorDia: {}, horarioPartido: "",
+      bienestar: "",
       experienciaPrevia: "", textoRetiro: "",
-      horariosPorDia: {}, dias: [],
-      aceptaCompromiso: false
+      videoPresentacion: "", cvUrl: "",
+      base64VideoCompromiso: "", base64CV: "", cvMimeType: "", cvExt: "",
+      dias: [], aceptaCompromiso: false
     };
 
     let stream, mediaRecorder, chunks = [];
 
-    const areasPresencial = ["Infraestructura", "Relaciones Comunitarias", "Medio Ambiente", "Logística y Procesos"];
-    const TOTAL_PASOS = 11;
+    const areasList = [
+      "Salud y proyectos", "Operaciones y logística", "Proyectos de innovación y sostenibilidad", 
+      "Administración y contabilidad", "Gestión de Talento Humano", "Marketing y Publicidad", 
+      "Gestión empresarial comercial", "Diseño y creatividad", "Infraestructura y Arquitectura", 
+      "Talleres de innovación verde y sostenibilidad", "Medio Ambiente y ecología", "Gerencia", 
+      "Gestión Digital (Sistema)", "Relaciones comunitarias (RRCC)", "Relaciones Publicas (RRPP)", 
+      "Relaciones Internacionales (RRII)", "Finanzas", "Investigación y Desarrollo (I+D)", 
+      "Innovación Minera", "Atención Salud y Bienestar"
+    ];
+
+    const puestosList = [
+      "Voluntario", "Pasante", "Asistente", "Analista", "Especialista", 
+      "Sub coordinador", "Coordinador", "Consultor", "Asesor", "Jefe", "Sub gerente", "Gerente"
+    ];
+
+    const areasPresencial = ["Infraestructura y Arquitectura", "Relaciones comunitarias (RRCC)", "Medio Ambiente y ecología", "Operaciones y logística"];
+    const TOTAL_PASOS = 12;
 
     function actualizarProgreso() {
       const pct = Math.min((paso / TOTAL_PASOS) * 100, 100);
@@ -656,95 +688,160 @@
             <h2>Tus datos personales</h2>
             <p style="font-size: 14px; color: #5a6a62; margin-bottom: 20px;">Por favor, llena tus datos para poder comunicarnos contigo.</p>
 
-            <img src="https://images.unsplash.com/photo-1516387938699-a93567ec168e?q=80&w=600&auto=format&fit=crop" style="width: 100%; max-width: 380px; border-radius: 14px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(10,31,26,.18);" alt="Contacto">
-
-            <input id="nombre" type="text" placeholder="Nombre completo *" value="${datos.nombre}">
-            <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
-            <input id="telefono" type="tel" placeholder="Tu teléfono principal *" value="${datos.telefono}">
-
-            <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; margin: 15px auto; width: 100%; max-width: 460px;">
-                <p style="font-size: 13px; margin: 0 0 12px 0; color: #facc15; text-align: left; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;">Contacto de emergencia / referencia</p>
-                <input id="telefonoRef" type="tel" placeholder="Teléfono de referencia *" value="${datos.telefonoRef|| ''}" style="width: 100%; margin-top: 0;">
-                <input id="vinculoRef" type="text" placeholder="¿Qué vínculo tienen? (Ej: Madre, Hermano) *" value="${datos.vinculoRef || ''}" style="width: 100%;">
+            <input id="nombre" type="text" placeholder="Nombre y Apellidos *" value="${datos.nombre}">
+            
+            <div class="row-inputs">
+                <input id="dni" type="number" placeholder="DNI *" value="${datos.dni}">
+                <input id="fechaNacimiento" type="text" placeholder="Fecha de Nacimiento (Ej: 04/08/2000) *" value="${datos.fechaNacimiento}">
             </div>
 
-            <input id="redes" type="text" placeholder="Link de tu LinkedIn, Instagram o Facebook *" value="${datos.redes}">
-            <button onclick="saveData()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
+            <div class="row-inputs">
+                <input id="telefono" type="tel" placeholder="Número de celular *" value="${datos.telefono}">
+                <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
+            </div>
+
+            <input id="redes" type="text" placeholder="Link de red social (LinkedIn, FB, IG) *" value="${datos.redes}">
+            
+            <div style="text-align:left; max-width:460px; margin: 15px auto;">
+                <p style="color:var(--cream); font-size:14px; margin-bottom:8px; font-weight:500;">Dirección de domicilio:</p>
+                <div class="row-inputs">
+                    <input id="distrito" type="text" placeholder="Distrito *" value="${datos.distrito}">
+                    <input id="provincia" type="text" placeholder="Provincia *" value="${datos.provincia}">
+                </div>
+                <input id="pais" type="text" placeholder="País *" value="${datos.pais}">
+            </div>
+
+            <button onclick="guardarDatosPersonales()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
         case 3:
           html = `
-            <h2>Perfil de ingreso</h2>
-            <p style="font-size: 14px; color: #5a6a62; margin-bottom: 18px;">Selecciona la opción que mejor se adapte a ti para ver los detalles:</p>
-            <div style="display: flex; flex-direction: column; gap: 12px; margin: 0 auto 18px auto; width: 100%; max-width: 460px;">
+            <h2>Contactos de emergencia</h2>
+            <p style="font-size: 14px; color: #5a6a62; margin-bottom: 20px;">Registra a las personas que debemos contactar en caso de emergencia.</p>
+
+            <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; margin: 15px auto; width: 100%; max-width: 460px;">
+                <p style="font-size: 13px; margin: 0 0 12px 0; color: #facc15; text-align: left; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;">Contacto de emergencia 1 *</p>
+                <input id="telefonoRef" type="tel" placeholder="Número de teléfono *" value="${datos.telefonoRef || ''}" style="width: 100%; margin-top: 0;">
+                <select id="vinculoRef" style="width: 100%; margin-top: 10px;">
+                    <option value="">Parentesco *</option>
+                    <option value="Madre" ${datos.vinculoRef==='Madre'?'selected':''}>Madre</option>
+                    <option value="Padre" ${datos.vinculoRef==='Padre'?'selected':''}>Padre</option>
+                    <option value="Hermano/a" ${datos.vinculoRef==='Hermano/a'?'selected':''}>Hermano/a</option>
+                    <option value="Esposo/a" ${datos.vinculoRef==='Esposo/a'?'selected':''}>Esposo/a</option>
+                    <option value="Otro" ${datos.vinculoRef==='Otro'?'selected':''}>Otro (tíos, primos, amigos)</option>
+                </select>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; margin: 15px auto; width: 100%; max-width: 460px;">
+                <p style="font-size: 13px; margin: 0 0 12px 0; color: #a7f3d0; text-align: left; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;">Contacto de emergencia 2 (Opcional)</p>
+                <input id="telefonoRef2" type="tel" placeholder="Número de teléfono" value="${datos.telefonoRef2 || ''}" style="width: 100%; margin-top: 0;">
+                <select id="vinculoRef2" style="width: 100%; margin-top: 10px;">
+                    <option value="">Parentesco</option>
+                    <option value="Madre" ${datos.vinculoRef2==='Madre'?'selected':''}>Madre</option>
+                    <option value="Padre" ${datos.vinculoRef2==='Padre'?'selected':''}>Padre</option>
+                    <option value="Hermano/a" ${datos.vinculoRef2==='Hermano/a'?'selected':''}>Hermano/a</option>
+                    <option value="Esposo/a" ${datos.vinculoRef2==='Esposo/a'?'selected':''}>Esposo/a</option>
+                    <option value="Otro" ${datos.vinculoRef2==='Otro'?'selected':''}>Otro (tíos, primos, amigos)</option>
+                </select>
+            </div>
+
+            <button onclick="guardarContactos()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
+          `;
+          break;
+
+        case 4:
+          html = `
+            <h2>Perfil y Académico</h2>
+            <p style="font-size: 14px; color: #5a6a62; margin-bottom: 18px;">Ingresa tus datos académicos y el rol al que postulas.</p>
+            
+            <input id="carrera" type="text" placeholder="Carrera o profesión *" value="${datos.carrera}">
+            <input id="centroEstudios" type="text" placeholder="Centro de estudios *" value="${datos.centroEstudios}">
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 15px auto; width: 100%; max-width: 460px;">
                 <div id="card-Voluntario" class="perfil-card ${datos.tipoUsuario === 'Voluntario' ? 'active' : ''}" onclick="seleccionarPerfil('Voluntario')">
-                    <strong>🌟 Voluntario</strong><br>
-                    <span>Ad Honorem · Impacto Social</span>
+                    <strong>🌟 Voluntario</strong><br><span>Ad Honorem · Impacto Social</span>
                 </div>
                 <div id="card-Estudiante" class="perfil-card ${datos.tipoUsuario === 'Estudiante' ? 'active' : ''}" onclick="seleccionarPerfil('Estudiante')">
-                    <strong>📚 Estudiante</strong><br>
-                    <span>Prácticas Profesionales o Pre-profesionales</span>
+                    <strong>📚 Estudiante</strong><br><span>Prácticas Profesionales o Pre-profesionales</span>
                 </div>
                 <div id="card-Egresado" class="perfil-card ${datos.tipoUsuario === 'Egresado' ? 'active' : ''}" onclick="seleccionarPerfil('Egresado')">
-                    <strong>💼 Egresado</strong><br>
-                    <span>Remunerado · Sujeto a negociación</span>
+                    <strong>💼 Egresado</strong><br><span>Remunerado · Sujeto a negociación</span>
                 </div>
             </div>
             <input type="hidden" id="tipoUsuario" value="${datos.tipoUsuario}">
-            <div id="infoPerfil" style="background: rgba(255,255,255,0.1); border: 1px dashed #22c55e; padding: 15px; border-radius: 8px; margin: 15px auto; width: 100%; max-width: 460px; min-height: 60px; text-align: left; font-size: 14px; display: none;">
-                <p id="textoInfo" style="margin:0; color: #fff;"></p>
-            </div>
-            <div id="subtipoDiv" style="display:${datos.tipoUsuario==='Estudiante'?'block':'none'}">
+            
+            <div id="subtipoDiv" style="display:${datos.tipoUsuario==='Estudiante'?'block':'none'}; max-width: 460px; margin: 0 auto;">
               <select id="subTipo" style="margin-top: 10px;">
                 <option value="Practicante" ${datos.subTipo==='Practicante'?'selected':''}>Practicante Pre-Profesional</option>
                 <option value="Remunerado" ${datos.subTipo==='Remunerado'?'selected':''}>Practicante con Subvención (Sujeto a vacante)</option>
               </select>
             </div>
-            <select id="area" onchange="actualizarInfoArea()" style="margin-top: 15px;">
-              <option value="">Área a postular...</option>
-              ${["Proyectos", "Medio Ambiente", "Gerencia", "GTH", "Marketing", "Infraestructura", "Relaciones Comunitarias", "Taller", "Sistemas", "Comercial", "Logística y Procesos"]
-                .map(a => `<option value="${a}" ${datos.area===a?'selected':''}>${a}</option>`).join('')}
+
+            <div class="row-inputs">
+                <select id="puesto">
+                  <option value="">Puesto con el que ingresa *</option>
+                  ${puestosList.map(p => `<option value="${p}" ${datos.puesto===p?'selected':''}>${p}</option>`).join('')}
+                </select>
+            </div>
+
+            <select id="area" onchange="actualizarInfoArea()" style="margin-top: 8px;">
+              <option value="">Área a la que ingresarás *</option>
+              ${areasList.map(a => `<option value="${a}" ${datos.area===a?'selected':''}>${a}</option>`).join('')}
             </select>
             <div id="msgAreaEspecial" class="warning" style="display:none; max-width:460px; margin: 12px auto;"></div>
-            <button onclick="guardarTipo()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
+
+            <div class="row-inputs">
+                <input id="fechaInicio" type="text" placeholder="Fecha inicio (Ej: 15/07) *" value="${datos.fechaInicio}">
+                <input id="periodoMeses" type="number" placeholder="Periodo (Meses) *" value="${datos.periodoMeses}">
+            </div>
+
+            <button onclick="guardarDatosAcademicos()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           if(datos.tipoUsuario) setTimeout(() => seleccionarPerfil(datos.tipoUsuario), 50);
           break;
 
-          case 4:
+        case 5:
           html = `
             <h2>Disponibilidad de horario</h2>
             <p style="font-size: 14px; color: #5a6a62; margin-bottom: 18px;">
-                Indica los días que puedes participar y escribe tu rango de horas disponible para cada uno (Ej: 9am - 5pm).
+                Indica los días y horarios que puedes participar (Formato 24h).
             </p>
             <div class="warning" style="max-width:460px; margin: 0 auto 18px;">
               La suma total de tus horas a la semana debe ser de <strong>48 horas</strong>.
             </div>
+            
             <div style="background: #064e3b; padding: 18px 20px; border-radius: 12px; margin: 15px auto; width: 100%; max-width: 460px; text-align: left; border: 1px solid #047857; box-sizing: border-box;">
               <p style="margin-top:0; color:#22c55e; font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:12px;">Selecciona tus días y horarios</p>
 
               ${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(dia => `
-                <div style="display: flex; align-items: center; margin-bottom: 12px; gap: 12px;">
-                  <label style="flex: 0 0 105px; cursor:pointer; font-weight:500;">
+                <div style="display: flex; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
+                  <label style="flex: 0 0 100%; cursor:pointer; font-weight:500;">
                     <input type="checkbox" class="cb-dia-dinamico" value="${dia}"
                            onchange="toggleInputHorario('${dia}')"
                            ${datos.horariosPorDia[dia] ? 'checked' : ''}> ${dia}
                   </label>
-                  <input type="text" id="input-hora-${dia}"
-                         placeholder="Ej: 9:00 - 17:00"
-                         style="display: ${datos.horariosPorDia[dia] ? 'block' : 'none'};
-                                margin: 0; padding: 9px 12px; width: 100%; font-size: 14px; max-width: none;"
-                         value="${datos.horariosPorDia[dia] || ''}">
+                  <div id="horarios-${dia}" style="display: ${datos.horariosPorDia[dia] ? 'flex' : 'none'}; gap: 8px; width: 100%;">
+                    <div style="width: 50%;">
+                        <span style="font-size:11px; color:#a7f3d0; margin-left:4px;">Inicio:</span>
+                        <input type="time" id="inicio-${dia}" style="margin: 2px 0 0 0; padding: 9px 12px; width: 100%; font-size: 14px;" value="${datos.horariosPorDia[dia]?.inicio || ''}">
+                    </div>
+                    <div style="width: 50%;">
+                        <span style="font-size:11px; color:#a7f3d0; margin-left:4px;">Salida:</span>
+                        <input type="time" id="fin-${dia}" style="margin: 2px 0 0 0; padding: 9px 12px; width: 100%; font-size: 14px;" value="${datos.horariosPorDia[dia]?.fin || ''}">
+                    </div>
+                  </div>
                 </div>
               `).join('')}
             </div>
+
+            <textarea id="horarioPartido" rows="3" placeholder="Si su horario es dividido (partido) dentro del mismo día, por favor detállelo siguiendo este ejemplo:\nLunes 8am-12pm / 6pm-10pm">${datos.horarioPartido}</textarea>
 
             <button onclick="guardarHorariosDinamicos()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
-        case 5:
+        case 6:
           const esPresencialFijo = areasPresencial.includes(datos.area);
           let selectModalidadHtml = "";
           let advertenciaModalidadHtml = "";
@@ -771,7 +868,7 @@
           if (datos.modalidad === "Híbrido" && !esPresencialFijo) {
             advertenciaModalidadHtml = `
               <div class="warning" style="max-width: 460px; margin: 15px auto;">
-                  ⚠️ <strong>Nota:</strong> La presencialidad será a coordinar (1 o 2 veces por semana) en nuestra sede en Lima - Miraflores. Marca tus días de preferencia.
+                ⚠️ <strong>Nota:</strong> La presencialidad será a coordinar (1 o 2 veces por semana) en nuestra sede en Lima - Miraflores. Marca tus días de preferencia.
               </div>
             `;
           }
@@ -805,23 +902,28 @@
           `;
           break;
 
-        case 6:
+        case 7:
           html = `<h2>Video informativo</h2>
             <p>Tómate un momento para ver este video:</p>
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1OlcWP62G7P6rPbgCmtNBixNzK9_puDWq/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <button onclick="next()">✓ He visto el video</button><br><br><button onclick="prev()" class="atras">← Atrás</button>`;
           break;
 
-        case 7:
+        case 8:
           html = `<h2>Productividad</h2>
             <p>Una breve guía sobre nuestra cultura de productividad:</p>
             <div class="tiktok-player"><iframe src="https://drive.google.com/file/d/1pFwlGdYD18-Xvw4Ml5v_Lsg7M4d4E6cx/preview" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
             <button onclick="next()">✓ He visto el video</button><br><br><button onclick="prev()" class="atras">← Atrás</button>`;
           break;
 
-        case 8:
+        case 9:
           html = `
-            <h2>Experiencia laboral</h2>
+            <h2>Bienestar y Experiencia</h2>
+            
+            <p style="font-size: 14px; text-align: left; max-width: 460px; margin: 10px auto 8px; color: var(--cream);"><strong>Bienestar personal:</strong> ¿Existe alguna situación personal, emocional o de salud que debamos considerar para apoyarte durante tu participación en Sanilab? Responde con sinceridad:</p>
+            <textarea id="bienestar" rows="3" placeholder="Tu respuesta...">${datos.bienestar}</textarea>
+
+            <p style="font-size: 14px; text-align: left; max-width: 460px; margin: 20px auto 8px; color: var(--cream);"><strong>Experiencia laboral previa:</strong></p>
             <select id="expPrevia" onchange="actualizarExp()">
               <option value="">¿Tienes experiencia laboral previa?</option>
               <option value="Si" ${datos.experienciaPrevia==='Si'?'selected':''}>Sí</option>
@@ -829,15 +931,15 @@
             </select>
 
             <div id="retiroDiv" style="display:${datos.experienciaPrevia==='Si'?'block':'none'}">
-              <p style="margin-top:15px;">Cuéntanos brevemente el motivo de retiro de tu último empleo:</p>
-              <textarea id="textoRetiro" rows="4">${datos.textoRetiro || ''}</textarea>
+              <p style="font-size: 14px; text-align: left; max-width: 460px; margin: 15px auto 8px; color: var(--cream);">Cuéntanos brevemente el motivo de retiro de tu último empleo:</p>
+              <textarea id="textoRetiro" rows="3">${datos.textoRetiro || ''}</textarea>
             </div>
 
             <button onclick="guardarRetiro()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
           break;
 
-        case 9:
+        case 10:
           html = `
             <h2>Sube tu CV</h2>
             <p>Por favor, sube tu Currículum Vitae en formato PDF o Word.</p>
@@ -849,7 +951,7 @@
           `;
           break;
 
-        case 10:
+        case 11:
           html = `
             <h2>Compromiso y reglas</h2>
             <p style="font-size: 14px; color: #5a6a62; margin-bottom: 18px;">
@@ -893,15 +995,16 @@
           `;
           break;
 
-        case 11:
+        case 12:
           html = `
             <h2>Resumen final</h2>
             <p style="color:#5a6a62;">Confirma que toda tu información sea correcta antes de enviar.</p>
             <div class="resumen">
               <p><strong>Nombre</strong><br>${datos.nombre}</p>
-              <p><strong>Modalidad</strong><br>${datos.tipoUsuario}</p>
+              <p><strong>Rol</strong><br>${datos.tipoUsuario} - ${datos.puesto}</p>
               <p><strong>Área</strong><br>${datos.area}</p>
               <p><strong>Días elegidos</strong><br>${datos.dias.join(', ') || 'No especificado'}</p>
+              <p><strong>Modalidad</strong><br>${datos.modalidad}</p>
               <p><strong>Compromiso</strong><br>Aceptado ✓</p>
             </div>
             <button onclick="finalizarRegistro(event)" style="padding:14px 36px; font-size:15.5px;">Finalizar entrevista</button>
@@ -953,67 +1056,86 @@
       document.body.appendChild(a); a.click();
     }
 
-    function saveData() {
+    function guardarDatosPersonales() {
       datos.nombre = document.getElementById("nombre").value.trim();
-      datos.email = document.getElementById("email").value.trim();
+      datos.dni = document.getElementById("dni").value.trim();
+      datos.fechaNacimiento = document.getElementById("fechaNacimiento").value.trim();
       datos.telefono = document.getElementById("telefono").value.trim();
-      datos.telefonoRef = document.getElementById("telefonoRef").value.trim();
-      datos.vinculoRef = document.getElementById("vinculoRef") ? document.getElementById("vinculoRef").value.trim() : "";
+      datos.email = document.getElementById("email").value.trim();
       datos.redes = document.getElementById("redes").value.trim();
-      if (!datos.nombre || !datos.email || !datos.telefono || !datos.telefonoRef || !datos.vinculoRef) {
-          return alert("Completa todos los datos obligatorios");
-      }
-      if (datos.telefono === datos.telefonoRef) {
-          return alert("⚠️ ERROR: El teléfono de referencia no puede ser tu mismo número. Por favor, coloca el número de un contacto distinto e indica qué vínculo tienen.");
+      datos.distrito = document.getElementById("distrito").value.trim();
+      datos.provincia = document.getElementById("provincia").value.trim();
+      datos.pais = document.getElementById("pais").value.trim();
+      
+      if (!datos.nombre || !datos.email || !datos.telefono || !datos.dni || !datos.fechaNacimiento || !datos.distrito || !datos.provincia || !datos.pais || !datos.redes) {
+          return alert("⚠️ Por favor completa todos los datos obligatorios.");
       }
       next();
     }
 
-    function actualizarTipo() {
-      const ts = document.getElementById("tipoUsuario"); const as = document.getElementById("area");
-      if(ts) datos.tipoUsuario = ts.value; if(as) datos.area = as.value;
-      render();
+    function guardarContactos() {
+      datos.telefonoRef = document.getElementById("telefonoRef").value.trim();
+      datos.vinculoRef = document.getElementById("vinculoRef").value.trim();
+      datos.telefonoRef2 = document.getElementById("telefonoRef2").value.trim();
+      datos.vinculoRef2 = document.getElementById("vinculoRef2").value.trim();
+
+      if (!datos.telefonoRef || !datos.vinculoRef) {
+          return alert("Completa los datos del Contacto de Emergencia 1");
+      }
+      if (datos.telefono === datos.telefonoRef || (datos.telefonoRef2 && datos.telefono === datos.telefonoRef2)) {
+          return alert("⚠️ ERROR: Los teléfonos de emergencia no pueden ser iguales a tu propio número.");
+      }
+      next();
     }
 
-    function guardarTipo() {
+    function guardarDatosAcademicos() {
+      datos.carrera = document.getElementById("carrera").value.trim();
+      datos.centroEstudios = document.getElementById("centroEstudios").value.trim();
       datos.tipoUsuario = document.getElementById("tipoUsuario").value;
       datos.subTipo = datos.tipoUsuario === "Estudiante" ? document.getElementById("subTipo").value : "";
+      datos.puesto = document.getElementById("puesto").value;
       datos.area = document.getElementById("area").value;
-      if (!datos.tipoUsuario || !datos.area) return alert("Selecciona modalidad de ingreso y área.");
+      datos.fechaInicio = document.getElementById("fechaInicio").value.trim();
+      datos.periodoMeses = document.getElementById("periodoMeses").value.trim();
+
+      if (!datos.carrera || !datos.centroEstudios || !datos.tipoUsuario || !datos.puesto || !datos.area || !datos.fechaInicio || !datos.periodoMeses) {
+        return alert("Completa todos los campos obligatorios para continuar.");
+      }
       next();
     }
 
-    function toggleTurno2() {
-      const isChecked = document.getElementById("checkTurno2").checked;
-      document.getElementById("turno2Div").style.display = isChecked ? "flex" : "none";
-      if (!isChecked) {
-        document.getElementById("horaInicio2").value = "";
-        document.getElementById("horaFin2").value = "";
+    function toggleInputHorario(dia) {
+      const container = document.getElementById(`horarios-${dia}`);
+      const checkbox = document.querySelector(`.cb-dia-dinamico[value="${dia}"]`);
+      container.style.display = checkbox.checked ? 'flex' : 'none';
+      if (!checkbox.checked) {
+          document.getElementById(`inicio-${dia}`).value = '';
+          document.getElementById(`fin-${dia}`).value = '';
       }
     }
 
-    function guardarHorario() {
-      datos.dias = Array.from(document.querySelectorAll('.cb-dia:checked')).map(cb => cb.value);
-      if (datos.dias.length === 0) return alert("Selecciona al menos un día.");
-      datos.horaInicio1 = document.getElementById("horaInicio1").value;
-      datos.horaFin1 = document.getElementById("horaFin1").value;
+    function guardarHorariosDinamicos() {
+      const checks = document.querySelectorAll('.cb-dia-dinamico:checked');
+      if (checks.length === 0) return alert("Debes seleccionar al menos un día disponible.");
+      
+      datos.horariosPorDia = {};
+      datos.dias = [];
+      let faltaHorario = false;
 
-      if (!datos.horaInicio1 || !datos.horaFin1) return alert("Ingresa las horas del Turno Principal.");
+      checks.forEach(cb => {
+        const dia = cb.value;
+        const inicio = document.getElementById(`inicio-${dia}`).value;
+        const fin = document.getElementById(`fin-${dia}`).value;
+        
+        if (!inicio || !fin) faltaHorario = true;
+        
+        datos.horariosPorDia[dia] = { inicio, fin };
+        datos.dias.push(dia);
+      });
 
-      const checkT2 = document.getElementById("checkTurno2").checked;
-      const hI2 = document.getElementById("horaInicio2") ? document.getElementById("horaInicio2").value : "";
-      const hF2 = document.getElementById("horaFin2") ? document.getElementById("horaFin2").value : "";
+      datos.horarioPartido = document.getElementById("horarioPartido").value.trim();
 
-      if (checkT2 && (!hI2 || !hF2)) {
-        return alert("Has activado el horario partido. Debes ingresar las horas del segundo turno o desmarcar la casilla.");
-      }
-
-      datos.horaInicio2 = checkT2 ? hI2 : "";
-      datos.horaFin2 = checkT2 ? hF2 : "";
-
-      datos.horaInicio = datos.horaInicio1;
-      datos.horaFin = datos.horaFin1;
-
+      if (faltaHorario) return alert("Por favor, ingresa la hora de inicio y de salida para todos los días que seleccionaste.");
       next();
     }
 
@@ -1023,7 +1145,9 @@
       const esPresencialFijo = areasPresencial.includes(datos.area);
       if(esPresencialFijo) datos.modalidad = "Presencial";
       else datos.modalidad = document.getElementById("modalidad").value;
+      
       if (!datos.modalidad) return alert("Selecciona una modalidad.");
+      
       if (datos.modalidad === "Presencial") {
         datos.ubicacion = document.getElementById("ubicacion").value;
         if(!datos.ubicacion) return alert("Selecciona una sede obligatoriamente.");
@@ -1031,14 +1155,16 @@
       } else if (datos.modalidad === "Híbrido") {
         const pre = Array.from(document.querySelectorAll('.cb-presencial:checked')).map(cb => cb.value);
         const rem = Array.from(document.querySelectorAll('.cb-remoto:checked')).map(cb => cb.value);
+        
         if (pre.length < 1) return alert("Debes seleccionar al menos 1 día en Presencial.");
         if (rem.length < 1) return alert("Debes seleccionar al menos 1 día en Remoto.");
-        if (pre.length > 2) {
-          return alert("❌ Solo se puede elegir un máximo de 2 días presenciales para la modalidad híbrida.");
-        }
+        if (pre.length > 2) return alert("❌ Solo se puede elegir un máximo de 2 días presenciales para la modalidad híbrida.");
+        
         if (pre.length + rem.length !== datos.dias.length) return alert(`Debes distribuir exactamente los ${datos.dias.length} días elegidos. Has asignado ${pre.length + rem.length}.`);
+        
         const duplicados = pre.filter(dia => rem.includes(dia));
         if (duplicados.length > 0) return alert(`Error: Has marcado "${duplicados.join(", ")}" en ambas columnas. Elige solo un formato por día.`);
+
         datos.diasPresencial = pre; datos.diasRemoto = rem; datos.ubicacion = "Lima - Miraflores";
       } else {
         datos.ubicacion = ""; datos.diasPresencial = []; datos.diasRemoto = [];
@@ -1046,15 +1172,34 @@
       next();
     }
 
-    function guardarCambios() { datos.cambios = document.getElementById("cambios").value.trim(); next(); }
+    function seleccionarPerfil(tipo) {
+        document.getElementById("tipoUsuario").value = tipo;
+        datos.tipoUsuario = tipo;
+        document.querySelectorAll('.perfil-card').forEach(el => el.classList.remove('active'));
+        document.getElementById("card-" + tipo).classList.add('active');
+        const subtipoDiv = document.getElementById("subtipoDiv");
+        subtipoDiv.style.display = (tipo === "Estudiante") ? "block" : "none";
+    }
+
+    function actualizarInfoArea() {
+        const area = document.getElementById("area").value;
+        const msgArea = document.getElementById("msgAreaEspecial");
+        if (areasPresencial.includes(area)) {
+            msgArea.style.display = "block";
+            msgArea.innerHTML = `⚠️ Nota: El trabajo de esta área será presencial.`;
+        } else {
+            msgArea.style.display = "none";
+        }
+    }
 
     function actualizarExp() { datos.experienciaPrevia = document.getElementById("expPrevia").value; render(); }
 
     function guardarRetiro() {
-      if(!datos.experienciaPrevia) return alert("Selecciona una opción.");
+      datos.bienestar = document.getElementById("bienestar").value.trim();
+      if(!datos.experienciaPrevia) return alert("Selecciona una opción sobre tu experiencia previa.");
       if(datos.experienciaPrevia === "Si") {
         datos.textoRetiro = document.getElementById("textoRetiro").value.trim();
-        if(!datos.textoRetiro) return alert("Por favor escribe el motivo.");
+        if(!datos.textoRetiro) return alert("Por favor escribe el motivo de retiro de tu último empleo.");
       } else { datos.textoRetiro = "Sin experiencia previa"; }
       next();
     }
@@ -1151,66 +1296,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
-    function toggleInputHorario(dia) {
-      const input = document.getElementById(`input-hora-${dia}`);
-      const checkbox = document.querySelector(`.cb-dia-dinamico[value="${dia}"]`);
-      input.style.display = checkbox.checked ? 'block' : 'none';
-      if (!checkbox.checked) input.value = '';
-    }
-    function guardarHorariosDinamicos() {
-      const checks = document.querySelectorAll('.cb-dia-dinamico:checked');
-      if (checks.length === 0) return alert("Debes seleccionar al menos un día disponible.");
-      datos.horariosPorDia = {};
-      datos.dias = [];
-      let faltaHorario = false;
-      checks.forEach(cb => {
-        const dia = cb.value;
-        const hora = document.getElementById(`input-hora-${dia}`).value.trim();
-        if (!hora) {
-            faltaHorario = true;
-        }
-        datos.horariosPorDia[dia] = hora;
-        datos.dias.push(dia);
-      });
-      if (faltaHorario) return alert("Por favor, escribe el horario para todos los días seleccionados.");
-      next();
-    }
-    function seleccionarPerfil(tipo) {
-        document.getElementById("tipoUsuario").value = tipo;
-        datos.tipoUsuario = tipo;
-        document.querySelectorAll('.perfil-card').forEach(el => el.classList.remove('active'));
-        document.getElementById("card-" + tipo).classList.add('active');
-        const infoPanel = document.getElementById("infoPerfil");
-        const texto = document.getElementById("textoInfo");
-        const subtipoDiv = document.getElementById("subtipoDiv");
-        infoPanel.style.display = "block";
-        if (tipo === "Voluntario") {
-            texto.innerHTML = "🌟 <strong>Voluntariado:</strong> Modalidad 100% ad-honorem. Te permite ganar experiencia real en proyectos de impacto socioambiental, ideal para construir tu CV.";
-        } else if (tipo === "Estudiante") {
-            texto.innerHTML = "📚 <strong>Estudiante:</strong> Enfocado en tus prácticas. Apoyamos tu formación académica con flexibilidad para tus estudios universitarios o técnicos.";
-        } else if (tipo === "Egresado") {
-            texto.innerHTML = "💼 <strong>Remunerado:</strong> Para perfiles que ya terminaron su formación. El monto está sujeto a negociación y disponibilidad de presupuesto en el área.";
-        }
-        subtipoDiv.style.display = (tipo === "Estudiante") ? "block" : "none";
-    }
-    function actualizarInfoArea() {
-        const area = document.getElementById("area").value;
-        const msgArea = document.getElementById("msgAreaEspecial");
-        if (areasPresencial.includes(area)) {
-            msgArea.style.display = "block";
-            msgArea.innerHTML = `⚠️ Nota: El trabajo de esta área será mayormente presencial.`;
-        } else {
-            msgArea.style.display = "none";
-        }
-    }
-    function guardarCompromiso() {
-      const check = document.getElementById("checkCompromiso");
-      if (!check.checked) {
-        return alert("⚠️ Debes aceptar el compromiso y las reglas de Sanilab para poder finalizar tu postulación.");
-      }
-      datos.aceptaCompromiso = true;
-      next();
-    }
+
     render();
   </script>
 </body>
