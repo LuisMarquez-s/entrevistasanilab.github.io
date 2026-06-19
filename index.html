@@ -186,6 +186,16 @@
       cursor: pointer;
     }
 
+    .row-inputs {
+      display: flex;
+      gap: 10px;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    .row-inputs input, .row-inputs select {
+      margin-top: 8px;
+    }
+
     label {
       font-size: 14px;
       color: var(--cream);
@@ -795,7 +805,7 @@
                            onchange="toggleInputHorario('${dia}')"
                            ${datos.horariosPorDia[dia] ? 'checked' : ''}> ${dia}
                   </label>
-                  <div id="horarios-${dia}" style="display: ${datos.horariosPorDia[dia] ? 'flex' : 'none'}; gap: 8px; width: 100%;">
+                  <div id="horarios-${dia}" style="display: ${datos.horariosPorDia[dia] ? 'flex' : 'none'}; gap: 10px; width: 100%; margin-top: 5px;">
                     <div style="width: 50%;">
                         <span style="font-size:11px; color:#a7f3d0; margin-left:4px;">Inicio:</span>
                         <input type="time" id="inicio-${dia}" style="margin: 2px 0 0 0; padding: 9px 12px; width: 100%; font-size: 14px;" value="${datos.horariosPorDia[dia]?.inicio || ''}">
@@ -1081,7 +1091,7 @@
     function toggleInputHorario(dia) {
       const container = document.getElementById(`horarios-${dia}`);
       const checkbox = document.querySelector(`.cb-dia-dinamico[value="${dia}"]`);
-      container.style.display = checkbox.checked ? 'block' : 'none';
+      container.style.display = checkbox.checked ? 'flex' : 'none';
       if (!checkbox.checked) {
           document.getElementById(`inicio-${dia}`).value = '';
           document.getElementById(`fin-${dia}`).value = '';
