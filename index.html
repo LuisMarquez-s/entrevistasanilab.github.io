@@ -186,16 +186,6 @@
       cursor: pointer;
     }
 
-    .row-inputs {
-      display: flex;
-      gap: 10px;
-      max-width: 460px;
-      margin: 0 auto;
-    }
-    .row-inputs input, .row-inputs select {
-      margin-top: 8px;
-    }
-
     label {
       font-size: 14px;
       color: var(--cream);
@@ -689,25 +679,16 @@
             <p style="font-size: 14px; color: #5a6a62; margin-bottom: 20px;">Por favor, llena tus datos para poder comunicarnos contigo.</p>
 
             <input id="nombre" type="text" placeholder="Nombre y Apellidos *" value="${datos.nombre}">
-            
-            <div class="row-inputs">
-                <input id="dni" type="number" placeholder="DNI *" value="${datos.dni}">
-                <input id="fechaNacimiento" type="text" placeholder="Fecha de Nacimiento (Ej: 04/08/2000) *" value="${datos.fechaNacimiento}">
-            </div>
-
-            <div class="row-inputs">
-                <input id="telefono" type="tel" placeholder="Número de celular *" value="${datos.telefono}">
-                <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
-            </div>
-
+            <input id="dni" type="number" placeholder="DNI *" value="${datos.dni}">
+            <input id="fechaNacimiento" type="text" placeholder="Fecha de Nacimiento (Ej: 04/08/2000) *" value="${datos.fechaNacimiento}">
+            <input id="telefono" type="tel" placeholder="Número de celular *" value="${datos.telefono}">
+            <input id="email" type="email" placeholder="Correo electrónico *" value="${datos.email}">
             <input id="redes" type="text" placeholder="Link de red social (LinkedIn, FB, IG) *" value="${datos.redes}">
             
             <div style="text-align:left; max-width:460px; margin: 15px auto;">
                 <p style="color:var(--cream); font-size:14px; margin-bottom:8px; font-weight:500;">Dirección de domicilio:</p>
-                <div class="row-inputs">
-                    <input id="distrito" type="text" placeholder="Distrito *" value="${datos.distrito}">
-                    <input id="provincia" type="text" placeholder="Provincia *" value="${datos.provincia}">
-                </div>
+                <input id="distrito" type="text" placeholder="Distrito *" value="${datos.distrito}">
+                <input id="provincia" type="text" placeholder="Provincia *" value="${datos.provincia}">
                 <input id="pais" type="text" placeholder="País *" value="${datos.pais}">
             </div>
 
@@ -778,23 +759,19 @@
               </select>
             </div>
 
-            <div class="row-inputs">
-                <select id="puesto">
-                  <option value="">Puesto con el que ingresa *</option>
-                  ${puestosList.map(p => `<option value="${p}" ${datos.puesto===p?'selected':''}>${p}</option>`).join('')}
-                </select>
-            </div>
+            <select id="puesto">
+              <option value="">Puesto con el que ingresa *</option>
+              ${puestosList.map(p => `<option value="${p}" ${datos.puesto===p?'selected':''}>${p}</option>`).join('')}
+            </select>
 
-            <select id="area" onchange="actualizarInfoArea()" style="margin-top: 8px;">
+            <select id="area" onchange="actualizarInfoArea()">
               <option value="">Área a la que ingresarás *</option>
               ${areasList.map(a => `<option value="${a}" ${datos.area===a?'selected':''}>${a}</option>`).join('')}
             </select>
             <div id="msgAreaEspecial" class="warning" style="display:none; max-width:460px; margin: 12px auto;"></div>
 
-            <div class="row-inputs">
-                <input id="fechaInicio" type="text" placeholder="Fecha inicio (Ej: 15/07) *" value="${datos.fechaInicio}">
-                <input id="periodoMeses" type="number" placeholder="Periodo (Meses) *" value="${datos.periodoMeses}">
-            </div>
+            <input id="fechaInicio" type="text" placeholder="Fecha inicio (Ej: 15/07) *" value="${datos.fechaInicio}">
+            <input id="periodoMeses" type="number" placeholder="Periodo (Meses) *" value="${datos.periodoMeses}">
 
             <button onclick="guardarDatosAcademicos()">Continuar →</button><br><button onclick="prev()" class="atras">← Atrás</button>
           `;
@@ -821,12 +798,12 @@
                            onchange="toggleInputHorario('${dia}')"
                            ${datos.horariosPorDia[dia] ? 'checked' : ''}> ${dia}
                   </label>
-                  <div id="horarios-${dia}" style="display: ${datos.horariosPorDia[dia] ? 'flex' : 'none'}; gap: 8px; width: 100%;">
-                    <div style="width: 50%;">
+                  <div id="horarios-${dia}" style="display: ${datos.horariosPorDia[dia] ? 'block' : 'none'}; width: 100%; margin-top: 5px;">
+                    <div style="margin-bottom: 8px;">
                         <span style="font-size:11px; color:#a7f3d0; margin-left:4px;">Inicio:</span>
                         <input type="time" id="inicio-${dia}" style="margin: 2px 0 0 0; padding: 9px 12px; width: 100%; font-size: 14px;" value="${datos.horariosPorDia[dia]?.inicio || ''}">
                     </div>
-                    <div style="width: 50%;">
+                    <div>
                         <span style="font-size:11px; color:#a7f3d0; margin-left:4px;">Salida:</span>
                         <input type="time" id="fin-${dia}" style="margin: 2px 0 0 0; padding: 9px 12px; width: 100%; font-size: 14px;" value="${datos.horariosPorDia[dia]?.fin || ''}">
                     </div>
@@ -887,12 +864,12 @@
 
             <div id="hibridoDiv" style="display:${datos.modalidad==='Híbrido' && !esPresencialFijo ? 'block' : 'none'}">
               <p>Distribuye tus <strong>${datos.dias.length} días</strong> disponibles:</p>
-              <div style="display: flex; justify-content: space-between; max-width: 460px; margin: 0 auto; text-align: left; background: #047857; padding: 18px; border-radius: 14px; gap: 16px;">
-                <div style="width: 48%;">
+              <div style="display: flex; flex-direction: column; max-width: 460px; margin: 0 auto; text-align: left; background: #047857; padding: 18px; border-radius: 14px; gap: 16px;">
+                <div style="width: 100%;">
                   <p style="color:#22c55e; font-weight:600; margin-top:0; letter-spacing:.05em; text-transform:uppercase; font-size:12px;">Presencial</p>
                   ${datos.dias.map(d => `<label style="display:block; padding:3px 0;"><input type="checkbox" class="cb-presencial" value="${d}" ${datos.diasPresencial.includes(d)?'checked':''}> ${d}</label>`).join('')}
                 </div>
-                <div style="width: 48%;">
+                <div style="width: 100%;">
                   <p style="color:#a7f3d0; font-weight:600; margin-top:0; letter-spacing:.05em; text-transform:uppercase; font-size:12px;">Remoto</p>
                   ${datos.dias.map(d => `<label style="display:block; padding:3px 0;"><input type="checkbox" class="cb-remoto" value="${d}" ${datos.diasRemoto.includes(d)?'checked':''}> ${d}</label>`).join('')}
                 </div>
@@ -1107,7 +1084,7 @@
     function toggleInputHorario(dia) {
       const container = document.getElementById(`horarios-${dia}`);
       const checkbox = document.querySelector(`.cb-dia-dinamico[value="${dia}"]`);
-      container.style.display = checkbox.checked ? 'flex' : 'none';
+      container.style.display = checkbox.checked ? 'block' : 'none';
       if (!checkbox.checked) {
           document.getElementById(`inicio-${dia}`).value = '';
           document.getElementById(`fin-${dia}`).value = '';
